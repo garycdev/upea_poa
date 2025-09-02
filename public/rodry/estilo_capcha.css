@@ -1,0 +1,54 @@
+.captcha {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.captcha-container {
+    position: relative;
+
+}
+.rectangulo {
+    width: 150px;
+    height: 40px;
+    background-color: rgba(255, 238, 238, 0.918);
+    background-image: linear-gradient(to bottom right, transparent 50%, rgb(255, 162, 162) 50%),
+                        linear-gradient(to bottom right, transparent 50%, rgba(255, 161, 161, 0.527) 50%);
+    background-size: 5px 5px;
+    background-repeat: repeat;
+    border-radius: 10px;
+}
+.captcha-text {
+    position: absolute;
+    top: 0%;
+    left: 10%;
+    font-size: 25px;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    background: linear-gradient(to right, #003ada, #2802ff79); /* Gradiente de colores */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent
+}
+
+.btn-refrescar{
+    font-size: 13px;
+    font-weight: bold;
+    border: 0px;
+    color: white;
+    background-color: #1877f2;
+    padding: 11px 16px;
+    border-radius: 15px;
+    cursor: pointer;
+    width: 46px;
+    height: 40px;
+}
+.btn-refrescar:hover{
+    background-image: linear-gradient(90deg,
+            #B799FF 0%,
+            #ACBCFF 50%,
+            #AEE2FF 75%,
+            #E6FFFD 100%);
+    color: black;
+    animation: slide 10s linear infinite;
+}
