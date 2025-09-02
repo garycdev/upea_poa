@@ -3,7 +3,7 @@
         <legend>Sacar reporte de Formularios</legend>
 
         <div class="container_rodry">
-            @if ($formulario1=='existe')
+            @if ($formulario1 == 'existe')
                 <form action="{{ route('pdf_form1') }}" method="post" target="_blank">
                     @csrf
                     <input type="hidden" name="id_carreraunidad" value="{{ $id_carreraunidad }}">
@@ -16,10 +16,9 @@
                         </div>
                     </button>
                 </form>
-
             @endif
 
-            @if ($formulario2=='existe')
+            @if ($formulario2 == 'existe')
                 <form action="{{ route('pdf_form2') }}" method="post" target="_blank">
                     @csrf
                     <input type="hidden" name="id_carreraunidad" value="{{ $id_carreraunidad }}">
@@ -34,7 +33,7 @@
                 </form>
             @endif
 
-            @if ($formulario3=='existe')
+            @if ($formulario3 == 'existe')
                 <form action="{{ route('pdf_form3') }}" method="post" target="_blank">
                     @csrf
                     <input type="hidden" name="id_carreraunidad" value="{{ $id_carreraunidad }}">
@@ -49,7 +48,7 @@
                 </form>
             @endif
 
-            @if ($formulario4=='existe')
+            @if ($formulario4 == 'existe')
                 <form action="{{ route('pdf_form4') }}" method="post" target="_blank">
                     @csrf
                     <input type="hidden" name="id_carreraunidad" value="{{ $id_carreraunidad }}">
@@ -64,7 +63,7 @@
                 </form>
             @endif
 
-            @if ($formulario5=='existe')
+            @if ($formulario5 == 'existe')
                 <form action="{{ route('pdf_form5') }}" method="post" target="_blank">
                     @csrf
                     <input type="hidden" name="id_carreraunidad" value="{{ $id_carreraunidad }}">

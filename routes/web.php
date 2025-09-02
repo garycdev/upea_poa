@@ -554,7 +554,7 @@ use App\Http\Controllers\Formulacion\Controlador_formulario5;
             Route::post('listar_carreraunidad','listar_carreraunidad')->name('pdf_listar_carreraunidad');
             Route::post('carrera_unidadaarea_formulario','carrera_unidadaarea_formulario')->name('pdf_carrera_unidadaarea_formulario');
 
-            //para imprimir los formularios
+            // Para imprimir los formularios
             Route::post('form1_pdf','formulario1_pdf')->name('pdf_form1');
             Route::post('form2_pdf','formulario2_pdf')->name('pdf_form2');
             Route::post('form3_pdf','formulario3_pdf')->name('pdf_form3');

@@ -688,7 +688,7 @@ class Controlador_reportesPDF extends Controller
     }
 
     /**
-     * RESUMEN
+     * RESUMEN Formulario N°6
      */
     public function formulario6_pdf(Request $request)
     {
@@ -701,19 +701,15 @@ class Controlador_reportesPDF extends Controller
         $data['carrera_unidad']          = UnidadCarreraArea::with('tipo_Carrera_UnidadaArea')->find($request->id_carreraunidad);
 
         $gestiones          = Gestiones::find($request->id_gestion);
-        $areas_estrategicas = Areas_estrategicas::with('operaciones')
-            ->where('id_gestion', $gestiones->id_gestion)
-            ->orderBy('id', 'asc')
-            ->get();
         $data['gestiones'] = $gestiones;
 
+        // Obtener formularios 5 vinculados al primer formulado
         $forms5 = Formulario5::where('configFormulado_id', $request->id_configuracion)
             ->where('unidadCarrera_id', $request->id_carreraunidad)
             ->where('gestion_id', $gestiones->id)
             ->select('id')
             ->get();
 
-        // Financiamientos para los detalles de partidas mediante forms5
         $financiamientos         = Financiamiento_tipo::where('estado', 'activo')->get();
         $data['financiamientos'] = $financiamientos;
 
@@ -722,6 +718,11 @@ class Controlador_reportesPDF extends Controller
             ->select('rl_medida_bienservicio.*')
             ->get();
 
+
+        /**
+         * CLASIFICADORES PARA LISTAR
+         * (tercer, cuarto y quinto detalle clasificador)
+         */
         $terceros = Detalle_tercerClasificador::join('detalleTercerClasi_medida_bn', 'detalleTercerClasi_medida_bn.detalle_tercerclasif_id', '=', 'rl_detalleClasiTercero.id')
             ->join('rl_clasificador_tercero', 'rl_clasificador_tercero.id', '=', 'rl_detalleClasiTercero.tercerclasificador_id')
             ->join('rl_medida_bienservicio', 'rl_medida_bienservicio.id', '=', 'detalleTercerClasi_medida_bn.medidabn_id')
@@ -750,9 +751,12 @@ class Controlador_reportesPDF extends Controller
         $data['cuartos']  = $cuartos;
         $data['quintos']  = $quintos;
 
-        // dd($quintos);
-        // dd($financiamientosForm5);
+        /**
+         * FIN DE CLASIFICADORES PARA LISTAR
+         */
 
+
+        // Obtener detalles de clasificador primero
         $detalles = Clasificador_primero::with(['relacion_clasificador_segundo'])
             ->join('confor_clasprim_partipo', 'rl_clasificador_primero.id', '=', 'confor_clasprim_partipo.clasificador_pid')
             ->join('rl_configuracion_formulado', 'confor_clasprim_partipo.configuracion_fid', '=', 'rl_configuracion_formulado.id')
@@ -761,8 +765,7 @@ class Controlador_reportesPDF extends Controller
             ->get();
         $data['detalles'] = $detalles;
 
-        // dd($detalles);
-
+        // Genera el PDF tamaño carta vertical
         $html = View::make('reportes.listado_formulario.formulario6_pdf')->with($data)->render();
         $dompdf->loadHtml($html);
         $dompdf->setPaper('letter', 'portrait');

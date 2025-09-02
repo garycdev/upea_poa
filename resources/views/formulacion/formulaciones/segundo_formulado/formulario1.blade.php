@@ -162,6 +162,22 @@
                                                 </div>
                                             </button>
                                         </form>
+
+                                        <form action="{{ route('pdf_form6') }}" method="post" target="_blank">
+                                            @csrf
+                                            <input type="hidden" name="id_carreraunidad"
+                                                value="{{ $formulario1->unidadCarrera_id }}">
+                                            <input type="hidden" name="id_configuracion"
+                                                value="{{ $formulario1->configFormulado_id }}">
+                                            <input type="hidden" name="id_gestion" value="{{ $gestiones->id }}">
+
+                                            <button class="card2" type="submit">
+                                                <h3 id="titulo_h3">FORM. Nº 6</h3>
+                                                <div class="go-corner-pdf" href="#">
+                                                    <div class="go-arrow"><i class="ri-file-pdf-line"></i></div>
+                                                </div>
+                                            </button>
+                                        </form>
                                     </div>
                                 </fieldset>
                             </div>
