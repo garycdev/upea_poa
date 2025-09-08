@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,21 +20,24 @@
         <div class="line"></div>
         <div class="line"></div>
         <div class="line"></div>
-      </div>
+    </div>
 
     <div class="login-box">
-        <h2>LOGIN</h2>
-        <div style="text-align: center; padding-bottom:10px;" id="respuesta" ></div>
-        <form id="inicio_sesion"  method="POST" autocomplete="off">
+        <h2>
+            <img src="{{ asset('logos/upea-banner.png') }}" alt="upea" width="250">
+        </h2>
+
+        <div style="text-align: center; padding-bottom:10px;" id="respuesta"></div>
+        <form id="inicio_sesion" method="POST" autocomplete="off">
             <div class="user-box">
                 <input type="text" name="usuario" id="usuario" required="" autocomplete="off">
                 <label> <i class="fa fa-user" aria-hidden="true"> </i> Usuario</label>
-                <div id="_usuario" ></div>
+                <div id="_usuario"></div>
             </div>
             <div class="user-box">
                 <input type="password" name="password" id="password" required="" autocomplete="off">
                 <label> <i class="fa fa-lock" aria-hidden="true"> </i> Contraseña</label>
-                <div id="_password" ></div>
+                <div id="_password"></div>
             </div>
 
             <div class="captcha">
@@ -45,9 +49,10 @@
             </div>
 
             <div class="user-box">
-                <input type="text" name="captcha" id="captcha" required="" autocomplete="off">
+                <input type="text" name="captcha" id="captcha" required="" autocomplete="off"
+                    onkeydown="if(event.key === 'Enter'){ event.preventDefault(); document.getElementById('btn_ingresar').click(); }">
                 <label> Ingrese el captcha</label>
-                <div id="_captcha" ></div>
+                <div id="_captcha"></div>
             </div>
 
             <input type="hidden" id="captcha_validar" name="captcha_validar">
@@ -65,44 +70,44 @@
     </div>
     <script src="{{ asset('plantilla_admin/js/jquery.min.js') }}"></script>
     <script>
-
-
-
         let usuario = document.getElementById('_usuario');
         let password = document.getElementById('_password');
         let capcha = document.getElementById('_captcha');
 
-        document.getElementById('btn_ingresar').addEventListener('click', async (e)=>{
+        document.getElementById('btn_ingresar').addEventListener('click', async (e) => {
             e.preventDefault();
             let datos = Object.fromEntries(new FormData(document.getElementById('inicio_sesion')).entries());
             try {
                 let token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-                let respuesta = await fetch('{{ route("ingresar") }}', {
-                    method : 'POST',
-                    headers:{
+                let respuesta = await fetch('{{ route('ingresar') }}', {
+                    method: 'POST',
+                    headers: {
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': token
                     },
                     body: JSON.stringify(datos)
                 });
                 let data = await respuesta.json();
-                if(data){
+                if (data) {
                     console.log(data);
                     usuario.innerHTML = '';
                     password.innerHTML = '';
                     capcha.innerHTML = '';
-                    if(data.tipo==='validacion'){
+                    if (data.tipo === 'validacion') {
                         for (let key in data.mensaje) {
-                            document.getElementById('respuesta').innerHTML = '<p style="color:red">'+data.mensaje+'</p>'
+                            document.getElementById('respuesta').innerHTML = '<p style="color:red">' + data
+                                .mensaje + '</p>'
                         }
                     }
-                    if(data.tipo=='error'){
-                        document.getElementById('respuesta').innerHTML = '<p style="color:red">'+data.mensaje+'</p>'
+                    if (data.tipo == 'error') {
+                        document.getElementById('respuesta').innerHTML = '<p style="color:red">' + data
+                            .mensaje + '</p>'
                     }
-                    if(data.tipo=='success'){
-                        document.getElementById('respuesta').innerHTML = '<p style="color:#ffff">'+data.mensaje+'</p>';
+                    if (data.tipo == 'success') {
+                        document.getElementById('respuesta').innerHTML = '<p style="color:#ffff">' + data
+                            .mensaje + '</p>';
                         setTimeout(() => {
-                            window.location='';
+                            window.location = '';
                         }, 1500);
                     }
                 }
@@ -113,6 +118,7 @@
 
 
         $(document).on("ready", inicio());
+
         function inicio() {
             $.get("{{ route('captcha') }}", function(data) {
                 $('#optener_cap').html(data);
@@ -121,4 +127,5 @@
         }
     </script>
 </body>
+
 </html>

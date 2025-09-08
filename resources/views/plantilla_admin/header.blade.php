@@ -286,17 +286,18 @@
                     </div> --}}
 
                     <div class="header-right-option dropdown profile-nav-item pt-0 pb-0">
-                        <a class="dropdown-item dropdown-toggle avatar d-flex align-items-center" href="#" id="navbarDropdown-4" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="dropdown-item dropdown-toggle avatar d-flex align-items-center" href="#"
+                            id="navbarDropdown-4" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 
                             @if (Auth::user()->perfil != null)
-                                <img  src="{{ asset('perfil/'.Auth::user()->perfil) }}" alt="avatar" loading="lazy">
+                                <img src="{{ asset('perfil/' . Auth::user()->perfil) }}" alt="avatar" loading="lazy">
                             @else
-                                <img  src="{{ asset('logos/upea_logo.png') }}" alt="avatar" loading="lazy">
+                                <img src="{{ asset('logos/upea_logo.png') }}" alt="avatar" loading="lazy">
                             @endif
 
                             <div class="d-none d-lg-block d-md-block">
-                                <h3>{{ Auth::user()->nombre }}</h3>
-                                <span>{{ Auth::user()->apellido }}</span>
+                                <h3>{{ Auth::user()->nombre }} {{ Auth::user()->apellido }}</h3>
+                                <span>{{ Auth::user()->unidad_carrera->nombre_completo ?? '' }}</span>
                             </div>
                         </a>
 
@@ -304,18 +305,22 @@
                             <div class="dropdown-header d-flex flex-column align-items-center">
                                 <div class="figure mb-3">
                                     @if (Auth::user()->perfil != null)
-                                        <img  src="{{ asset('perfil/'.Auth::user()->perfil) }}" class="rounded-circle" alt="avatar" loading="lazy">
+                                        <img src="{{ asset('perfil/' . Auth::user()->perfil) }}" class="rounded-circle"
+                                            alt="avatar" loading="lazy">
                                     @else
-                                        <img  src="{{ asset('logos/upea_logo.png') }}" class="rounded-circle" alt="avatar" loading="lazy">
+                                        <img src="{{ asset('logos/upea_logo.png') }}" class="rounded-circle"
+                                            alt="avatar" loading="lazy">
                                     @endif
                                 </div>
 
                                 <div class="info text-center">
-                                    <span class="name">{{ Auth::user()->nombre }} </span>
+                                    <span class="name">{{ Auth::user()->nombre }} {{ Auth::user()->apellido }}</span>
+                                    <span class="badge bg-success role">
+                                        {{ Auth::user()->role[0]->name }}
+                                    </span>
                                     <p class="mb-3 email">
-                                        <a href="#">
-                                            <span class="__cf_email__" data-cfemail="117b7e797f627c787d76705179747d7d7e3f727e7c">{{ Auth::user()->unidad_carrera->nombre_completo }}</span>
-                                        </a>
+                                        <span class="__cf_email__"
+                                            data-cfemail="117b7e797f627c787d76705179747d7d7e3f727e7c">{{ Auth::user()->unidad_carrera->nombre_completo ?? '' }}</span>
                                     </p>
                                 </div>
                             </div>

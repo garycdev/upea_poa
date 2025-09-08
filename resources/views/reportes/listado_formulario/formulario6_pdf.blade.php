@@ -260,15 +260,21 @@
                                     <td>{{ $det3->titulo }}</td>
                                     @foreach ($financiamientos as $finan)
                                         @php
-                                            $monto = $ter
-                                                ->where('tipo_financiamiento_id', $finan->id)
-                                                ->sum('total_presupuesto');
-                                            $suma += $monto;
-                                            $totales[$finan->id] += $monto;
+                                            $query = $ter->where('tipo_financiamiento_id', $finan->id);
+                                            $monto = $query->sum('total_presupuesto');
+
+                                            if ($query->count() == 0) {
+                                                $monto = '';
+                                            } else {
+                                                $suma += $monto;
+                                                $totales[$finan->id] += $monto;
+                                            }
                                         @endphp
-                                        <td>{{ $monto ? con_separador_comas($monto) . ' bs' : '' }}</td>
+                                        <td>
+                                            {{ $monto >= 0 ? con_separador_comas($monto) . ' bs' : '' }}
+                                        </td>
                                     @endforeach
-                                    <td>{{ $suma ? con_separador_comas($suma) . ' bs' : '' }}</td>
+                                    <td>{{ $suma >= 0 ? con_separador_comas($suma) . ' bs' : '' }}</td>
                                 </tr>
                             @endif
 
@@ -285,15 +291,21 @@
                                         <td>{{ $det4->titulo }}</td>
                                         @foreach ($financiamientos as $finan)
                                             @php
-                                                $monto = $cua
-                                                    ->where('tipo_financiamiento_id', $finan->id)
-                                                    ->sum('total_presupuesto');
-                                                $suma += $monto;
-                                                $totales[$finan->id] += $monto;
+                                                $query = $cua->where('tipo_financiamiento_id', $finan->id);
+                                                $monto = $query->sum('total_presupuesto');
+
+                                                if ($query->count() == 0) {
+                                                    $monto = '';
+                                                } else {
+                                                    $suma += $monto;
+                                                    $totales[$finan->id] += $monto;
+                                                }
                                             @endphp
-                                            <td>{{ $monto ? con_separador_comas($monto) . ' bs' : '' }}</td>
+                                            <td>
+                                                {{ $monto >= 0 ? con_separador_comas($monto) . ' bs' : '' }}
+                                            </td>
                                         @endforeach
-                                        <td>{{ $suma ? con_separador_comas($suma) . ' bs' : '' }}</td>
+                                        <td>{{ $suma >= 0 ? con_separador_comas($suma) . ' bs' : '' }}</td>
                                     </tr>
                                 @endif
 
@@ -310,15 +322,20 @@
                                             <td>{{ $det5->titulo }}</td>
                                             @foreach ($financiamientos as $finan)
                                                 @php
-                                                    $monto = $quin
-                                                        ->where('tipo_financiamiento_id', $finan->id)
-                                                        ->sum('total_presupuesto');
-                                                    $suma += $monto;
-                                                    $totales[$finan->id] += $monto;
+                                                    $query = $quin->where('tipo_financiamiento_id', $finan->id);
+                                                    $monto = $query->sum('total_presupuesto');
+
+                                                    if ($query->count() == 0) {
+                                                        $monto = '';
+                                                    } else {
+                                                        $suma += $monto;
+                                                        $totales[$finan->id] += $monto;
+                                                    }
                                                 @endphp
-                                                <td>{{ $monto ? con_separador_comas($monto) . ' bs' : '' }}</td>
+                                                <td>{{ $monto >= 0 ? con_separador_comas($monto) . ' bs' : '' }}
+                                                </td>
                                             @endforeach
-                                            <td>{{ $suma ? con_separador_comas($suma) . ' bs' : '' }}</td>
+                                            <td>{{ $suma >= 0 ? con_separador_comas($suma) . ' bs' : '' }}</td>
                                         </tr>
                                     @endif
                                 @endforeach
@@ -361,7 +378,8 @@
                 @foreach ($financiamientos as $finan)
                     <tr>
                         <td>{{ $finan->descripcion }}</td>
-                        <td align="right">{{ $totales[$finan->id] ? con_separador_comas($totales[$finan->id]) . ' bs' : '-' }}</td>
+                        <td align="right">
+                            {{ $totales[$finan->id] ? con_separador_comas($totales[$finan->id]) . ' bs' : '-' }}</td>
                     </tr>
                 @endforeach
                 <tr>

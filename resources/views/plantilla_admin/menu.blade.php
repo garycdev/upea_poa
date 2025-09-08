@@ -26,7 +26,6 @@
                     </li>
                 </ul>
             </li> --}}
-
             @can('Menu_inicio')
                 <li class="@if ($menu == '1') {{ 'mm-active' }} @endif">
                     <a href="{{ route('inicio') }}" class="box-style d-flex align-items-center">
@@ -73,7 +72,7 @@
                 </li>
             @endcan
 
-            <!--ONFIGURACIÓN-->
+            <!--CONFIGURACIÓN-->
             @can('Menu_configuracion')
                 <li class="@if ($menu == '6' || $menu == '7' || $menu == '8' || $menu == '9' || $menu == '10') {{ 'mm-active' }} @endif">
                     <a href="#" class="has-arrow box-style d-flex align-items-center">
@@ -148,7 +147,8 @@
                         @can('asignar_financiamiento')
                             <li class=" @if ($menu == '11') {{ 'active' }} @endif ">
                                 <a href="{{ route('adm_asignarFinanciamiento') }}">
-                                    <span class="menu-title">Asignar <br> Financiamiento</span>
+                                    {{-- <span class="menu-title">Asignar <br> Financiamiento</span> --}}
+                                    <span class="menu-title">Techos <br> Presupuestarios</span>
                                 </a>
                             </li>
                         @endcan
@@ -181,15 +181,42 @@
                                 </a>
                             </li>
                         @endcan
+                    </ul>
+                </li>
 
+                <li class="@if ($menu == '19' || $menu == '20') {{ 'mm-active' }} @endif">
+                    <a href="#" class="has-arrow box-style d-flex align-items-center">
+                        <div class="icon">
+                            <img src="{{ asset('plantilla_admin/images/icon/draft.svg') }}" alt="usuario">
+                        </div>
+                        <span class="menu-title">PRESUPUESTOS Y<br>MODIFICACIONES<br>PRESUPUESTARIAS</span>
+                    </a>
+                    
+                    <ul class="sidemenu-nav-second-level">
+                        @can('formulacion_poa')
+                            <li class=" @if ($menu == '19') {{ 'active' }} @endif ">
+                                <a href="{{ route('fut_inicio') }}">
+                                    <span class="menu-title">Formulario unico<br>de tramite (FUT)</span>
+                                </a>
+                            </li>
+                        @endcan
+                    </ul>
+
+                    <ul class="sidemenu-nav-second-level">
+                        @can('formulacion_poa')
+                            <li class=" @if ($menu == '20') {{ 'active' }} @endif ">
+                                <a href="{{ route('mot_inicio') }}">
+                                    <span class="menu-title">Modificaciones<br>presupuestarias (MOT)</span>
+                                </a>
+                            </li>
+                        @endcan
                     </ul>
                 </li>
             @endcan
 
             {{-- REPORTES PDF --}}
-
             @can('reportes_pdf')
-                <li class="@if ($menu == '15' || $menu == '16' || $menu == '17') {{ 'mm-active' }} @endif">
+                <li class="@if ($menu == '15' || $menu == '16' || $menu == '17' || $menu == '18') {{ 'mm-active' }} @endif">
                     <a href="#" class="has-arrow box-style d-flex align-items-center">
                         <div class="icon">
                             <img src="{{ asset('plantilla_admin/images/icon/book.svg') }}" alt="usuario">
@@ -212,9 +239,25 @@
                             </a>
                         </li>
                     </ul>
+
+                    <ul class="sidemenu-nav-second-level">
+                        <li class="@if ($menu == '17') {{ 'active' }} @endif">
+                            <a href="{{ route('pdf_poa') }}">
+                                <span class="menu-title">Modificaciones<br>presupuestarias (MOT)</span>
+                            </a>
+                        </li>
+                    </ul>
+
+                    <ul class="sidemenu-nav-second-level">
+                        <li class="@if ($menu == '18') {{ 'active' }} @endif">
+                            <a href="{{ route('pdf_poa') }}">
+                                <span class="menu-title">Formulario unico<br>de tramite (FUT)</span>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
             @endcan
-            </li>
         </ul>
     </nav>
 </nav>
+
