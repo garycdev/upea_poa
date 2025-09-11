@@ -183,7 +183,9 @@
                         @endcan
                     </ul>
                 </li>
+            @endcan
 
+            {{-- @can('Menu_seguimiento_admin')
                 <li class="@if ($menu == '19' || $menu == '20') {{ 'mm-active' }} @endif">
                     <a href="#" class="has-arrow box-style d-flex align-items-center">
                         <div class="icon">
@@ -191,7 +193,7 @@
                         </div>
                         <span class="menu-title">PRESUPUESTOS Y<br>MODIFICACIONES<br>PRESUPUESTARIAS</span>
                     </a>
-                    
+
                     <ul class="sidemenu-nav-second-level">
                         @can('formulacion_poa')
                             <li class=" @if ($menu == '19') {{ 'active' }} @endif ">
@@ -212,7 +214,38 @@
                         @endcan
                     </ul>
                 </li>
-            @endcan
+            @endcan --}}
+
+            {{-- @can('Menu_seguimiento')
+                <li class="@if ($menu == '21' || $menu == '22') {{ 'mm-active' }} @endif">
+                    <a href="#" class="has-arrow box-style d-flex align-items-center">
+                        <div class="icon">
+                            <img src="{{ asset('plantilla_admin/images/icon/eye.svg') }}" alt="usuario">
+                        </div>
+                        <span class="menu-title">SEGUIMIENTO<br>DEL POA</span>
+                    </a>
+
+                    <ul class="sidemenu-nav-second-level">
+                        @can('formulacion_poa')
+                            <li class=" @if ($menu == '21') {{ 'active' }} @endif ">
+                                <a href="{{ route('fut_inicio') }}">
+                                    <span class="menu-title">Formulario unico<br>de tramite (FUT)</span>
+                                </a>
+                            </li>
+                        @endcan
+                    </ul>
+
+                    <ul class="sidemenu-nav-second-level">
+                        @can('formulacion_poa')
+                            <li class=" @if ($menu == '22') {{ 'active' }} @endif ">
+                                <a href="{{ route('mot_inicio') }}">
+                                    <span class="menu-title">Modificaciones<br>presupuestarias (MOT)</span>
+                                </a>
+                            </li>
+                        @endcan
+                    </ul>
+                </li>
+            @endcan --}}
 
             {{-- REPORTES PDF --}}
             @can('reportes_pdf')
@@ -240,7 +273,7 @@
                         </li>
                     </ul>
 
-                    <ul class="sidemenu-nav-second-level">
+                    {{-- <ul class="sidemenu-nav-second-level">
                         <li class="@if ($menu == '17') {{ 'active' }} @endif">
                             <a href="{{ route('pdf_poa') }}">
                                 <span class="menu-title">Modificaciones<br>presupuestarias (MOT)</span>
@@ -254,10 +287,9 @@
                                 <span class="menu-title">Formulario unico<br>de tramite (FUT)</span>
                             </a>
                         </li>
-                    </ul>
+                    </ul> --}}
                 </li>
             @endcan
         </ul>
     </nav>
 </nav>
-

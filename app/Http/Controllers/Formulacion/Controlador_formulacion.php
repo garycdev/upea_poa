@@ -32,11 +32,15 @@ class Controlador_formulacion extends Controller
         $data['menu'] = 13;
         if (Auth::user()->id_unidad_carrera != null) {
             $data['carrera_unidad'] = UnidadCarreraArea::where('id', Auth::user()->id_unidad_carrera)->get();
-            $data['gestion']        = Gestion::get();
+            // $data['gestion']        = Gestion::get();
+            $data['gestiones'] = Gestiones::where('estado', 'activo')
+                // ->whereYear('gestion', '>=', date('Y'))
+                ->orderBy('gestion', 'desc')
+                ->get();
             return view('formulacion.formulacion_poa', $data);
         } else {
-            $data['tipo_error'] = 'NOTA!';
-            $data['mensaje']    = 'Lo siento no tiene acceso!';
+            $data['tipo_error'] = '¡NOTA!';
+            $data['mensaje']    = '¡ Lo siento, no tiene asignado una unidad, area o carrera !';
             return view('formulacion.errores.formulacion_error', $data);
         }
     }

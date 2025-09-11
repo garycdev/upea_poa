@@ -26,7 +26,7 @@
 <link rel="stylesheet" href="{{ asset('plantilla_admin/toastr/toastr.min.css') }}">
 
 
-<link rel="stylesheet" type="text/css" href="{{ asset('plantilla_admin/data_tables/datatables.min.css') }}"/>
+<link rel="stylesheet" type="text/css" href="{{ asset('plantilla_admin/data_tables/datatables.min.css') }}" />
 
 
 <!-- Styles -->
@@ -34,7 +34,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css"/> --}}
 
 <link rel="stylesheet" href="{{ asset('plantilla_admin/rodry/select2/css/select2.min.css') }}" />
-<link rel="stylesheet" href="{{ asset('plantilla_admin/rodry/select2/css/select2-bootstrap-5-theme.min.css') }}"/>
+<link rel="stylesheet" href="{{ asset('plantilla_admin/rodry/select2/css/select2-bootstrap-5-theme.min.css') }}" />
 
 
 
@@ -47,32 +47,35 @@
 <link rel="stylesheet" href="{{ asset('plantilla_admin/css/editor.css') }}">
 
 <style>
-    .swal2-actions button + button {
-        margin-left: 10px; /* Ajustar el espacio entre los botones */
+    .swal2-actions button+button {
+        margin-left: 10px;
+        /* Ajustar el espacio entre los botones */
     }
 
-    .active.link-secondary{
+    .active.link-secondary {
         font-weight: bold;
-        color:#fff;
+        color: #fff;
     }
-    .nav-item button:active{
+
+    .nav-item button:active {
         background-color: rgba(137, 245, 245, 0.486);
     }
 
-    #error_in{
-        color:red;
-        font-size:13px;
+    #error_in {
+        color: red;
+        font-size: 13px;
     }
 
-    .form-check-input{
+    .form-check-input {
         font-size: 20px;
     }
 
-    #alerta_nota{
+    #alerta_nota {
         background-color: rgba(207, 24, 0, 0.87);
         border-radius: 10px;
     }
-    #alerta_nota > p{
+
+    #alerta_nota>p {
         color: #fff;
         font-weight: bold;
     }
@@ -89,16 +92,17 @@
         background: #2178e8;
         color: #fff;
         font-size: 18px;
-        padding: 2px 5px ;
+        padding: 2px 5px;
         border-radius: 10px;
         box-shadow: 0 0 0 5px #fff;
         margin-top: -35px;
     }
 
-    .linea_arriba{
+    .linea_arriba {
         border-top: #2178e8 solid;
         padding-top: 10px;
     }
+
     #verticalText {
         writing-mode: vertical-lr;
         transform: rotate(180deg);
@@ -110,8 +114,10 @@
 
     .dataTables_wrapper .dt-buttons .btn {
         margin-right: 5px;
-        min-width: 120px; /* Ajusta el ancho del botón según tu preferencia */
+        min-width: 120px;
+        /* Ajusta el ancho del botón según tu preferencia */
     }
+
     /* Estilos personalizados para el botón de exportación de PDF */
     .dataTables_wrapper .dt-buttons .buttons-pdf {
         background-color: #a1010f;
@@ -121,8 +127,12 @@
     }
 
     .dataTables_wrapper .dt-buttons .buttons-pdf:hover {
-    background-color: #db0000;
-    border-color: #da0000;
+        background-color: #db0000;
+        border-color: #da0000;
     }
 
+    .select-readonly {
+        pointer-events: none;
+        background-color: #e9ecef;
+    }
 </style>

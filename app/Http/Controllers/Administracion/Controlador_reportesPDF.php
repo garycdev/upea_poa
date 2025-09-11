@@ -37,6 +37,10 @@ class Controlador_reportesPDF extends Controller
     {
         $data['menu']    = 15;
         $data['gestion'] = Gestion::get();
+        // $data['gestiones'] = Gestiones::where('estado', 'activo')
+        // ->whereYear('gestion', '>=', date('Y'))
+        // ->orderBy('gestion', 'desc')
+        // ->get();
         return view('reportes.pei', $data);
     }
     //para el reprte del PEI PDF
@@ -160,9 +164,13 @@ class Controlador_reportesPDF extends Controller
     //para el menu de reportes
     public function reportes_pdf_poa()
     {
-        $data['menu']    = 16;
-        $data['gestion'] = Gestion::get();
-        $data['tipo']    = Tipo_CarreraUnidad::orderBy('id', 'asc')->get();
+        $data['menu'] = 16;
+        // $data['gestion'] = Gestion::get();
+        $data['gestiones'] = Gestiones::where('estado', 'activo')
+            // ->whereYear('gestion', '>=', date('Y'))
+            ->orderBy('gestion', 'desc')
+            ->get();
+        $data['tipo'] = Tipo_CarreraUnidad::orderBy('id', 'asc')->get();
         return view('reportes.formulacion_poa', $data);
     }
     //para la parte de listar
@@ -700,7 +708,7 @@ class Controlador_reportesPDF extends Controller
         $data['configuracion_formulado'] = Configuracion_formulado::with('formulado_tipo')->find($request->id_configuracion);
         $data['carrera_unidad']          = UnidadCarreraArea::with('tipo_Carrera_UnidadaArea')->find($request->id_carreraunidad);
 
-        $gestiones          = Gestiones::find($request->id_gestion);
+        $gestiones         = Gestiones::find($request->id_gestion);
         $data['gestiones'] = $gestiones;
 
         // Obtener formularios 5 vinculados al primer formulado
@@ -717,7 +725,6 @@ class Controlador_reportesPDF extends Controller
             ->whereIn('rl_formulario5.id', $forms5->pluck('id'))
             ->select('rl_medida_bienservicio.*')
             ->get();
-
 
         /**
          * CLASIFICADORES PARA LISTAR
@@ -754,7 +761,6 @@ class Controlador_reportesPDF extends Controller
         /**
          * FIN DE CLASIFICADORES PARA LISTAR
          */
-
 
         // Obtener detalles de clasificador primero
         $detalles = Clasificador_primero::with(['relacion_clasificador_segundo'])

@@ -94,7 +94,7 @@
                 <form action="{{ route('matriz_pdf') }}" method="post" autocomplete="off">
                     @csrf
                     <div class="row">
-                        <div class="mb-3 col-sm-12 col-md-6 col-lg-4 col-xl-4">
+                        {{-- <div class="mb-3 col-sm-12 col-md-6 col-lg-4 col-xl-4">
                             <fieldset>
                                 <legend class="text-center">Gestión</legend>
                                 <select name="gestion" id="gestion" class="form-select"
@@ -106,28 +106,33 @@
                                     @endforeach
                                 </select>
                             </fieldset>
-                        </div>
-                        <div class="mb-3 col-sm-12 col-md-6 col-lg-4 col-xl-4">
+                        </div> --}}
+                        <div class="mb-3 col-sm-12 col-md-6 col-lg-6 col-xl-6">
                             <fieldset>
                                 <legend>Gestión especifica</legend>
                                 <select name="gestion_esp" id="gestion_esp" class="form-select select2_simple1"
                                     onchange="listar_configuracion_formulado(this.value)" style="width: 100%">
                                     <option selected disabled>[SELECCIONE UNA GESTIÓN ESPECIFICA]</option>
+                                    @foreach ($gestiones as $lis)
+                                        <option value="{{ $lis->id }}">
+                                            {{ $lis->gestion }}</option>
+                                    @endforeach
                                 </select>
                             </fieldset>
                         </div>
                         {{-- aqui tomamos lo que es el id de configuracion formulado --}}
-                        <div class="mb-3 col-sm-12 col-md-6 col-lg-4 col-xl-4">
+                        <div class="mb-3 col-sm-12 col-md-6 col-lg-6 col-xl-6">
                             <fieldset>
                                 <legend>Tipo de Formulado</legend>
                                 <select name="tipo_formulado" id="tipo_formulado" class="form-select select2_simple1"
                                     style="width: 100%">
                                     <option value="selected" selected disabled>[SELECCIONE EL TIPO DE FORMULADO]</option>
+
                                 </select>
                             </fieldset>
                         </div>
 
-                        <div class="mb-3 col-sm-12 col-md-6 col-lg-4 col-xl-4">
+                        <div class="mb-3 col-sm-12 col-md-6 col-lg-6 col-xl-6">
                             <fieldset>
                                 <legend>Tipo</legend>
                                 <select name="tipo" id="tipo" class="form-select select2_simple1"
@@ -139,7 +144,7 @@
                                 </select>
                             </fieldset>
                         </div>
-                        <div class="mb-3 col-sm-12 col-md-6 col-lg-4 col-xl-4">
+                        <div class="mb-3 col-sm-12 col-md-6 col-lg-6 col-xl-6">
                             <fieldset>
                                 <legend id="legend_leer" style="font-size: 14px">Tipo : </legend>
                                 <select name="carrera_unidad" id="carrera_unidad" class="form-select select2_simple1"

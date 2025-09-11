@@ -21,7 +21,7 @@
         <div class="container-fluid">
             <div class="card-box-style ">
                 <div class="row text-center">
-                    <div class="mb-3 col-sm-12 col-md-6 col-lg-6 col-xl-6 mx-auto">
+                    {{-- <div class="mb-3 col-sm-12 col-md-6 col-lg-6 col-xl-6 mx-auto">
                         <fieldset>
                             <legend>Seleccione una gestión</legend>
                                 <select name="gestion" id="gestion" class="form-select" onchange="listar_gestionesEsp(this.value)">
@@ -32,14 +32,19 @@
                                 </select>
                                 <div id="_gestion"></div>
                         </fieldset>
-                    </div>
+                    </div> --}}
                     <div class="mb-3 col-sm-12 col-md-6 col-lg-6 col-xl-6 mx-auto">
                         <fieldset>
                             <legend>Seleccione una gestión especifica</legend>
-                                <select name="gestiones" id="gestiones" class="form-select" onchange="listar_gestionesAsignacionForm(this.value)">
-                                    <option value="selected" selected disabled >[SELECCIONE UNA GESTION ESPECIFICA]</option>
-                                </select>
-                                <div id="_gestiones"></div>
+                            <select name="gestiones" id="gestiones" class="form-select"
+                                onchange="listar_gestionesAsignacionForm(this.value)">
+                                <option value="selected" selected disabled>[SELECCIONE UNA GESTION ESPECIFICA]</option>
+                                @foreach ($gestiones as $lis)
+                                    <option value="{{ $lis->id }}">{{ $lis->gestion }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <div id="_gestiones"></div>
                         </fieldset>
                     </div>
                 </div>
@@ -56,38 +61,42 @@
 
 @section('scripts')
     <script>
-
-        function listar_gestionesEsp(id){
+        function listar_gestionesEsp(id) {
             $.ajax({
                 type: "POST",
                 url: "{{ route('adm_listarGestiones') }}",
-                data: {id:id},
+                data: {
+                    id: id
+                },
                 dataType: "JSON",
-                success: function (data) {
+                success: function(data) {
                     document.getElementById('ListadoGestionesFormulados').innerHTML = '';
                     $('#gestiones').empty().append(
                         '<option value="selected" selected disabled >[SELECCIONE UNA GESTION ESPECÍFICA]</option>'
                     );
 
-                    if(data.tipo==='success'){
+                    if (data.tipo === 'success') {
                         let datos = data.mensaje;
                         datos.forEach(value => {
-                            $('#gestiones').append('<option value = "' + value.id + '">' + value.gestion + '</option>');
+                            $('#gestiones').append('<option value = "' + value.id + '">' + value
+                                .gestion + '</option>');
                         });
                     }
-                    if(data.tipo==='error'){
+                    if (data.tipo === 'error') {
                         toastr[data.tipo](data.mensaje);
                     }
                 }
             });
         }
         //para
-        function listar_gestionesAsignacionForm(id){
+        function listar_gestionesAsignacionForm(id) {
             $.ajax({
                 type: "POST",
                 url: "{{ route('poa_listarGestionesSP') }}",
-                data: {id:id},
-                success: function (data) {
+                data: {
+                    id: id
+                },
+                success: function(data) {
                     document.getElementById('ListadoGestionesFormulados').innerHTML = data;
                 }
             });
