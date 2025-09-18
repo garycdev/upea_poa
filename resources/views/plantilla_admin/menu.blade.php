@@ -26,6 +26,7 @@
                     </li>
                 </ul>
             </li> --}}
+
             @can('Menu_inicio')
                 <li class="@if ($menu == '1') {{ 'mm-active' }} @endif">
                     <a href="{{ route('inicio') }}" class="box-style d-flex align-items-center">
@@ -163,29 +164,31 @@
                 </li>
             @endcan
 
-            @can('Menu_formulacion_del_Poa')
-                {{-- CONFIGURACIÓN DEL POA --}}
-                <li class="@if ($menu == '13') {{ 'mm-active' }} @endif">
-                    <a href="#" class="has-arrow box-style d-flex align-items-center">
-                        <div class="icon">
-                            <img src="{{ asset('plantilla_admin/images/icon/layer.svg') }}" alt="usuario">
-                        </div>
-                        <span class="menu-title">FORMULACIÓN <br> DEL POA</span>
-                    </a>
+            {{-- Solo mostrar si tiene unidad asignada --}}
+            @if (isset(Auth::user()->id_unidad_carrera))
+                @can('Menu_formulacion_del_Poa')
+                    {{-- CONFIGURACIÓN DEL POA --}}
+                    <li class="@if ($menu == '13') {{ 'mm-active' }} @endif">
+                        <a href="#" class="has-arrow box-style d-flex align-items-center">
+                            <div class="icon">
+                                <img src="{{ asset('plantilla_admin/images/icon/layer.svg') }}" alt="usuario">
+                            </div>
+                            <span class="menu-title">FORMULACIÓN <br> DEL POA</span>
+                        </a>
 
-                    <ul class="sidemenu-nav-second-level">
-                        @can('formulacion_poa')
-                            <li class=" @if ($menu == '13') {{ 'active' }} @endif ">
-                                <a href="{{ route('poa_formulacion') }}">
-                                    <span class="menu-title">Formulación <br> del Plan <br> Operativo Anual</span>
-                                </a>
-                            </li>
-                        @endcan
-                    </ul>
-                </li>
-            @endcan
-
-            {{-- @can('Menu_seguimiento_admin')
+                        <ul class="sidemenu-nav-second-level">
+                            @can('formulacion_poa')
+                                <li class=" @if ($menu == '13') {{ 'active' }} @endif ">
+                                    <a href="{{ route('poa_formulacion') }}">
+                                        <span class="menu-title">Formulación <br> del Plan <br> Operativo Anual</span>
+                                    </a>
+                                </li>
+                            @endcan
+                        </ul>
+                    </li>
+                @endcan
+            @endif
+            @can('Menu_formulario_modificacion')
                 <li class="@if ($menu == '19' || $menu == '20') {{ 'mm-active' }} @endif">
                     <a href="#" class="has-arrow box-style d-flex align-items-center">
                         <div class="icon">
@@ -214,38 +217,41 @@
                         @endcan
                     </ul>
                 </li>
-            @endcan --}}
+            @endcan
 
-            {{-- @can('Menu_seguimiento')
-                <li class="@if ($menu == '21' || $menu == '22') {{ 'mm-active' }} @endif">
-                    <a href="#" class="has-arrow box-style d-flex align-items-center">
-                        <div class="icon">
-                            <img src="{{ asset('plantilla_admin/images/icon/eye.svg') }}" alt="usuario">
-                        </div>
-                        <span class="menu-title">SEGUIMIENTO<br>DEL POA</span>
-                    </a>
+            {{-- Solo mostrar si tiene unidad asignada --}}
+            @if (isset(Auth::user()->id_unidad_carrera))
+                @can('Menu_seguimiento')
+                    <li class="@if ($menu == '21' || $menu == '22') {{ 'mm-active' }} @endif">
+                        <a href="#" class="has-arrow box-style d-flex align-items-center">
+                            <div class="icon">
+                                <img src="{{ asset('plantilla_admin/images/icon/eye.svg') }}" alt="usuario">
+                            </div>
+                            <span class="menu-title">SEGUIMIENTO<br>DEL POA</span>
+                        </a>
 
-                    <ul class="sidemenu-nav-second-level">
-                        @can('formulacion_poa')
-                            <li class=" @if ($menu == '21') {{ 'active' }} @endif ">
-                                <a href="{{ route('fut_inicio') }}">
-                                    <span class="menu-title">Formulario unico<br>de tramite (FUT)</span>
-                                </a>
-                            </li>
-                        @endcan
-                    </ul>
+                        <ul class="sidemenu-nav-second-level">
+                            @can('formulacion_poa')
+                                <li class=" @if ($menu == '21') {{ 'active' }} @endif ">
+                                    <a href="{{ route('fut_inicio') }}">
+                                        <span class="menu-title">Formulario unico<br>de tramite (FUT)</span>
+                                    </a>
+                                </li>
+                            @endcan
+                        </ul>
 
-                    <ul class="sidemenu-nav-second-level">
-                        @can('formulacion_poa')
-                            <li class=" @if ($menu == '22') {{ 'active' }} @endif ">
-                                <a href="{{ route('mot_inicio') }}">
-                                    <span class="menu-title">Modificaciones<br>presupuestarias (MOT)</span>
-                                </a>
-                            </li>
-                        @endcan
-                    </ul>
-                </li>
-            @endcan --}}
+                        <ul class="sidemenu-nav-second-level">
+                            @can('formulacion_poa')
+                                <li class=" @if ($menu == '22') {{ 'active' }} @endif ">
+                                    <a href="{{ route('mot_inicio') }}">
+                                        <span class="menu-title">Modificaciones<br>presupuestarias (MOT)</span>
+                                    </a>
+                                </li>
+                            @endcan
+                        </ul>
+                    </li>
+                @endcan
+            @endif
 
             {{-- REPORTES PDF --}}
             @can('reportes_pdf')

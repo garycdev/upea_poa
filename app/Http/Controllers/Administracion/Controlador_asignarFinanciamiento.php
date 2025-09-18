@@ -18,7 +18,7 @@ class Controlador_asignarFinanciamiento extends Controller{
     //para asignar el financiamiento
     public function asignarFinanciamiento(){
         $data['menu']       = '11';
-        $data['gestion']    = Gestion::where('estado', 'activo')->get();
+        $data['gestiones']    = Gestiones::where('estado', 'activo')->get();
         return view('administrador.configuracion_poa.asignar_financiamiento',$data);
     }
     //para listar las gestiones especificas

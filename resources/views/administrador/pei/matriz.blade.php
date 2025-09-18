@@ -277,6 +277,19 @@
                                 <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6 mb-2"></div>
 
                                 <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6 mb-2">
+                                    <label for="objetivo_estrategico_sub" class="col-form-label">Seleccione Objetivo
+                                        Estratégico (SUB)</label>
+                                    {{-- <select name="objetivo_estrategico_sub" id="objetivo_estrategico_sub" class="select2"
+                                        onchange="objetivo_estrategico_inst_pei(this.value)"> --}}
+                                    <select name="objetivo_estrategico_sub" id="objetivo_estrategico_sub"
+                                        class="form-control select-readonly">
+                                        <option value="" selected disabled>[OBJETIVO ESTRATÉGICO DEL SISTEMA DE
+                                            UNIVERSIDADES DE BOLIVIA ]</option>
+                                    </select>
+                                    <div id="_objetivo_estrategico_sub"></div>
+                                </div>
+
+                                <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6 mb-2">
                                     <label for="obj_politica_institucional_pei" class="col-form-label">Seleccione Politica
                                         Institucional</label>
                                     <select name="politica_institucional_pei" id="politica_institucional_pei"
@@ -288,19 +301,6 @@
                                         @endforeach
                                     </select>
                                     <div id="_politica_institucional_pei"></div>
-                                </div>
-
-                                <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6 mb-2">
-                                    <label for="objetivo_estrategico_sub" class="col-form-label">Seleccione Objetivo
-                                        Estratégico (SUB)</label>
-                                    {{-- <select name="objetivo_estrategico_sub" id="objetivo_estrategico_sub" class="select2"
-                                        onchange="objetivo_estrategico_inst_pei(this.value)"> --}}
-                                    <select name="objetivo_estrategico_sub" id="objetivo_estrategico_sub"
-                                        class="form-control select-readonly">
-                                        <option value="" selected disabled>[OBJETIVO ESTRATÉGICO DEL SISTEMA DE
-                                            UNIVERSIDADES DE BOLIVIA ]</option>
-                                    </select>
-                                    <div id="_objetivo_estrategico_sub"></div>
                                 </div>
                             </div>
                         </fieldset>
@@ -873,6 +873,7 @@
 
         function cerrar_modal_matriz() {
             limpiar_campos('form_matriz');
+
             // $(".select2").val('selected').trigger('change');
 
             // $('#objetivo_estrategico_pdu').empty().append(
@@ -884,10 +885,12 @@
             // $('#objetivo_estrategico_institucional').empty().append(
             //     '<option selected disabled>[OBJETIVO ESTRATÉGICO INSTITUCIONAL]</option>'
             // );
+
             $('#objetivo_estrategico_pdu').val('').trigger('change');
             $('#objetivo_estrategico_sub').val('').trigger('change');
             $('#objetivo_estrategico_institucional').val('').trigger('change');
             $('#politica_institucional_pei').val('').trigger('change');
+
             vaciar_errores_matriz();
         }
         //para listar los objetivos estrategicos de PDU
@@ -931,8 +934,10 @@
         function obj_estrategico_sub_1(select) {
             const id = $(select).val();
             const pdd_id = $(select).find(':selected').data('pdd-id');
+            const oes_id = $(select).find(':selected').data('oes-id');
 
             $('#politica_institucional_pei').val(pdd_id).trigger('change');
+            $('#politica_institucional_pei').attr('data-oes-id', oes_id);
         }
 
         function obj_estrategico_sub(select) {
@@ -961,13 +966,16 @@
                         let datos = data.mensaje;
                         datos.forEach((value, index) => {
                             $('#objetivo_estrategico_sub').append(
-                                `<option value="${value.id}" ${index == 0 ? 'selected' : ''}>${value.descripcion}</option>`
+                                `<option value="${value.id}" >${value.descripcion}</option>`
                             );
                         });
                     }
                     if (data.tipo === 'error') {
                         toastr[data.tipo](data.mensaje);
                     }
+
+                    const oes_id = $(select).attr('data-oes-id');
+                    $('#objetivo_estrategico_sub').val(oes_id).trigger('change')
                 }
             });
         }

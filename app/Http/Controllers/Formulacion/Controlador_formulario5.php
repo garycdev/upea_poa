@@ -116,8 +116,8 @@ class Controlador_formulario5 extends Controller
                 $new_formulario5->primer_semestre    = $request->primer_semestre;
                 $new_formulario5->segundo_semestre   = $request->segundo_semestre;
                 $new_formulario5->total              = $request->total;
-                $new_formulario5->desde              = date($gestiones->gestion . '-01-02');
-                $new_formulario5->hasta              = date($gestiones->gestion . '-12-10');
+                $new_formulario5->desde              = date($gestiones->gestion . '-01-01');
+                $new_formulario5->hasta              = date($gestiones->gestion . '-12-31');
                 $new_formulario5->save();
                 if ($new_formulario5->id) {
                     $data = mensaje_array('success', 'Se inserto con exito la operación del formulario Nº 5');
@@ -337,6 +337,7 @@ class Controlador_formulario5 extends Controller
 
             $monto_sobrante = $monto_seleccionado - $mutiplicado;
 
+            $data = [];
             if ($mutiplicado > $monto_seleccionado) {
                 $data = [
                     'tipo'                 => 'error',

@@ -26,8 +26,8 @@
     <div class="default-table-area">
         <div class="container-fluid">
             <div class="card-box-style text-center">
-                <div class="row">
-                    <div class="mb-3 col-6">
+                <div class="row text-center d-flex justify-content-center">
+                    {{-- <div class="mb-3 col-6">
                         <label for="sigla" class="form-label">Seleccine una gestión</label>
                         <select name="gestion" id="gestion" class="form-select" onchange="listar_gestionesEspecificas(this.value)">
                             <option value="selected" selected disabled >[SELECCIONE UNA GESTIÓN]</option>
@@ -36,13 +36,20 @@
                             @endforeach
                         </select>
                         <div id="_gestion"></div>
-                    </div>
-                    <div class="mb-3 col-6">
-                        <label for="sigla" class="form-label">Seleccine una gestión Especifica</label>
-                        <select name="gestion_especifica" id="gestion_especifica" class="form-select" onchange="listarTipoCarreraUnidadArea(this.value)">
-                            <option value="selected" selected disabled >[SELECCIONE UNA GESTIÓN ESPECÍFICA]</option>
-                        </select>
-                        <div id="_gestion_especifica"></div>
+                    </div> --}}
+                    <div class="mb-3 col-sm-12 col-md-6 col-lg-4 col-xl-4">
+                        <fieldset>
+                            <legend>Seleccoine una gestión especifica</legend>
+                            <select name="gestion_especifica" id="gestion_especifica" class="form-select"
+                                onchange="listarTipoCarreraUnidadArea(this.value)">
+                                <option value="selected" selected disabled>[SELECCIONE UNA GESTIÓN ESPECÍFICA]</option>
+                                @foreach ($gestiones as $lis)
+                                    <option value="{{ $lis->id }}">{{ $lis->gestion }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <div id="_gestion_especifica"></div>
+                        </fieldset>
                     </div>
                 </div>
                 <div class="row">
@@ -58,24 +65,27 @@
 @section('scripts')
     <script>
         //para listar las gestiones especificas
-        function listar_gestionesEspecificas(id){
-            document.getElementById('mostrar_tipoCarreraUnidad').innerHTML='';
+        function listar_gestionesEspecificas(id) {
+            document.getElementById('mostrar_tipoCarreraUnidad').innerHTML = '';
             $.ajax({
                 type: "POST",
                 url: "{{ route('adm_listarGestiones') }}",
-                data: {id:id},
+                data: {
+                    id: id
+                },
                 dataType: "JSON",
-                success: function (data) {
+                success: function(data) {
                     $('#gestion_especifica').empty().append(
                         '<option value="selected" selected disabled >[SELECCIONE UNA GESTIÓN ESPECÍFICA]</option>'
                     );
-                    if(data.tipo==='success'){
+                    if (data.tipo === 'success') {
                         let datos = data.mensaje;
                         datos.forEach(value => {
-                            $('#gestion_especifica').append('<option value = "' + value.id + '">' + value.gestion + '</option>');
+                            $('#gestion_especifica').append('<option value = "' + value.id + '">' +
+                                value.gestion + '</option>');
                         });
                     }
-                    if(data.tipo==='error'){
+                    if (data.tipo === 'error') {
                         toastr[data.tipo](data.mensaje);
                     }
                 }
@@ -83,12 +93,14 @@
         }
 
         //para listar el tipo de carrea y tambien
-        function listarTipoCarreraUnidadArea(id){
+        function listarTipoCarreraUnidadArea(id) {
             $.ajax({
                 type: "POST",
                 url: "{{ route('adm_listar_CarreraUnidad') }}",
-                data: {id:id},
-                success: function (data) {
+                data: {
+                    id: id
+                },
+                success: function(data) {
                     document.getElementById('mostrar_tipoCarreraUnidad').innerHTML = data;
                 }
             });

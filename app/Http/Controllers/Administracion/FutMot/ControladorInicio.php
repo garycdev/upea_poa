@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Controllers\FutMot;
+namespace App\Http\Controllers\Administracion\FutMot;
 
 use App\Http\Controllers\Controller;
 use App\Models\Gestiones;
@@ -17,7 +17,6 @@ class ControladorPrincipal extends Controller
             ->join('roles', 'roles.id', '=', 'mhr.role_id')
             ->where('mhr.model_id', '=', Auth::user()->id)
             ->first();
-        // dd($rol);
         $unidad_carrera = DB::table('rl_unidad_carrera')
             ->where('estado', '=', 'activo')
             ->get();

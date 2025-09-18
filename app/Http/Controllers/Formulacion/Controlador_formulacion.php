@@ -34,7 +34,7 @@ class Controlador_formulacion extends Controller
             $data['carrera_unidad'] = UnidadCarreraArea::where('id', Auth::user()->id_unidad_carrera)->get();
             // $data['gestion']        = Gestion::get();
             $data['gestiones'] = Gestiones::where('estado', 'activo')
-                // ->whereYear('gestion', '>=', date('Y'))
+            // ->whereYear('gestion', '>=', date('Y'))
                 ->orderBy('gestion', 'desc')
                 ->get();
             return view('formulacion.formulacion_poa', $data);
@@ -293,13 +293,24 @@ class Controlador_formulacion extends Controller
         $politica_desarrolloPDU = Politica_desarrollo::where('id_area_estrategica', $id_areaEstrategica)
             ->where('id_tipo_plan', pdu_t())
             ->get();
-        $data['politica_desarrolloPDU'] = $politica_desarrolloPDU;
+        $data['politica_desarrolloPDU']    = $politica_desarrolloPDU;
+        $data['objetivos_estrategicosPDU'] = Objetivo_estrategico::join('rl_politica_de_desarrollo as pdd', 'pdd.id', '=', 'rl_objetivo_estrategico.id_politica_desarrollo')
+            ->where('pdd.id_tipo_plan', pdu_t())
+            ->where('pdd.id_area_estrategica', $id_areaEstrategica)
+            ->select('rl_objetivo_estrategico.*', 'pdd.descripcion as politica_desarrollo_descripcion', 'pdd.id as politica_desarrollo_id')
+            ->get();
 
         //para listar las politicas de desarrollo PEI
         $politica_institucionalPEI = Politica_desarrollo::where('id_area_estrategica', $id_areaEstrategica)
             ->where('id_tipo_plan', pei_t())
             ->get();
-        $data['politica_institucionalPEI'] = $politica_institucionalPEI;
+        $data['politica_institucionalPEI']                 = $politica_institucionalPEI;
+        $data['objetivos_estrategicos_institucionalesPEI'] = Objetivo_institucional::join('rl_objetivo_estrategico_sub as oes', 'oes.id', '=', 'rl_objetivo_institucional.id_objetivo_estrategico_sub')
+            ->join('rl_politica_de_desarrollo as pdd', 'pdd.id', '=', 'oes.id_politica_desarrollo')
+            ->where('pdd.id_tipo_plan', pei_t())
+            ->where('pdd.id_area_estrategica', $id_areaEstrategica)
+            ->select('rl_objetivo_institucional.*', 'oes.id as oes_id', 'oes.descripcion as oes_descripcion', 'pdd.id as pdd_id', 'pdd.descripcion as pdd_descripcion')
+            ->get();
 
         //indicador_estrategico
         /* $indicador_estrategico = $gestion->relacion_indicador()->where('estado','activo')->get();
@@ -575,7 +586,7 @@ class Controlador_formulacion extends Controller
                 ->where('unidadCarrera_id', Auth::user()->id_unidad_carrera)
                 ->where('gestion_id', $request->id_gestiones)
                 ->get();
-            $formuario2 = Formulario2::with('politica_desarrollo_pei', 'objetivo_estrategico_sub', 'objetivo_institucional')->find($request->id_formulario2);
+            $formuario2 = Formulario2::with('politica_desarrollo_pei', 'objetivo_estrategico_sub', 'objetivo_institucional', 'objetivo_estrategico')->find($request->id_formulario2);
             if (count($existe_yaelform2) > 0) {
                 $data = mensaje_array('error', 'Porfavor seleccione un indicador diferente!');
                 $data = [

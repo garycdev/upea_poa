@@ -5964,8 +5964,9 @@ Page-navigation Area Style*/
 }
 
 .card-title {
+  margin-top: 5px;
   font-weight: 600;
-  font-size: 20px;
+  font-size: 16px;
 }
 
 .apexcharts-text tspan {

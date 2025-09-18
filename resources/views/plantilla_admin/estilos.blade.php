@@ -1,40 +1,40 @@
 <!-- Required meta tags -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author" content="Rodrigo">
+<meta name="author" content="Gary">
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <!-- Link Of CSS -->
-<link rel="stylesheet" href="{{ asset('plantilla_admin/css/bootstrap.min.css') }}">
-<link rel="stylesheet" href="{{ asset('plantilla_admin/css/owl.theme.default.min.css') }}">
-<link rel="stylesheet" href="{{ asset('plantilla_admin/css/owl.carousel.min.css') }}">
-<link rel="stylesheet" href="{{ asset('plantilla_admin/css/animate.min.css') }}">
-<link rel="stylesheet" href="{{ asset('plantilla_admin/css/remixicon.css') }}">
-<link rel="stylesheet" href="{{ asset('plantilla_admin/css/boxicons.min.css') }}">
-<link rel="stylesheet" href="{{ asset('plantilla_admin/css/iconsax.css') }}">
-<link rel="stylesheet" href="{{ asset('plantilla_admin/css/metismenu.min.css') }}">
-<link rel="stylesheet" href="{{ asset('plantilla_admin/css/simplebar.min.css') }}">
-<link rel="stylesheet" href="{{ asset('plantilla_admin/css/calendar.css') }}">
-<link rel="stylesheet" href="{{ asset('plantilla_admin/css/jbox.all.min.css') }}">
-<link rel="stylesheet" href="{{ asset('plantilla_admin/css/editor.css') }}">
-<link rel="stylesheet" href="{{ asset('plantilla_admin/css/font-awesome.min.css') }}">
-<link rel="stylesheet" href="{{ asset('plantilla_admin/css/loaders.css') }}">
-<link rel="stylesheet" href="{{ asset('plantilla_admin/css/header.css') }}">
-<link rel="stylesheet" href="{{ asset('plantilla_admin/css/sidebar-menu.css') }}">
-<link rel="stylesheet" href="{{ asset('plantilla_admin/css/footer.css') }}">
-<link rel="stylesheet" href="{{ asset('plantilla_admin/css/style.css') }}">
-<link rel="stylesheet" href="{{ asset('plantilla_admin/css/responsive.css') }}">
-
-<link rel="stylesheet" href="{{ asset('plantilla_admin/toastr/toastr.min.css') }}">
-
-
-<link rel="stylesheet" type="text/css" href="{{ asset('plantilla_admin/data_tables/datatables.min.css') }}" />
+<link rel="stylesheet" href="{{ asset('plantilla_admin/css/bootstrap.min.css') }}" type="text/css">
+<link rel="stylesheet" href="{{ asset('plantilla_admin/css/owl.theme.default.min.css') }}" type="text/css">
+<link rel="stylesheet" href="{{ asset('plantilla_admin/css/owl.carousel.min.css') }}" type="text/css">
+<link rel="stylesheet" href="{{ asset('plantilla_admin/css/animate.min.css') }}" type="text/css">
+<link rel="stylesheet" href="{{ asset('plantilla_admin/css/remixicon.css') }}" type="text/css">
+<link rel="stylesheet" href="{{ asset('plantilla_admin/css/boxicons.min.css') }}" type="text/css">
+<link rel="stylesheet" href="{{ asset('plantilla_admin/css/iconsax.css') }}" type="text/css">
+<link rel="stylesheet" href="{{ asset('plantilla_admin/css/metismenu.min.css') }}" type="text/css">
+<link rel="stylesheet" href="{{ asset('plantilla_admin/css/simplebar.min.css') }}" type="text/css">
+<link rel="stylesheet" href="{{ asset('plantilla_admin/css/calendar.css') }}" type="text/css">
+<link rel="stylesheet" href="{{ asset('plantilla_admin/css/jbox.all.min.css') }}" type="text/css">
+<link rel="stylesheet" href="{{ asset('plantilla_admin/css/editor.css') }}" type="text/css">
+<link rel="stylesheet" href="{{ asset('plantilla_admin/css/font-awesome.min.css') }}" type="text/css">
+<link rel="stylesheet" href="{{ asset('plantilla_admin/css/loaders.css') }}" type="text/css">
+<link rel="stylesheet" href="{{ asset('plantilla_admin/css/header.css') }}" type="text/css">
+<link rel="stylesheet" href="{{ asset('plantilla_admin/css/sidebar-menu.css') }}" type="text/css">
+<link rel="stylesheet" href="{{ asset('plantilla_admin/css/footer.css') }}" type="text/css">
+<link rel="stylesheet" href="{{ asset('plantilla_admin/css/style.css') }}" type="text/css">
+<link rel="stylesheet" href="{{ asset('plantilla_admin/css/responsive.css') }}" type="text/css">
+<link rel="stylesheet" href="{{ asset('plantilla_admin/toastr/toastr.min.css') }}" type="text/css">
+<link rel="stylesheet" href="{{ asset('plantilla_admin/data_tables/datatables.min.css') }}" type="text/css">
+<link rel="stylesheet" href="{{ asset('plantilla_admin/rodry/select2/css/select2.min.css') }}" type="text/css">
+<link rel="stylesheet" href="{{ asset('plantilla_admin/rodry/select2/css/select2-bootstrap-5-theme.min.css') }}"
+    type="text/css">
 
 
 <!-- Styles -->
 {{-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css"/> --}}
 
-<link rel="stylesheet" href="{{ asset('plantilla_admin/rodry/select2/css/select2.min.css') }}" />
-<link rel="stylesheet" href="{{ asset('plantilla_admin/rodry/select2/css/select2-bootstrap-5-theme.min.css') }}" />
 
 
 

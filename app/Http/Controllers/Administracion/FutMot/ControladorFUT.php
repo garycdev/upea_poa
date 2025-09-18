@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Controllers\FutMot;
+namespace App\Http\Controllers\Administracion\FutMot;
 
 use App\Http\Controllers\Controller;
 use App\Models\Configuracion\UnidadCarreraArea;
@@ -22,7 +22,7 @@ class ControladorFUT extends Controller
             $data['carrera_unidad'] = UnidadCarreraArea::where('id', Auth::user()->id_unidad_carrera)->get();
             $data['gestion']        = Gestion::get();
 
-            return view('fut.formulario', $data);
+            return view('administrador.fut.formulario', $data);
         } else {
             $data['tipo_error'] = 'NOTA!';
             $data['mensaje']    = 'Lo siento no tiene acceso!';
@@ -95,7 +95,7 @@ class ControladorFUT extends Controller
         $data['formulado']     = $formulado;
         $data['carrera']       = $carrera;
 
-        return view('fut.listaFUT', $data);
+        return view('administrador.fut.listaFUT', $data);
     }
     public function getSaldo(Request $req)
     {
@@ -208,7 +208,7 @@ class ControladorFUT extends Controller
         $data['id_conformulado']          = $id_conformulado;
         $data['nro_fut']                  = $nro_fut;
 
-        return view('fut.formularioFut', $data);
+        return view('administrador.fut.formularioFut', $data);
     }
     public function getSaldoPartidas(Request $req)
     {
@@ -339,7 +339,7 @@ class ControladorFUT extends Controller
         $data['financiamientos'] = $financiamientos;
         $data['medidas']         = $medidas;
 
-        return view('fut.financiamientoFut', $data);
+        return view('administrador.fut.financiamientoFut', $data);
     }
     public function postFormulario(Request $req)
     {

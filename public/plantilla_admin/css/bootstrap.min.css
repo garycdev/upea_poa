@@ -546,7 +546,7 @@ progress {
     content: "— ";
 }
 .img-fluid {
-    max-width: 100%;
+    max-width: 70px;
     height: auto;
 }
 .img-thumbnail {
@@ -4632,6 +4632,9 @@ fieldset:disabled .btn {
     font-size: var(--bs-progress-font-size);
     background-color: var(--bs-progress-bg);
     border-radius: var(--bs-progress-border-radius);
+}
+.progress-sm {
+    height: calc(var(--bs-progress-height) - 7px);
 }
 .progress-bar {
     display: flex;

@@ -6,8 +6,10 @@ use App\Http\Controllers\Administracion\Controlador_clasificador;
 
 //para la gestion
 use App\Http\Controllers\Administracion\Controlador_Configuracion;
+
 //para PDES
 use App\Http\Controllers\Administracion\Controlador_Foda;
+
 //para AREAS ESTRATEGICAS
 use App\Http\Controllers\Administracion\Controlador_formulado;
 use App\Http\Controllers\Administracion\Controlador_Gestion;
@@ -16,14 +18,15 @@ use App\Http\Controllers\Administracion\Controlador_Pdes;
 use App\Http\Controllers\Administracion\Controlador_Pdu;
 use App\Http\Controllers\Administracion\Controlador_Pei;
 use App\Http\Controllers\Administracion\Controlador_reportesPDF;
+use App\Http\Controllers\Administracion\FutMot\ControladorFUT;
+use App\Http\Controllers\Administracion\FutMot\ControladorMOT;
+use App\Http\Controllers\Administracion\FutMot\ControladorReportePdf;
 use App\Http\Controllers\Formulacion\Controlador_fodaCarrera;
+
 //para PARTE DE LAS CARRERAS UNIDADES ADMINISTRATIVAS
 use App\Http\Controllers\Formulacion\Controlador_formulacion;
 use App\Http\Controllers\Formulacion\Controlador_formulario2;
 use App\Http\Controllers\Formulacion\Controlador_formulario5;
-use App\Http\Controllers\FutMot\ControladorFUT;
-use App\Http\Controllers\FutMot\ControladorMOT;
-use App\Http\Controllers\FutMot\ControladorReportePdf;
 use App\Http\Controllers\Usuario\Administracion_usuario;
 use App\Http\Controllers\Usuario_controlador;
 use Illuminate\Support\Facades\Route;
@@ -42,7 +45,6 @@ Route::prefix('/')->middleware(['no_autenticados'])->group(function () {
 });
 
 Route::prefix('/poa')->middleware(['autenticados'])->group(function () {
-
     /**
      * USUARIO CONTROLADOR salir e inicio
      */
@@ -619,5 +621,5 @@ Route::prefix('/poa')->middleware(['autenticados'])->group(function () {
 });
 
 Route::prefix('/plan')->middleware(['autenticados'])->group(function () {
-
+    //
 });

@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Controllers\FutMot;
+namespace App\Http\Controllers\Administracion\FutMot;
 
 use App\Http\Controllers\Controller;
 use App\Models\Configuracion\UnidadCarreraArea;
@@ -23,7 +23,7 @@ class ControladorMOT extends Controller
             $data['carrera_unidad'] = UnidadCarreraArea::where('id', Auth::user()->id_unidad_carrera)->get();
             $data['gestion']        = Gestion::get();
 
-            return view('mot.modificaciones_presupuestarias', $data);
+            return view('administrador.mot.modificaciones_presupuestarias', $data);
         } else {
             $data['tipo_error'] = 'NOTA!';
             $data['mensaje']    = 'Lo siento no tiene acceso!';
@@ -104,7 +104,7 @@ class ControladorMOT extends Controller
         $data['mot']           = $mot;
         $data['carrera']       = $carrera;
 
-        return view('mot.lista', $data);
+        return view('administrador.mot.lista', $data);
     }
 
     public function formulario($id_formulado, $gestiones_id, $id_conformulado)
@@ -147,7 +147,7 @@ class ControladorMOT extends Controller
         $data['id_conformulado']          = $id_conformulado;
         $data['nro_mot']                  = $nro_mot;
 
-        return view('mot.formulario', $data);
+        return view('administrador.mot.formulario', $data);
     }
     public function modificacionP($id_mot)
     {
@@ -173,7 +173,7 @@ class ControladorMOT extends Controller
         $data['financiamientos'] = $financiamientos;
         $data['medidas']         = $medidas;
 
-        return view('mot.financiamiento', $data);
+        return view('administrador.mot.financiamiento', $data);
     }
     public function getSaldoPartidas(Request $req)
     {

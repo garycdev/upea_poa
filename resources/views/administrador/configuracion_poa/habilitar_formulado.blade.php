@@ -27,8 +27,6 @@
         <div class="container-fluid">
             <div class="card-box-style ">
                 <form id="form_habilitarFormulado" method="post" autocomplete="off">
-
-
                     <div class="row text-center">
                         {{-- <div class="mb-3 col-sm-12 col-md-6 col-lg-6 col-xl-6">
                             <fieldset>

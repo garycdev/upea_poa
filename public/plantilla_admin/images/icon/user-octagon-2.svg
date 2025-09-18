@@ -1,0 +1,20 @@
+<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg">
+
+ <g>
+  <title>background</title>
+  <rect fill="none" id="canvas_background" height="602" width="802" y="-1" x="-1"/>
+ </g>
+ <g>
+  <title>Layer 1</title>
+  <g id="vuesax_linear_user-octagon">
+   <g id="user-octagon">
+    <path stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round" stroke="#ffffff" fill="none" d="m21.079973,8.58l0,6.84a3.174,3.174 0 0 1 -1.57,2.73l-5.94,3.43a3.163,3.163 0 0 1 -3.15,0l-5.94,-3.43a3.15,3.15 0 0 1 -1.57,-2.73l0,-6.84a3.174,3.174 0 0 1 1.57,-2.73l5.94,-3.43a3.163,3.163 0 0 1 3.15,0l5.94,3.43a3.162,3.162 0 0 1 1.57,2.73z" id="Vector"/>
+    <g id="Group">
+     <path stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round" stroke="#ffffff" fill="none" d="m14.329983,8.669996a2.33,2.33 0 1 1 -2.33,-2.33a2.33,2.33 0 0 1 2.33,2.33z" id="Vector-2"/>
+     <path stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round" stroke="#ffffff" fill="none" d="m16,16.659994c0,-1.8 -1.79,-3.26 -4,-3.26s-4,1.46 -4,3.26" id="Vector-3"/>
+    </g>
+    <path stroke="#ffffff" opacity="0" fill="none" d="m0,0l24,0l0,24l-24,0l0,-24z" id="Vector-4"/>
+   </g>
+  </g>
+ </g>
+</svg>

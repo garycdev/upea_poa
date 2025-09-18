@@ -10,7 +10,7 @@
                 <div class="col-lg-6 col-sm-6">
                     <div class="page-title">
                         <h5>FORMULACIÓN DEL PLAN OPERATIVO ANUAL</h5>
-                        <h5>{{ $carrera_unidad[0]->nombre_completo }}</h5>
+                        <h5 class="text-muted">{{ $carrera_unidad[0]->nombre_completo }}</h5>
                     </div>
                 </div>
             </div>

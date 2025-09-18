@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Controllers\FutMot;
+namespace App\Http\Controllers\Administracion\FutMot;
 
 use App\Http\Controllers\Controller;
 use App\Models\FutMot\Fut;
