@@ -2,11 +2,13 @@
 namespace App\Http\Controllers\Administracion\FutMot;
 
 use App\Http\Controllers\Controller;
+use App\Models\Carreras_Unidades_Area\Tipo_CarreraUnidad;
+use App\Models\Configuracion\Financiamiento_tipo;
 use App\Models\Configuracion\UnidadCarreraArea;
 use App\Models\FutMot\Fut;
 use App\Models\FutMot\FutMov;
 use App\Models\FutMot\FutPP;
-use App\Models\Gestion;
+use App\Models\Gestiones;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,15 +22,41 @@ class ControladorFUT extends Controller
         $data['menu'] = 19;
         if (Auth::user()->id_unidad_carrera != null) {
             $data['carrera_unidad'] = UnidadCarreraArea::where('id', Auth::user()->id_unidad_carrera)->get();
-            $data['gestion']        = Gestion::get();
+            $data['unidades']       = UnidadCarreraArea::get();
+            $data['gestiones']      = Gestiones::get();
 
-            return view('administrador.fut.formulario', $data);
+            return view('administrador.fut.inicio', $data);
         } else {
-            $data['tipo_error'] = 'NOTA!';
-            $data['mensaje']    = 'Lo siento no tiene acceso!';
-            return view('formulacion.errores.formulacion_error', $data);
-        }
+            $data['unidades']       = UnidadCarreraArea::get();
+            $data['gestiones']      = Gestiones::get();
 
+            return view('administrador.fut.inicio', $data);
+        }
+    }
+    public function listar_CarreraUnidad(Request $request)
+    {
+        if ($request->ajax()) {
+            $data['gestiones_lis']         = Gestiones::find($request->id);
+            $data['tipoCarreraUnidadArea'] = Tipo_CarreraUnidad::orderBy('id', 'asc')->get();
+            $data['menu']                  = '19';
+            return view('administrador.fut.detalles_CarreraUnidadArea', $data);
+        }
+    }
+
+    public function asignar_financiamiento($id_carreraUnidadArea, $id_gestiones)
+    {
+        $id_tipo_carrera        = desencriptar($id_carreraUnidadArea);
+        $id_gestion             = desencriptar($id_gestiones);
+        $gestiones_lis          = Gestiones::find($id_gestion);
+        $tipo_carreraUnidadArea = Tipo_CarreraUnidad::find($id_tipo_carrera);
+        $fuente_financiamiento  = Financiamiento_tipo::get();
+        $data                   = [
+            'gestion_seleccionada'   => $gestiones_lis,
+            'tipo_carreraUnidadArea' => $tipo_carreraUnidadArea,
+            'menu'                   => '19',
+            'fuente_financiamiento'  => $fuente_financiamiento,
+        ];
+        return view('administrador.configuracion_poa.financiamiento_gestion.financiamiento_gestion', $data);
     }
 
     public function selectGestiones(Request $req)
@@ -38,6 +66,7 @@ class ControladorFUT extends Controller
 
         return $gestiones;
     }
+
     public function selectGestion(Request $req)
     {
         $tipo_carrera = DB::table('rl_tipo_carrera')->orderBy('id', 'asc')->get();
@@ -267,6 +296,7 @@ class ControladorFUT extends Controller
         $data = [$partidas_formulado3, $partidas_formulado4, $partidas_formulado5, $saldo_formulado];
         return $data;
     }
+
     public function getPoliticaDesarrollo(Request $req)
     {
         $id_area   = $req->input('id_area');

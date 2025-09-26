@@ -393,8 +393,10 @@ class Controlador_formulario5 extends Controller
                 $medida_bien_servicio->precio_unitario = $request->precio_unitario;
                 if ($request->total_presupuesto_env != '') {
                     $medida_bien_servicio->total_presupuesto = sin_separador_comas($request->total_presupuesto_env);
+                    $medida_bien_servicio->total_monto       = sin_separador_comas($request->total_presupuesto_env);
                 } else {
                     $medida_bien_servicio->total_presupuesto = 0;
+                    $medida_bien_servicio->total_monto       = 0;
                 }
                 $medida_bien_servicio->tipo_financiamiento_id = $request->tipo_fina_id;
                 $medida_bien_servicio->fecha_requerida        = date($request->gestion . '-' . $request->mes . '-' . $request->dia);

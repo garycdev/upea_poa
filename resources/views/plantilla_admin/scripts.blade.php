@@ -107,6 +107,24 @@
         });
     }
 
+    $('.select2_partida').select2({
+        theme: "bootstrap-5",
+        containerCssClass: "select2--small", // For Select2 v4.0
+        selectionCssClass: "select2--small", // For Select2 v4.1
+        dropdownCssClass: "select2--small",
+        width: '100%'
+    });
+
+    function partida_select2(valor) {
+        $('.select2_partida').select2({
+            dropdownParent: $(valor),
+            theme: "bootstrap-5",
+            containerCssClass: "select2--small", // For Select2 v4.0
+            selectionCssClass: "select2--small", // For Select2 v4.1
+            dropdownCssClass: "select2--small",
+        });
+    }
+
     function fut_select2(valor) {
         $('.select2_fut').select2({
             dropdownParent: $(valor),
@@ -157,6 +175,17 @@
     $('.dataTable').dataTable({
         "responsive": true,
     });
+
+    function conSeparadorComas(valor) {
+        return valor.toLocaleString("en-US", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+    }
+
+    function formatearConCeros(numero, longitud = 4) {
+        return String(numero).padStart(longitud, '0');
+    }
 
 
     //para repetir algo X

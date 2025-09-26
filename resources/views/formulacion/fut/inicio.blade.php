@@ -21,7 +21,7 @@
         <div class="container-fluid">
             <div class="card-box-style ">
                 <div class="row text-center">
-                    <div class="mb-3 col-sm-12 col-md-6 col-lg-6 col-xl-6 mx-auto">
+                    {{-- <div class="mb-3 col-sm-12 col-md-6 col-lg-6 col-xl-6 mx-auto">
                         <fieldset>
                             <legend>Seleccione una gestión</legend>
                             <select name="id_gestion" id="id_gestion" class="form-select" onchange="selectGestiones(this)">
@@ -34,12 +34,17 @@
                             </select>
                             <div id="_gestion"></div>
                         </fieldset>
-                    </div>
+                    </div> --}}
                     <div class="mb-3 col-sm-12 col-md-6 col-lg-6 col-xl-6 mx-auto">
                         <fieldset>
                             <legend>Seleccione una gestión especifica</legend>
                             <select name="gestion" id="gestion" class="form-select" onchange="selectGestion(this)">
                                 <option value="selected" selected disabled>[SELECCIONE UNA GESTION ESPECIFICA]</option>
+                                @foreach ($gestiones as $ges)
+                                    <option value="{{ $ges->id }}">
+                                        {{ $ges->gestion }}
+                                    </option>
+                                @endforeach
                             </select>
                             <div id="_gestiones"></div>
                         </fieldset>
@@ -92,7 +97,8 @@
                 dataType: "json",
                 data: {
                     _token: '{{ csrf_token() }}',
-                    id_gestion: id_gestion
+                    id_gestion: id_gestion,
+                    id_unidad_carrera: '{{ Auth::user()->id_unidad_carrera }}'
                 },
                 success: function(response) {
                     $('#ListadoGestionesFormulados').empty();
@@ -103,7 +109,7 @@
                         response.forEach(function(element) {
                             let $item = $(`
                                 <div class="ag-courses_item">
-                                    <a href="{{ route('listarFormulariosFut', ['id_conformulado' => 'ELEMENT_ID']) }}" class="ag-courses-item_link">
+                                    <a href="{{ route('fut.listar', ['id_conformulado' => 'ELEMENT_ID']) }}" class="ag-courses-item_link">
                                         <div class="ag-courses-item_bg"></div>
                                         <div class="ag-courses-item_title text-center">
                                             ${element.descripcion}

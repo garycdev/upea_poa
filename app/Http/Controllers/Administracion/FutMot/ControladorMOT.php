@@ -47,12 +47,14 @@ class ControladorMOT extends Controller
     }
     public function getFormulados(Request $req)
     {
-        $id_gestion = $req->input('id_gestion');
+        $id_gestion        = $req->input('id_gestion');
+        $id_unidad_carrera = $req->input('id_unidad_carrera');
+
         $formulados = Configuracion_formulado::join('rl_formulado_tipo as rft', 'rl_configuracion_formulado.formulado_id', '=', 'rft.id')
             ->join('rl_formulario1 as f1', 'f1.configFormulado_id', '=', 'rl_configuracion_formulado.id')
             ->select('rl_configuracion_formulado.*', 'rft.descripcion')
             ->where('gestiones_id', '=', $id_gestion)
-            ->where('f1.unidadCarrera_id', '=', Auth::user()->id_unidad_carrera)
+            ->where('f1.unidadCarrera_id', '=', $id_unidad_carrera)
             ->orderBy('formulado_id', 'asc')
             ->get();
 

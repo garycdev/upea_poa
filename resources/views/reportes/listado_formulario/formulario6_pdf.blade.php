@@ -109,6 +109,7 @@
 
         .text-secundario {
             padding-top: 0px;
+            padding-bottom: 0px;
             margin-top: -12px;
         }
 
@@ -205,7 +206,7 @@
                 $tabla[$det->id] = $filaPadre;
             }
         @endphp
-        <table class="my-table" style="width: 100%; font-size:12px">
+        <table class="my-table" style="width: 100%; font-size:10px">
             <thead>
                 <tr>
                     <th>PARTIDA</th>
@@ -368,7 +369,7 @@
             </tbody>
         </table>
 
-        <table class="my-table" style="width: 50%; font-size:12px; margin-top: 50px;">
+        <table class="my-table" style="width: 50%; font-size:10px; margin-top: 50px;">
             <thead>
                 <tr>
                     <td colspan="2" style="border: 0;font-weight:bold;">PRESUPUESTO ASIGNADO A LA UNIDAD</td>

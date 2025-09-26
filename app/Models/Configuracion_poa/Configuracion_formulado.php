@@ -49,4 +49,7 @@ class Configuracion_formulado extends Model
     public function formulario1(){
         return $this->hasMany(Formulario1::class, 'configFormulado_id', 'id');
     }
+    public function gestion(){
+        return $this->hasOne(Gestiones::class, 'id', 'gestiones_id');
+    }
 }

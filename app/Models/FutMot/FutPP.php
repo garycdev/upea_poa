@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models\FutMot;
 
 use App\Models\Configuracion\Financiamiento_tipo;
@@ -9,10 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class FutPP extends Model
 {
     use HasFactory;
-    protected $table = 'fut_partidas_presupuestarias';
+    protected $table      = 'fut_partidas_presupuestarias';
     protected $primaryKey = 'id_fut_pp';
-    protected $fillable = [
+    protected $fillable   = [
         'organismo_financiador',
+        'monto',
         'categoria_progmatica',
         'id_fut',
     ];
@@ -26,7 +26,12 @@ class FutPP extends Model
     {
         return $this->belongsTo(Financiamiento_tipo::class, 'organismo_financiador', 'id');
     }
-    public function mov(){
+    public function mov()
+    {
         return $this->hasMany(FutMov::class, 'id_fut_pp', 'id_fut_pp');
+    }
+    public function fut()
+    {
+        return $this->hasOne(Fut::class, 'id_fut', 'id_fut');
     }
 }

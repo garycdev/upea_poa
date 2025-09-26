@@ -146,6 +146,7 @@ class Controlador_asignarFinanciamiento extends Controller{
 
                             $caja = new Caja;
                             $caja->saldo                    = $saldo_recivido;
+                            $caja->monto                    = $saldo_recivido;
                             $caja->fecha                    = date('Y-m-d');
                             $caja->gestiones_id             = $request->gestiones_idSelec;
                             $caja->unidad_carrera_id        = $request->unidadCareraArea;

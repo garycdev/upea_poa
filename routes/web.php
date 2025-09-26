@@ -27,6 +27,7 @@ use App\Http\Controllers\Formulacion\Controlador_fodaCarrera;
 use App\Http\Controllers\Formulacion\Controlador_formulacion;
 use App\Http\Controllers\Formulacion\Controlador_formulario2;
 use App\Http\Controllers\Formulacion\Controlador_formulario5;
+use App\Http\Controllers\Formulacion\FutMot\ControladorFormulacionFUT;
 use App\Http\Controllers\Usuario\Administracion_usuario;
 use App\Http\Controllers\Usuario_controlador;
 use Illuminate\Support\Facades\Route;
@@ -575,7 +576,7 @@ Route::prefix('/poa')->middleware(['autenticados'])->group(function () {
         Route::post('/politicas', 'getPoliticaDesarrollo')->name('getPoliticaDesarrolloFut');
         Route::post('/gestiones', 'selectGestiones')->name('obtenerGestionesFut');
         Route::post('/saldo', 'getSaldo')->name('getSaldoFut');
-        Route::get('/formular/{id_fur}', 'formular')->name('formularFut');
+        Route::get('/formular/{id_fut}', 'formular')->name('formularFut');
         Route::post('/obtener', 'getPartidas')->name('getPartidas');
         Route::post('/partida', 'postPartida')->name('postPartida');
 
@@ -583,6 +584,22 @@ Route::prefix('/poa')->middleware(['autenticados'])->group(function () {
 
         Route::get('/carrera', 'selectIdCarrera')->name('obtener_carrera');
         // Route::post('/formulariomot', 'formulario')->name('formulario');
+
+        Route::prefix('formulacion')->controller(ControladorFormulacionFUT::class)->group(function () {
+            Route::get('/', 'inicio')->name('fut.inicio');
+            Route::get('/lista/{id_conformulado}/{id_carrera?}', 'listarFormularios')->name('fut.listar');
+            Route::get('/formulario/{id_formulado}/{gestiones_id}/{id_conformulado}', 'formulario')->name('fut.formulario');
+            Route::post('/formulario', 'realizarCompra')->name('fut.compra');
+            Route::post('/detalle', 'editarMonto')->name('fut.editar.monto');
+            Route::delete('/detalle', 'eliminarMonto')->name('fut.eliminar.monto');
+            Route::get('/detalle/{id_fut}', 'formular')->name('fut.detalle');
+
+            Route::post('/buscar', 'buscarCorrelativo')->name('fut.buscar');
+            Route::get('/modal/{id_fut}', 'abrirModal')->name('fut.modal');
+            Route::post('/validar', 'validarFormulario')->name('fut.validar');
+
+            Route::get('/get', 'getOperacionObjetivo')->name('fut.operacion_objetivo');
+        });
     });
 
     Route::prefix('mot')->controller(ControladorMOT::class)->group(function () {
@@ -617,6 +634,8 @@ Route::prefix('/poa')->middleware(['autenticados'])->group(function () {
     Route::controller(ControladorReportePdf::class)->group(function () {
         Route::get('/motPdf/{id_mot}', 'generarPdfMot')->name('pdfMot');
         Route::get('/futPdf/{id_fut}', 'generarPdfFut')->name('pdfFut');
+
+        Route::get('/fut/formulacion/{id_fut}', 'formulacionPdfFut')->name('fut.pdf');
     });
 });
 

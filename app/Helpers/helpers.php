@@ -97,6 +97,11 @@ function fecha_literal($Fecha, $Formato)
     }
 }
 
+function formatear_con_ceros($numero, $longitud = 4)
+{
+    return str_pad(intval($numero), $longitud, '0', STR_PAD_LEFT);
+}
+
 //PDU =  1
 function pdu_t()
 {

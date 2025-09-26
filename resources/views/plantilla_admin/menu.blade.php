@@ -233,7 +233,7 @@
                         <ul class="sidemenu-nav-second-level">
                             @can('formulacion_poa')
                                 <li class=" @if ($menu == '21') {{ 'active' }} @endif ">
-                                    <a href="{{ route('fut_inicio') }}">
+                                    <a href="{{ route('fut.inicio') }}">
                                         <span class="menu-title">Formulario unico<br>de tramite (FUT)</span>
                                     </a>
                                 </li>
