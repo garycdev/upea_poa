@@ -12,7 +12,7 @@
                 GESTION: {{ $configuracion->gestion }}<br>
                 {{ $fut->unidad_carrera->nombre_completo }}
                 <br>CODIGO: {{ $configuracion->codigo }}
-                <br>FUT N°: {{ $fut->id_fut }}
+                <br>FUT N°: {{ formatear_con_ceros($fut->nro) }}
             </h5>
             <div class="page-title my-auto col-md-3 col-12">
                 <div
@@ -20,6 +20,30 @@
                     <p>Estado: <strong>{{ $fut->estado }}</strong></p>
                     @if (isset($fut->observacion))
                         <p>Observacion: {{ $fut->observacion }}</p>
+                    @endif
+                </div>
+                <div class="d-flex align-items-center justify-content-evenly">
+                    @can('Validar_seguimiento')
+                        @if ($fut->estado == 'elaborado')
+                            <button type="button" class="btn btn-primary d-inline btn-validar-fut" data-id="{{ $fut->id_fut }}">
+                                Validar solicitud
+                            </button>
+                        @endif
+                    @endcan
+                    @if ($fut->estado == 'aprobado' && Auth::user()->id_unidad_carrera == $fut->id_unidad_carrera)
+                        <button type="button" class="btn btn-success btn-modal-ejecutar-fut" data-id="{{ $fut->id_fut }}">
+                            Ejecutar compra
+                        </button>
+                    @endif
+                    <a href="{{ route('fut.pdf', $fut->id_fut) }}" class="btn btn-warning" target="_blank"
+                        style="display:inline-block">
+                        <i class="ri-file-pdf-line"></i> Solicitud
+                    </a>
+                    @if ($fut->estado == 'aprobado' || $fut->estado == 'ejecutado')
+                        <a href="{{ route('pdfFut', $fut->id_fut) }}" class="btn btn-danger" target="_blank"
+                            style="display:inline-block">
+                            <i class="ri-file-pdf-line"></i> Formulario
+                        </a>
                     @endif
                 </div>
             </div>
@@ -53,11 +77,33 @@
                         {{ $fut->importe - $total_total }}&nbsp;bs.</div>
                     <input type="hidden" id="total_total" value="{{ $fut->importe - $total_total }}"> --}}
                     @if ($fut->estado == 'rechazado')
-                        <div class="alert fs-6 alert-danger">Monto revertido :
-                            {{ con_separador_comas($total_total) }}&nbsp;bs.</div>
-                    @elseif (Auth::user()->ind_unidad_carrera == $fut->id_unidad_carrera)
-                        <div class="alert fs-6 alert-info">Monto disponible para cambios:
-                            {{ con_separador_comas($fut->getTotalPresupuestoAttribute()) }}&nbsp;bs.</div>
+                        <div class="alert fs-6 alert-danger">
+                            <strong>
+                                Monto revertido :
+                                {{ con_separador_comas($total_total) }}&nbsp;bs.
+                            </strong>
+                        </div>
+                    @elseif (Auth::user()->id_unidad_carrera == $fut->id_unidad_carrera && $fut->estado == 'elaborado')
+                        <div class="alert fs-6 alert-info">
+                            <strong>
+                                Monto disponible para cambios:
+                                {{ con_separador_comas($fut->getTotalPresupuestoAttribute()) }}&nbsp;bs.
+                            </strong>
+                        </div>
+                    @elseif ($fut->estado == 'aprobado')
+                        <div class="alert fs-6 alert-primary">
+                            <strong>
+                                Monto aprobado :
+                                {{ con_separador_comas($total_total) }}&nbsp;bs.
+                            </strong>
+                        </div>
+                    @elseif ($fut->estado == 'ejecutado')
+                        <div class="alert fs-6 alert-success">
+                            <strong>
+                                Monto ejecutado exitosamente :
+                                {{ con_separador_comas($total_total) }}&nbsp;bs.
+                            </strong>
+                        </div>
                     @endif
                     {{-- <input type="hidden" id="total_total" value="{{ $fut->importe }}"> --}}
                     <table class="table table-hover table-striped">
@@ -104,9 +150,7 @@
                                                                     {{ con_separador_comas($mov->partida_monto) }}&nbsp;bs.
                                                                 </td>
                                                                 <td>
-                                                                    @if (Auth::user()->id_unidad_carrera == $fut->id_unidad_carrera &&
-                                                                            $mov->futpp->fut->estado != 'rechazado' &&
-                                                                            $mov->futpp->fut->estado != 'valido')
+                                                                    @if (Auth::user()->id_unidad_carrera == $fut->id_unidad_carrera && $mov->futpp->fut->estado == 'elaborado')
                                                                         <button type="submit"
                                                                             class="btn btn-outline-warning"
                                                                             data-bs-toggle="modal"
@@ -297,14 +341,16 @@
                 </div>
                 <div class="mt-3 d-flex justify-content-center">
                     {{-- @dd($fut) --}}
-                    @if (isset(Auth::user()->id_unidad_carrera))
-                        <a href="{{ route('fut.listar', $configuracion->id) }}" class="btn btn-dark">Volver</a>
-                    @else
-                        <a href="{{ route('fut.listar', [$configuracion->id, $fut->id_unidad_carrera]) }}"
-                            class="btn btn-dark">
-                            Volver
-                        </a>
-                    @endif
+                    @cannot('Validar_seguimiento')
+                        @if (isset(Auth::user()->id_unidad_carrera))
+                            <a href="{{ route('fut.listar', $configuracion->id) }}" class="btn btn-dark">Volver</a>
+                        @else
+                            <a href="{{ route('fut.listar', [$configuracion->id, $fut->id_unidad_carrera]) }}"
+                                class="btn btn-dark">
+                                Volver
+                            </a>
+                        @endif
+                    @endcannot
                 </div>
             </div>
         </div>

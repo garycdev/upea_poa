@@ -1,5 +1,5 @@
 @extends('principal')
-@section('titulo', 'Formulario FUT')
+@section('titulo', 'Formulario MOT')
 @section('contenido')
     <div class="page">
         <div class="main-content app-content">
@@ -18,14 +18,13 @@
                     <div class="card">
                         <div class="card-body row">
                             <h5 class="col-10 text-center fw-bold mt-3">
-                                FORMULARIO DE INICIO/UNICO DE TRAMITE<br>
-                                CONTRATACIóN DE BIENES Y/O SERVICIOS Y ACTIVOS FIJOS - FUT
+                                MODIFICACIONES PRESUPUESTARIAS (MOT)
                             </h5>
                             @if (Auth::user()->id_unidad_carrera == $carrera->id)
                                 <div class="col-2 form-group d-flex align-items-center justify-content-center">
-                                    <a href="{{ route('fut.formulario', [Crypt::encryptString($formulado->id), Crypt::encryptString($configuracion->gestiones_id), Crypt::encryptString($configuracion->id)]) }}"
+                                    <a href="{{ route('mot.formulario', [Crypt::encryptString($formulado->id), Crypt::encryptString($configuracion->gestiones_id), Crypt::encryptString($configuracion->id)]) }}"
                                         class="btn btn-outline-primary">
-                                        Nuevo formulario de inicio/unico
+                                        Nuevo formulario de modificaciones
                                     </a>
                                 </div>
                             @endif
@@ -48,7 +47,7 @@
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
-                                            <th>Nro FUT</th>
+                                            <th>Nro MOT</th>
                                             <th>Areas estrategicas</th>
                                             <th>Organismo financiador</th>
                                             <th>Monto</th>
@@ -59,20 +58,20 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if (count($fut) > 0)
-                                            @foreach ($fut as $item)
+                                        @if (count($mot) > 0)
+                                            @foreach ($mot as $item)
                                                 <tr>
                                                     <td>{{ formatear_con_ceros($item->nro) }}</td>
                                                     <td>
                                                         <ul>
-                                                            @foreach ($item->areas_estrategicas() as $ae)
+                                                            @foreach ($item->areas_estrategicas_de() as $ae)
                                                                 <li>{{ $ae->descripcion }}</li>
                                                             @endforeach
                                                         </ul>
                                                     </td>
                                                     <td>
                                                         <ul>
-                                                            @foreach ($item->futpp as $fuente)
+                                                            @foreach ($item->motpp as $fuente)
                                                                 <li>{{ $fuente->of->descripcion }}</li>
                                                             @endforeach
                                                         </ul>
@@ -97,7 +96,7 @@
                                                         @can('Validar_seguimiento')
                                                             @if ($item->estado == 'elaborado')
                                                                 <button type="button" class="btn btn-primary btn-validar"
-                                                                    data-id="{{ $item->id_fut }}">
+                                                                    data-id="{{ $item->id_mot }}">
                                                                     Validar
                                                                 </button>
                                                             @endif
@@ -105,29 +104,29 @@
                                                         @if ($item->estado == 'aprobado' && Auth::user()->id_unidad_carrera == $item->id_unidad_carrera)
                                                             <button type="button"
                                                                 class="btn btn-success btn-modal-ejecutar"
-                                                                data-id="{{ $item->id_fut }}">
+                                                                data-id="{{ $item->id_mot }}">
                                                                 Ejecutar compra
                                                             </button>
                                                         @endif
                                                     </td>
                                                     <td>
-                                                        <a href="{{ route('fut.detalle', $item->id_fut) }}"
+                                                        <a href="{{ route('mot.detalle', $item->id_mot) }}"
                                                             class="btn btn-outline-primary" style="display:inline-block">
                                                             <i class="ri-eye-fill"></i>
                                                         </a>
                                                         {{-- @if (Auth::user()->id_unidad_carrera == $item->id_unidad_carrera) --}}
-                                                        <a href="{{ route('fut.pdf', $item->id_fut) }}"
+                                                        <a href="{{ route('mot.pdf', $item->id_mot) }}"
                                                             class="btn btn-outline-warning" target="_blank">
                                                             <i class="ri-file-pdf-line"></i>
                                                         </a>
                                                         {{-- @endif --}}
-                                                        {{-- <a href="{{ route('pdffut', $item->id_fut) }}"
+                                                        {{-- <a href="{{ route('pdfMot', $item->id_mot) }}"
                                                             class="btn btn-warning" target="_blank"
                                                             style="display:inline-block">
                                                             <i class="ri-pencil-fill"></i>
                                                         </a> --}}
                                                         @if ($item->estado == 'ejecutado' || $item->estado == 'aprobado')
-                                                            <a href="{{ route('pdfFut', $item->id_fut) }}"
+                                                            <a href="{{ route('pdfMot', $item->id_mot) }}"
                                                                 class="btn btn-outline-danger" target="_blank">
                                                                 <i class="ri-file-pdf-line"></i>
                                                             </a>
@@ -155,7 +154,7 @@
 
                             <div class="mt-3 d-flex justify-content-center">
                                 @cannot('Validar_seguimiento')
-                                    <a href="{{ route('fut.inicio') }}" class="btn btn-dark">Volver</a>
+                                    <a href="{{ route('mot.inicio') }}" class="btn btn-dark">Volver</a>
                                 @endcannot
                             </div>
                         </div>
@@ -169,7 +168,7 @@
 @section('scripts')
     <script>
         // function abriModal(id) {
-        //     $.get("{{ route('fut.modal', ':id') }}".replace(':id', id), function(html) {
+        //     $.get("{{ route('mot.modal', ':id') }}".replace(':id', id), function(html) {
         //         $("#modalValidar .modal-body").html(html);
         //     });
         // }

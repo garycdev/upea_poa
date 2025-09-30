@@ -15,244 +15,319 @@ use App\Models\Poa\Formulario1;
 use App\Models\User;
 use FPDF;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 
 class ControladorReportePdf extends Controller
 {
     public function generarPdfMot(Request $req, $id_mot)
     {
-        $id_mot = Crypt::decryptString($id_mot);
-        $mot    = Mot::where('id_mot', '=', $id_mot)->first();
+        $mot       = Mot::where('id_mot', '=', $id_mot)->first();
+        $objetivos = $this->getObjetivos($mot->id_mot);
+        // dd($objetivos);
 
-        $pdf = new FPDF();
+        $pdf = new Fpdf('P', 'mm', 'Letter');
+        // $pdf = new Fpdf();
         $pdf->SetMargins(10, 10, 10);
         $pdf->SetAutoPageBreak(false);
 
         $pdf->AddPage();
 
-        // Titullo
-        $pdf->setXY(36, 5);
+        $altura = 2;
+        $pdf->SetXY(3, $altura);
+        $pdf->SetFont('Arial', 'B', 9);
+        $pdf->Cell(20, 5, utf8_decode('IMP ' . fecha_literal(date('Y-m-d'), 4)), 0, 0, 'L', false);
+
+        $pdf->Image('logos/encabezado.jpg', 41, 8, 135);
+        $pdf->Image('logos/logo_upea.jpg', 185, 5, 25);
+
+        // Titulo
+        $altura += 27;
+        $pdf->setXY(60, $altura);
         $pdf->SetFont('Arial', 'BU', 10);
-        $pdf->MultiCell(120, 5, 'FORMULARIO DE MODIFICACIÓN POA - PRESUPUESTO DE OBJETIVOS Y/O TAREAS (ACTIVIDADES-OPERACIONES) - M.O.T.', 0, 'C', false);
+        $pdf->MultiCell(100, 5, utf8_decode('FORMULARIO DE INICIO DE TRAMITE CONTRATACIÓN DE BIENES Y/O SERVICIOS Y ACTIVOS FIJOS'), 0, 'C', false);
         $pdf->SetFont('Arial', 'B', 12);
-        $pdf->setXY(160, 6);
+        $altura += 1;
+        $pdf->setXY(166, $altura + 15);
         $pdf->Cell(20, 5, utf8_decode('MOT N°:'), 0, 0, 'L', false);
-        $pdf->setXY(180, 4);
-        $pdf->Cell(20, 10, utf8_decode(formatear_con_ceros($mot->nro)), 1, 0, 'C', false);
+        $pdf->setXY(185, $altura + 12);
+        $pdf->Cell(20, 10, formatear_con_ceros($mot->nro), 1, 0, 'C', false);
 
         // Color rojito para Cell
         $pdf->SetFillColor(217, 149, 148);
 
-        // F-1
-        $pdf->setY(20);
-        $pdf->setFont('Arial', 'B', 6);
-        $pdf->setX(5);
-        $pdf->Cell(50, 5, utf8_decode('Area Estratégica (F-1)            :'), 0, 0, 'L', false);
-        $pdf->setFont('Arial', '', 6);
-        $pdf->setX(37);
-        $pdf->Cell(20, 5, utf8_decode('MODIFICA'), 0, 0, 'C', true);
-        // $pdf->SetFillColor(0, 0, 0);
-        $pdf->setX(59);
-        $pdf->Cell(10, 5, utf8_decode('CÓDIGO'), 0, 0, 'C', false);
-        $pdf->setX(70);
-        $pdf->Cell(10, 5, utf8_decode($mot->area_estrategica_de), 1, 0, 'C', false);
-        $pdf->setX(83);
-        $pdf->Cell(87, 5, utf8_decode(strtoupper($mot->ae_de->descripcion)), 1, 0, 'L', false);
-        $pdf->setX(172);
-        $pdf->Cell(10, 5, utf8_decode('IMPORTE:'), 0, 0, 'C', false);
-        $pdf->setX(184);
-        $pdf->Cell(20, 5, utf8_decode($mot->ae_de_importe . ' bs'), 1, 0, 'C', false);
-        $pdf->setX(77);
+        $usuario = User::where('id', '=', $mot->id_usuario)->first();
 
         // F-1
-        $pdf->setY(28);
-        $pdf->setFont('Arial', 'B', 6);
-        $pdf->setX(5);
-        $pdf->Cell(50, 5, utf8_decode('Area Estratégica (F-1)            :'), 0, 0, 'L', false);
-        $pdf->setFont('Arial', '', 6);
-        $pdf->setX(37);
-        $pdf->Cell(20, 5, utf8_decode('INCREMENTA'), 0, 0, 'C', true);
-        $pdf->setX(59);
-        $pdf->Cell(10, 5, utf8_decode('CÓDIGO'), 0, 0, 'C', false);
-        $pdf->setX(70);
-        $pdf->Cell(10, 5, utf8_decode($mot->area_estrategica_a), 1, 0, 'C', false);
-        $pdf->setX(83);
-        $pdf->Cell(87, 5, utf8_decode(strtoupper($mot->ae_a->descripcion)), 1, 0, 'L', false);
-        $pdf->setX(172);
-        $pdf->Cell(10, 5, utf8_decode('IMPORTE:'), 0, 0, 'C', false);
-        $pdf->setX(184);
-        $pdf->Cell(20, 5, utf8_decode($mot->ae_a_importe . ' bs'), 1, 0, 'C', false);
-        $pdf->setX(77);
+        $altura += 12;
+        $pdf->setY($altura);
+        $pdf->setFont('Arial', 'B', 8);
+        $pdf->setX(10);
+        $pdf->Cell(55, 5, utf8_decode('Unidad Solicitante :'), 0, 0, 'L', false);
+        $pdf->setFont('Arial', '', 7);
+        $pdf->setY($altura);
+        $altura += 7;
+        $pdf->setX(39);
+        $pdf->Cell(125, 5, utf8_decode('Lic. ' . $usuario->nombre . ' ' . $usuario->apellido), 1, 0, 'L', false);
+        $pdf->setXY(39, $altura);
+        $pdf->Cell(125, 5, utf8_decode('Area Carrera: ' . $usuario->unidad_carrera->nombre_completo), 1, 0, 'L', false);
 
-        // F-2
-        $pdf->setY(36);
-        $pdf->setFont('Arial', 'B', 6);
-        $pdf->setX(5);
-        $pdf->Cell(50, 5, utf8_decode('Objetivo de Gestión (F-2)      :'), 0, 0, 'L', false);
-        $pdf->setFont('Arial', '', 6);
-        $pdf->setX(37);
-        $pdf->Cell(20, 5, utf8_decode('MODIFICA'), 0, 0, 'C', true);
-        $pdf->setX(59);
-        $pdf->Cell(10, 5, utf8_decode('CÓDIGO'), 0, 0, 'C', false);
-        $pdf->setX(70);
-        $og_de = DB::table('rl_objetivo_institucional as og')
-            ->where('og.id', '=', $mot->objetivo_gestion_de)
-            ->first();
-        $pdf->Cell(10, 5, utf8_decode($mot->area_estrategica_de . '.' . $og_de->codigo), 1, 0, 'C', false);
-        $pdf->setX(83);
-        // $og_de = DB::table('rl_politica_de_desarrollo')
-        //     ->where('id_area_estrategica', '=', $mot->area_estrategica_de)
-        //     ->where('id_tipo_plan', '=', 1)
-        //     ->where('CÓDIGO', '=', $mot->objetivo_gestion_de)
-        //     ->first();
-        $pdf->setFont('Arial', '', 5);
-        $pdf->MultiCell(87, 3, utf8_decode($og_de->descripcion), 1, 0, 0, 'L', false);
-        $pdf->setFont('Arial', '', 6);
-        $pdf->setXY(172, 36);
-        $pdf->Cell(10, 5, utf8_decode('IMPORTE:'), 0, 0, 'C', false);
-        $pdf->setX(184);
-        $pdf->Cell(20, 5, utf8_decode($mot->og_de_importe . ' bs'), 1, 0, 'C', false);
-        $pdf->setX(77);
-
-        // F-2
-        $pdf->setY(44);
-        $pdf->setFont('Arial', 'B', 6);
-        $pdf->setX(5);
-        $pdf->Cell(50, 5, utf8_decode('Objetivo de Gestión (F-2)      :'), 0, 0, 'L', false);
-        $pdf->setFont('Arial', '', 6);
-        $pdf->setX(37);
-        $pdf->Cell(20, 5, utf8_decode('INCREMENTA'), 0, 0, 'C', true);
-        $pdf->setX(59);
-        $pdf->Cell(10, 5, utf8_decode('CÓDIGO'), 0, 0, 'C', false);
-        $pdf->setX(70);
-        $og_a = DB::table('rl_objetivo_institucional as og')
-            ->where('og.id', '=', $mot->objetivo_gestion_a)
-            ->first();
-        $pdf->Cell(10, 5, utf8_decode($mot->area_estrategica_a . '.' . $og_a->codigo), 1, 0, 'C', false);
-        $pdf->setX(83);
-        // $og_a = DB::table('rl_politica_de_desarrollo')
-        //     ->where('id_area_estrategica', '=', $mot->area_estrategica_a)
-        //     ->where('id_tipo_plan', '=', 1)
-        //     ->where('CÓDIGO', '=', $mot->objetivo_gestion_a)
-        //     ->first();
-        $pdf->setFont('Arial', '', 5);
-        $pdf->MultiCell(87, 3, utf8_decode($og_a->descripcion), 1, 0, 0, 'L', false);
-        $pdf->setFont('Arial', '', 6);
-        $pdf->setXY(172, 44);
-        $pdf->Cell(10, 5, utf8_decode('IMPORTE:'), 0, 0, 'C', false);
-        $pdf->setX(184);
-        $pdf->Cell(20, 5, utf8_decode($mot->og_a_importe . ' bs'), 1, 0, 'C', false);
-        $pdf->setX(77);
-
-        // F-3 F-3A
-        $pdf->setY(52);
-        $pdf->setFont('Arial', 'B', 6);
-        $pdf->setX(5);
-        $pdf->Cell(50, 5, utf8_decode('Tarea o Proyecto (F-3; F-3A) :'), 0, 0, 'L', false);
-        $pdf->setFont('Arial', '', 6);
-        $pdf->setX(37);
-        $pdf->Cell(20, 5, utf8_decode('MODIFICA'), 0, 0, 'C', true);
-        $pdf->setX(59);
-        $pdf->Cell(10, 5, utf8_decode('CÓDIGO'), 0, 0, 'C', false);
-        $pdf->setX(70);
-        $tp_de = DB::table('rl_operaciones')
-            ->where('id', '=', $mot->tarea_proyecto_de)
-            ->first();
-        $pdf->Cell(10, 5, utf8_decode($mot->area_estrategica_de . '.' . $og_de->codigo . '.' . $tp_de->tipo_operacion_id), 1, 0, 'C', false);
-        $pdf->setX(83);
-        $pdf->setFont('Arial', '', 5);
-        $pdf->multiCell(87, 3, utf8_decode($tp_de->descripcion), 1, 0, 0, 'L', false);
-        $pdf->setFont('Arial', '', 6);
-        $pdf->setXY(172, 52);
-        $pdf->Cell(10, 5, utf8_decode('IMPORTE:'), 0, 0, 'C', false);
-        $pdf->setX(184);
-        $pdf->Cell(20, 5, utf8_decode($mot->tp_de_importe . ' bs'), 1, 0, 'C', false);
-        $pdf->setX(77);
-
-        // F-3 F-3A
-        $pdf->setY(60);
-        $pdf->setFont('Arial', 'B', 6);
-        $pdf->setX(5);
-        $pdf->Cell(50, 5, utf8_decode('Tarea o Proyecto (F-3; F-3A) :'), 0, 0, 'L', false);
-        $pdf->setFont('Arial', '', 6);
-        $pdf->setX(37);
-        $pdf->Cell(20, 5, utf8_decode('INCREMENTA'), 0, 0, 'C', true);
-        $pdf->setX(59);
-        $pdf->Cell(10, 5, utf8_decode('CÓDIGO'), 0, 0, 'C', false);
-        $pdf->setX(70);
-        $tp_a = DB::table('rl_operaciones')
-            ->where('id', '=', $mot->tarea_proyecto_a)
-            ->first();
-        $pdf->Cell(10, 5, utf8_decode($mot->area_estrategica_a . '.' . $og_a->codigo . '.' . $tp_a->tipo_operacion_id), 1, 0, 'C', false);
-        $pdf->setX(83);
-        $pdf->setFont('Arial', '', 5);
-        $pdf->MultiCell(87, 3, utf8_decode($tp_a->descripcion), 1, 0, 0, 'L', false);
-        $pdf->setFont('Arial', '', 6);
-        $pdf->setXY(172, 60);
-        $pdf->Cell(10, 5, utf8_decode('IMPORTE:'), 0, 0, 'C', false);
-        $pdf->setX(184);
-        $pdf->Cell(20, 5, utf8_decode($mot->tp_a_importe . ' bs'), 1, 0, 'C', false);
-        $pdf->setX(77);
-
-        // Linea separadora
+        $altura += 8;
         $pdf->SetLineWidth(0.25);
-        $pdf->Line(3, 68, 207, 68);
+        $pdf->Line(10, $altura, 200, $altura);
         $pdf->Ln();
 
-        $ancho           = 10;
-        $altura          = 72;
+        // F-1
+        $altura += 4;
+        $pdf->setY($altura);
+        $pdf->setFont('Arial', 'B', 7);
+        $pdf->setX(5);
+        $pdf->Cell(50, 5, utf8_decode('Area Estratégica (F-1)            :'), 0, 0, 'L', false);
+        $pdf->setFont('Arial', '', 7);
+        $pdf->setX(42);
+        $pdf->Cell(20, 5, utf8_decode('MODIFICA'), 0, 0, 'C', true);
+        $pdf->setX(64);
+        $pdf->Cell(10, 5, utf8_decode('CÓDIGO'), 0, 0, 'C', false);
+        // $pdf->SetFillColor(0, 0, 0);
+        foreach ($mot->areas_estrategicas_de() as $area) {
+            $pdf->setXY(75, $altura);
+            $pdf->Cell(8, 5, utf8_decode($area->codigo_areas_estrategicas), 1, 0, 'C', false);
+            $pdf->setX(83);
+            $pdf->Cell(87, 5, $this->ellipsis($pdf, $area->descripcion, 87), 1, 0, 'L', false);
+            $pdf->setX(172);
+            $pdf->Cell(10, 5, utf8_decode('IMPORTE:'), 0, 0, 'C', false);
+            $pdf->setX(184);
+            $pdf->Cell(20, 5, utf8_decode($mot->ae_de_importe . ' bs'), 1, 0, 'C', false);
+            $pdf->setX(77);
+            $altura += 5;
+        }
+
+        $altura += 2;
+        // F-1
+        $pdf->setY($altura);
+        $pdf->setFont('Arial', 'B', 7);
+        $pdf->setX(5);
+        $pdf->Cell(50, 5, utf8_decode('Area Estratégica (F-1)            :'), 0, 0, 'L', false);
+        $pdf->setFont('Arial', '', 7);
+        $pdf->setX(42);
+        $pdf->Cell(20, 5, utf8_decode('INCREMENTA'), 0, 0, 'C', true);
+        $pdf->setX(64);
+        $pdf->Cell(10, 5, utf8_decode('CÓDIGO'), 0, 0, 'C', false);
+
+        if (count($objetivos['areas']) > 0) {
+            foreach ($objetivos['areas'] as $area) {
+                // dd($area);
+                $pdf->setXY(75, $altura);
+                $pdf->Cell(8, 5, utf8_decode($area['codigo']), 1, 0, 'C', false);
+                $pdf->setX(83);
+                $pdf->Cell(87, 5, $this->ellipsis($pdf, $area['descripcion'], 87), 1, 0, 'L', false);
+                $pdf->setX(172);
+                $pdf->Cell(10, 5, utf8_decode('IMPORTE:'), 0, 0, 'C', false);
+                $pdf->setX(184);
+                $pdf->Cell(20, 5, utf8_decode($mot->ae_de_importe . ' bs'), 1, 0, 'C', false);
+                $pdf->setX(77);
+                $altura += 5;
+            }
+        } else {
+            $pdf->setXY(75, $altura);
+            $pdf->Cell(8, 5, '-', 1, 0, 'C', false);
+            $pdf->setX(83);
+            $pdf->Cell(87, 5, '-', 1, 0, 'L', false);
+            $pdf->setX(172);
+            $pdf->Cell(10, 5, utf8_decode('IMPORTE:'), 0, 0, 'C', false);
+            $pdf->setX(184);
+            $pdf->Cell(20, 5, '-', 1, 0, 'C', false);
+            $pdf->setX(77);
+            $altura += 5;
+        }
+
+        $altura += 2;
+        // F-2
+        $pdf->setY($altura);
+        $pdf->setFont('Arial', 'B', 7);
+        $pdf->setX(5);
+        $pdf->Cell(50, 5, utf8_decode('Objetivo de Gestión (F-2)      :'), 0, 0, 'L', false);
+        $pdf->setFont('Arial', '', 7);
+        $pdf->setX(42);
+        $pdf->Cell(20, 5, utf8_decode('MODIFICA'), 0, 0, 'C', true);
+        $pdf->setX(64);
+        $pdf->Cell(10, 5, utf8_decode('CÓDIGO'), 0, 0, 'C', false);
+        foreach ($mot->objetivos_gestion_de() as $oins) {
+            $pdf->setXY(75, $altura);
+            $pdf->Cell(8, 5, utf8_decode($oins->codigo), 1, 0, 'C', false);
+            $pdf->setX(83);
+            $pdf->setFont('Arial', '', 6);
+            $pdf->Cell(87, 5, $this->ellipsis($pdf, $oins->descripcion, 87), 1, 0, 'L', false);
+            $pdf->setFont('Arial', '', 7);
+            $pdf->setXY(172, $altura);
+            $pdf->Cell(10, 5, utf8_decode('IMPORTE:'), 0, 0, 'C', false);
+            $pdf->setX(184);
+            $pdf->Cell(20, 5, utf8_decode($mot->og_de_importe . ' bs'), 1, 0, 'C', false);
+            $pdf->setX(77);
+            $altura += 5;
+        }
+
+        $altura += 2;
+        // F-2
+        $pdf->setY($altura);
+        $pdf->setFont('Arial', 'B', 7);
+        $pdf->setX(5);
+        $pdf->Cell(50, 5, utf8_decode('Objetivo de Gestión (F-2)      :'), 0, 0, 'L', false);
+        $pdf->setFont('Arial', '', 7);
+        $pdf->setX(42);
+        $pdf->Cell(20, 5, utf8_decode('INCREMENTA'), 0, 0, 'C', true);
+        $pdf->setX(64);
+        $pdf->Cell(10, 5, utf8_decode('CÓDIGO'), 0, 0, 'C', false);
+
+        if (count($objetivos['objetivos']) > 0) {
+            foreach ($objetivos['objetivos'] as $oins) {
+                $pdf->setXY(75, $altura);
+                $pdf->Cell(8, 5, utf8_decode($oins['codigo']), 1, 0, 'C', false);
+                $pdf->setX(83);
+                $pdf->setFont('Arial', '', 6);
+                $pdf->Cell(87, 5, $this->ellipsis($pdf, $oins['descripcion'], 87), 1, 0, 'L', false);
+                $pdf->setFont('Arial', '', 7);
+                $pdf->setXY(172, $altura);
+                $pdf->Cell(10, 5, utf8_decode('IMPORTE:'), 0, 0, 'C', false);
+                $pdf->setX(184);
+                $pdf->Cell(20, 5, utf8_decode($mot->og_de_importe . ' bs'), 1, 0, 'C', false);
+                $pdf->setX(77);
+                $altura += 5;
+            }
+        } else {
+            $pdf->setXY(75, $altura);
+            $pdf->Cell(8, 5, '-', 1, 0, 'C', false);
+            $pdf->setX(83);
+            $pdf->Cell(87, 5, '-', 1, 0, 'L', false);
+            $pdf->setX(172);
+            $pdf->Cell(10, 5, utf8_decode('IMPORTE:'), 0, 0, 'C', false);
+            $pdf->setX(184);
+            $pdf->Cell(20, 5, '-', 1, 0, 'C', false);
+            $pdf->setX(77);
+            $altura += 5;
+        }
+
+        $altura += 2;
+        // F-3 F-3A
+        $pdf->setY($altura);
+        $pdf->setFont('Arial', 'B', 7);
+        $pdf->setX(5);
+        $pdf->Cell(50, 5, utf8_decode('Tarea o Proyecto (F-3; F-3A) :'), 0, 0, 'L', false);
+        $pdf->setFont('Arial', '', 7);
+        $pdf->setX(42);
+        $pdf->Cell(20, 5, utf8_decode('MODIFICA'), 0, 0, 'C', true);
+        $pdf->setX(64);
+        $pdf->Cell(10, 5, utf8_decode('CÓDIGO'), 0, 0, 'C', false);
+        foreach ($mot->tareas_proyectos_de() as $op) {
+            $pdf->setXY(75, $altura);
+            $pdf->Cell(8, 5, utf8_decode($op->id), 1, 0, 'C', false);
+            $pdf->setX(83);
+            $pdf->setFont('Arial', '', 6);
+            $pdf->Cell(87, 5, $this->ellipsis($pdf, $op->descripcion, 87), 1, 0, 'L', false);
+            $pdf->setFont('Arial', '', 7);
+            $pdf->setXY(172, $altura);
+            $pdf->Cell(10, 5, utf8_decode('IMPORTE:'), 0, 0, 'C', false);
+            $pdf->setX(184);
+            $pdf->Cell(20, 5, utf8_decode($mot->tp_de_importe . ' bs'), 1, 0, 'C', false);
+            $pdf->setX(77);
+
+            $altura += 5;
+        }
+        $altura += 2;
+        // F-3 F-3A
+        $pdf->setY($altura);
+        $pdf->setFont('Arial', 'B', 7);
+        $pdf->setX(5);
+        $pdf->Cell(50, 5, utf8_decode('Tarea o Proyecto (F-3; F-3A) :'), 0, 0, 'L', false);
+        $pdf->setFont('Arial', '', 7);
+        $pdf->setX(42);
+        $pdf->Cell(20, 5, utf8_decode('INCREMENTA'), 0, 0, 'C', true);
+        $pdf->setX(64);
+        $pdf->Cell(10, 5, utf8_decode('CÓDIGO'), 0, 0, 'C', false);
+
+        if (count($objetivos['operaciones']) > 0) {
+            foreach ($objetivos['operaciones'] as $op) {
+                $pdf->setXY(75, $altura);
+                $pdf->Cell(8, 5, utf8_decode($op['id']), 1, 0, 'C', false);
+                $pdf->setX(83);
+                $pdf->setFont('Arial', '', 6);
+                $pdf->Cell(87, 5, $this->ellipsis($pdf, $op['descripcion'], 87), 1, 0, 'L', false);
+                $pdf->setFont('Arial', '', 7);
+                $pdf->setXY(172, $altura);
+                $pdf->Cell(10, 5, utf8_decode('IMPORTE:'), 0, 0, 'C', false);
+                $pdf->setX(184);
+                $pdf->Cell(20, 5, utf8_decode($mot->tp_de_importe . ' bs'), 1, 0, 'C', false);
+                $pdf->setX(77);
+
+                $altura += 5;
+            }
+        } else {
+            $pdf->setXY(75, $altura);
+            $pdf->Cell(8, 5, '-', 1, 0, 'C', false);
+            $pdf->setX(83);
+            $pdf->Cell(87, 5, '-', 1, 0, 'L', false);
+            $pdf->setX(172);
+            $pdf->Cell(10, 5, utf8_decode('IMPORTE:'), 0, 0, 'C', false);
+            $pdf->setX(184);
+            $pdf->Cell(20, 5, '-', 1, 0, 'C', false);
+            $pdf->setX(77);
+            $altura += 5;
+        }
+        $altura += 4;
+        // Linea separadora
+        $pdf->SetLineWidth(0.25);
+        $pdf->Line(3, $altura, 207, $altura);
+        $pdf->Ln();
+
+        $ancho = 10;
+        $altura += 3;
+        $pdf->setY($altura);
+        $pdf->setFont('Arial', 'B', 7);
+        $pdf->setX(10);
+        $pdf->Cell(50, 3, utf8_decode('Fuente de Financiamiento :'), 0, 0, 'L', false);
+        // $pdf->setX(62);
+        // $pdf->Cell(8, 3, utf8_decode('1'), 1, 0, 'C', false);
+        // $pdf->setX(70);
+        // $pdf->Cell(5, 3, utf8_decode('1'), 1, 0, 'C', false);
+
         $financiamientos = MotPP::where('id_mot', '=', $mot->id_mot)->get();
+        $altura          = $altura + 5;
         //Organismos financiadores
         foreach ($financiamientos as $fin) {
             if ($fin->accion == 'DE') {
                 // Fuentes de financiamiento
                 $pdf->setY($altura);
-                $pdf->setFont('Arial', 'B', 6);
+                $pdf->setFont('Arial', 'B', 7);
                 $pdf->setX(10);
-                $pdf->Cell(50, 3, utf8_decode('Fuente de Financiamiento :'), 0, 0, 'L', false);
+                $pdf->Cell(50, 5, utf8_decode('Organismo Financiador     :'), 0, 0, 'L', false);
+                $pdf->setFont('Arial', '', 7);
                 $pdf->setX(62);
-                $pdf->Cell(8, 3, utf8_decode('1'), 1, 0, 'C', false);
+                $pdf->Cell(8, 5, utf8_decode(substr($fin->of->codigo, 0, 1)), 1, 0, 'C', false);
                 $pdf->setX(70);
-                $pdf->Cell(5, 3, utf8_decode('1'), 1, 0, 'C', false);
-                $altura = $altura + 5;
-
-                $pdf->setY($altura);
-                $pdf->setFont('Arial', 'B', 6);
-                $pdf->setX(10);
-                $pdf->Cell(50, 3, utf8_decode('Organismo Financiador   :'), 0, 0, 'L', false);
-                $pdf->setFont('Arial', '', 6);
-                $pdf->setX(62);
-                $pdf->Cell(8, 3, utf8_decode(substr($fin->of->codigo, 0, 1)), 1, 0, 'C', false);
-                $pdf->setX(70);
-                $pdf->Cell(5, 3, utf8_decode(substr($fin->of->codigo, 1, 1)), 1, 0, 'C', false);
+                $pdf->Cell(5, 5, utf8_decode(substr($fin->of->codigo, 1, 1)), 1, 0, 'C', false);
                 $pdf->setX(75);
-                $pdf->Cell(7, 3, utf8_decode(substr($fin->of->codigo, 2, 1)), 1, 0, 'C', false);
+                $pdf->Cell(7, 5, utf8_decode(substr($fin->of->codigo, 2, 1)), 1, 0, 'C', false);
                 $pdf->setX(88);
-                $pdf->Cell(60, 3, utf8_decode($fin->of->descripcion), 1, 0, 'C', false);
-                $altura = $altura + 3;
+                $pdf->Cell(60, 5, utf8_decode($fin->of->descripcion), 1, 0, 'C', false);
+                $altura = $altura + 5;
             } else {
-                $altura = $altura - 2;
+                $altura = $altura;
             }
-            $pdf->setXY(45, $altura);
-            $pdf->Cell(10, 3, utf8_decode($fin->accion), 0, 0, 'C', false);
+            $pdf->setXY(45, $altura - 2);
+            $pdf->Cell(10, 5, utf8_decode($fin->accion), 0, 0, 'C', false);
 
-            $altura = $altura + 4;
+            $altura = $altura + 3;
             $pdf->setY($altura);
-            $pdf->setFont('Arial', 'B', 6);
+            $pdf->setFont('Arial', 'B', 7);
             $pdf->setX($ancho);
-            $pdf->MultiCell(35, 3, utf8_decode('Partidas Presupuestarias y Descripción                              :'), 0, 'L', false);
+            $pdf->MultiCell(35, 5, utf8_decode('Partidas Presupuestarias y Descripción                         :'), 0, 'L', false);
 
             $movimientos = MotMov::where('id_mot_pp', '=', $fin->id_mot_pp)->get();
-            $total       = 0;
-            foreach ($movimientos as $mov) {
-                $altura++;
-                // Lista
-                $pdf->setY($altura);
-                $pdf->setFont('Arial', '', 6);
-                $pdf->setX(62);
-                $pdf->Cell(25, 3, utf8_decode($mov->partida_codigo), 1, 0, 'C', false);
-                $pdf->setX(92);
+            $pdf->setFont('Arial', '', 7);
+            $total = 0;
+
+            $movimientosGrupo = [];
+            $partidaGrupo     = '';
+            foreach ($movimientos as $key => $mov) {
                 $accion = '5';
                 for ($i = 3; $i < 5; $i++) {
                     if (substr($mov->partida_codigo, $i, 1) == 0) {
@@ -264,26 +339,52 @@ class ControladorReportePdf extends Controller
                 switch ($accion) {
                     case '3':
                         $partida = DB::table('rl_clasificador_tercero')->where('codigo', '=', $mov->partida_codigo)->first();
+                        $detalle = DB::table('rl_detalleClasiTercero')->where('id', '=', $mov->id_detalle)->first();
                         break;
                     case '4':
                         $partida = DB::table('rl_clasificador_cuarto')->where('codigo', '=', $mov->partida_codigo)->first();
+                        $detalle = DB::table('rl_detalleClasiCuarto')->where('id', '=', $mov->id_detalle)->first();
                         break;
                     case '5':
                         $partida = DB::table('rl_clasificador_quinto')->where('codigo', '=', $mov->partida_codigo)->first();
+                        $detalle = DB::table('rl_detalleClasiQuinto')->where('id', '=', $mov->id_detalle)->first();
                         break;
                 }
-                $pdf->Cell(65, 3, utf8_decode($partida->titulo), 1, 0, 'L', false);
-                $pdf->setX(157);
-                $pdf->Cell(20, 3, utf8_decode($mov->partida_monto . ' bs'), 1, 0, 'C', false);
-                $altura = $altura + 5;
-                $total  = $total + $mov->partida_monto;
+
+                if ($partidaGrupo != $mov->partida_codigo) {
+                    $partidaGrupo = $mov->partida_codigo;
+
+                    $movimientosGrupo[$partidaGrupo] = [
+                        'titulo' => $partida->titulo,
+                        'monto'  => $mov->partida_monto,
+                    ];
+                } else {
+                    $movimientosGrupo[$partidaGrupo]['monto'] += $mov->partida_monto;
+                }
             }
+
+            $total = 0;
+            foreach ($movimientosGrupo as $key => $mov) {
+                $pdf->setY($altura);
+                $pdf->setX(62);
+                $pdf->Cell(25, 5, utf8_decode($key), 1, 0, 'C', false);
+                $pdf->setX(87);
+
+                $pdf->Cell(70, 5, utf8_decode($movimientosGrupo[$key]['titulo']), 1, 0, 'L', false);
+                $pdf->setX(157);
+                $pdf->Cell(25, 5, utf8_decode(con_separador_comas($movimientosGrupo[$key]['monto']) . ' bs'), 1, 0, 'C', false);
+                $altura = $altura + 5;
+
+                $total = $total + $movimientosGrupo[$key]['monto'];
+            }
+
             // Total 1 1
-            $altura = $altura - 2;
-            $pdf->setXY(92, $altura);
-            $pdf->Cell(65, 3, utf8_decode('TOTAL'), 1, 0, 'R', true);
+            $altura = $altura;
+            $pdf->setXY(62, $altura);
+            $pdf->setFont('Arial', 'B', 7);
+            $pdf->Cell(95, 5, utf8_decode('TOTAL'), 1, 0, 'R', true);
             $pdf->setX(157);
-            $pdf->Cell(20, 3, utf8_decode($total . ' bs'), 1, 0, 'C', true);
+            $pdf->Cell(25, 5, utf8_decode(con_separador_comas($total) . ' bs'), 1, 0, 'C', true);
             $altura = $altura + 5;
 
             if ($fin->accion == 'A') {
@@ -292,14 +393,14 @@ class ControladorReportePdf extends Controller
         }
 
         // Respaldo tramite
-        $pdf->setXY(5, 240);
-        $pdf->Cell(30, 5, utf8_decode('Respaldo de Tramite             :'), 0, 0, 'L', false);
+        $pdf->setXY(5, -60);
+        $pdf->Cell(30, 5, utf8_decode('Respaldo de Tramite           :'), 0, 0, 'L', false);
         $pdf->setX(40);
         $pdf->Cell(120, 5, utf8_decode($mot->respaldo_tramite), 1, 0, 'L', false);
 
         // Fecha
-        $pdf->setXY(5, 245);
-        $pdf->Cell(30, 5, utf8_decode('Fecha de Inicio de Tramite    :'), 0, 0, 'L', false);
+        $pdf->setXY(5, -55);
+        $pdf->Cell(30, 5, utf8_decode('Fecha de Inicio de Tramite :'), 0, 0, 'L', false);
         $pdf->setX(40);
         $pdf->Cell(20, 5, utf8_decode('Dia'), 1, 0, 'C', false);
         $pdf->setX(60);
@@ -307,48 +408,48 @@ class ControladorReportePdf extends Controller
         $pdf->setX(70);
         $pdf->Cell(10, 5, utf8_decode('Año'), 1, 0, 'C', false);
 
-        $pdf->setY(250);
+        $pdf->setY(-50);
         $pdf->setX(40);
         $pdf->MultiCell(40, 8, utf8_decode($mot->fecha_tramite), 1, 'C', false);
 
         // Linea separadora
         $pdf->SetLineWidth(0.25);
-        $pdf->Line(3, 265, 110, 265);
+        $pdf->Line(3, 245, 110, 245);
         $pdf->Ln();
 
         $usuario = User::where('id', '=', $mot->id_usuario)->first();
 
         // Unidad
-        $pdf->setXY(5, 270);
-        $pdf->Cell(30, 5, utf8_decode('Unidad solicitante                  :'), 0, 0, 'L', false);
+        $pdf->setXY(10, -26);
+        $pdf->Cell(30, 5, utf8_decode('Unidad solicitante    :'), 0, 0, 'L', false);
         $pdf->setX(40);
         $pdf->Cell(60, 5, utf8_decode('Lic. ' . $usuario->nombre . ' ' . $usuario->apellido), 1, 0, 'C', false);
 
         $pdf->setFont('Arial', '', 5);
-        $pdf->setXY(40, 275);
+        $pdf->setXY(40, -21);
         $pdf->Cell(60, 5, utf8_decode($usuario->unidad_carrera->nombre_completo), 1, 0, 'C', false);
 
         // Firmas
         $pdf->SetLineWidth(0.25);
-        $pdf->Line(125, 260, 155, 260);
+        $pdf->Line(125, 240, 155, 240);
         $pdf->Ln();
-        $pdf->setXY(125, 261);
+        $pdf->setXY(125, -38);
         $pdf->MultiCell(30, 3, utf8_decode('Firma y Sello'), 0, 'C', false);
-        $pdf->setXY(125, 263);
+        $pdf->setXY(125, -35);
         $pdf->MultiCell(30, 3, utf8_decode('Técnico de Planificación'), 0, 'C', false);
 
         $pdf->SetLineWidth(0.25);
-        $pdf->Line(165, 260, 195, 260);
+        $pdf->Line(165, 240, 195, 240);
         $pdf->Ln();
-        $pdf->setXY(165, 261);
+        $pdf->setXY(165, -38);
         $pdf->MultiCell(30, 3, utf8_decode('Firma y Sello'), 0, 'C', false);
-        $pdf->setXY(165, 263);
+        $pdf->setXY(165, -35);
         $pdf->MultiCell(30, 3, utf8_decode('Jefe de Planificación'), 0, 'C', false);
 
         $pdf->SetLineWidth(0.25);
-        $pdf->Line(145, 280, 175, 280);
+        $pdf->Line(145, 260, 175, 260);
         $pdf->Ln();
-        $pdf->setXY(145, 281);
+        $pdf->setXY(145, -18);
         $pdf->MultiCell(30, 3, utf8_decode('Firma y Sello'), 0, 'C', false);
         // $pdf->setXY(145, 284);
         // $pdf->MultiCell(30, 3, utf8_decode('Jefe de Planificación'), 0, 'C', false);
@@ -357,6 +458,384 @@ class ControladorReportePdf extends Controller
         $pdf->setFont('Arial', '', 7);
         $pdf->setXY(10, -7);
         $pdf->Cell(200, 3, utf8_decode('NOTA: La Unidad de Presupuestos remitirá una copia de la Modificación Presupuestaria realizada en el SIGEP a la Unidad de Planificación.'), 0, 0, 'L', false);
+
+        $nombreArchivo = 'MotN' . $mot->nro . '-' . date('Y-m-d_H-i-s') . '.pdf';
+
+        $pdf->Output('I', $nombreArchivo);
+        exit;
+        // $pdfContent = $pdf->Output($nombreArchivo, 'I');
+
+        // return response($pdfContent, 200)
+        //     ->header('Content-Type', 'application/pdf')
+        //     ->header('Content-Disposition', 'inline; filename=nombre_del_pdf.pdf'); // Mostrar en línea en el navegador
+    }
+
+    public function formulacionPdfMot(Request $req, $id_mot)
+    {
+        $mot       = Mot::where('id_mot', '=', $id_mot)->first();
+        $objetivos = $this->getObjetivos($mot->id_mot);
+        // dd($objetivos);
+
+        $pdf = new Fpdf('P', 'mm', 'Letter');
+        // $pdf = new Fpdf();
+        $pdf->SetMargins(10, 10, 10);
+        $pdf->SetAutoPageBreak(false);
+
+        $pdf->AddPage();
+
+        $altura = 2;
+        $pdf->SetXY(3, $altura);
+        $pdf->SetFont('Arial', 'B', 9);
+        $pdf->Cell(20, 5, utf8_decode('IMP ' . fecha_literal(date('Y-m-d'), 4)), 0, 0, 'L', false);
+
+        $pdf->Image('logos/encabezado.jpg', 41, 8, 135);
+        $pdf->Image('logos/logo_upea.jpg', 185, 5, 25);
+
+        // Titulo
+        $altura += 27;
+        $pdf->setXY(60, $altura);
+        $pdf->SetFont('Arial', 'BU', 10);
+        $pdf->MultiCell(100, 5, utf8_decode('FORMULARIO DE INICIO DE TRAMITE CONTRATACIÓN DE BIENES Y/O SERVICIOS Y ACTIVOS FIJOS'), 0, 'C', false);
+        $pdf->SetFont('Arial', 'B', 12);
+        $altura += 1;
+        $pdf->setXY(166, $altura + 15);
+        $pdf->Cell(20, 5, utf8_decode('MOT N°:'), 0, 0, 'L', false);
+        $pdf->setXY(185, $altura + 12);
+        $pdf->Cell(20, 10, formatear_con_ceros($mot->nro), 1, 0, 'C', false);
+
+        // Color rojito para Cell
+        $pdf->SetFillColor(217, 149, 148);
+
+        $usuario = User::where('id', '=', $mot->id_usuario)->first();
+
+        // F-1
+        $altura += 12;
+        $pdf->setY($altura);
+        $pdf->setFont('Arial', 'B', 8);
+        $pdf->setX(10);
+        $pdf->Cell(55, 5, utf8_decode('Unidad Solicitante :'), 0, 0, 'L', false);
+        $pdf->setFont('Arial', '', 7);
+        $pdf->setY($altura);
+        $altura += 7;
+        $pdf->setX(39);
+        $pdf->Cell(125, 5, utf8_decode('Lic. ' . $usuario->nombre . ' ' . $usuario->apellido), 1, 0, 'L', false);
+        $pdf->setXY(39, $altura);
+        $pdf->Cell(125, 5, utf8_decode('Area Carrera: ' . $usuario->unidad_carrera->nombre_completo), 1, 0, 'L', false);
+
+        $altura += 8;
+        $pdf->SetLineWidth(0.25);
+        $pdf->Line(10, $altura, 200, $altura);
+        $pdf->Ln();
+
+        // F-1
+        $altura += 4;
+        $pdf->setY($altura);
+        $pdf->setFont('Arial', 'B', 7);
+        $pdf->setX(5);
+        $pdf->Cell(50, 5, utf8_decode('Area Estratégica (F-1)            :'), 0, 0, 'L', false);
+        $pdf->setFont('Arial', '', 7);
+        $pdf->setX(42);
+        $pdf->Cell(20, 5, utf8_decode('MODIFICA'), 0, 0, 'C', true);
+        $pdf->setX(64);
+        $pdf->Cell(10, 5, utf8_decode('CÓDIGO'), 0, 0, 'C', false);
+        // $pdf->SetFillColor(0, 0, 0);
+        foreach ($mot->areas_estrategicas_de() as $area) {
+            $pdf->setXY(75, $altura);
+            $pdf->Cell(8, 5, utf8_decode($area->codigo_areas_estrategicas), 1, 0, 'C', false);
+            $pdf->setX(83);
+            $pdf->Cell(87, 5, $this->ellipsis($pdf, $area->descripcion, 87), 1, 0, 'L', false);
+            $pdf->setX(172);
+            $pdf->Cell(10, 5, utf8_decode('IMPORTE:'), 0, 0, 'C', false);
+            $pdf->setX(184);
+            $pdf->Cell(20, 5, utf8_decode($mot->ae_de_importe . ' bs'), 1, 0, 'C', false);
+            $pdf->setX(77);
+            $altura += 5;
+        }
+
+        $altura += 2;
+        // F-1
+        $pdf->setY($altura);
+        $pdf->setFont('Arial', 'B', 7);
+        $pdf->setX(5);
+        $pdf->Cell(50, 5, utf8_decode('Area Estratégica (F-1)            :'), 0, 0, 'L', false);
+        $pdf->setFont('Arial', '', 7);
+        $pdf->setX(42);
+        $pdf->Cell(20, 5, utf8_decode('INCREMENTA'), 0, 0, 'C', true);
+        $pdf->setX(64);
+        $pdf->Cell(10, 5, utf8_decode('CÓDIGO'), 0, 0, 'C', false);
+
+        if (count($objetivos['areas']) > 0) {
+            foreach ($objetivos['areas'] as $area) {
+                // dd($area);
+                $pdf->setXY(75, $altura);
+                $pdf->Cell(8, 5, utf8_decode($area['codigo']), 1, 0, 'C', false);
+                $pdf->setX(83);
+                $pdf->Cell(87, 5, $this->ellipsis($pdf, $area['descripcion'], 87), 1, 0, 'L', false);
+                $pdf->setX(172);
+                $pdf->Cell(10, 5, utf8_decode('IMPORTE:'), 0, 0, 'C', false);
+                $pdf->setX(184);
+                $pdf->Cell(20, 5, utf8_decode($mot->ae_de_importe . ' bs'), 1, 0, 'C', false);
+                $pdf->setX(77);
+                $altura += 5;
+            }
+        } else {
+            $pdf->setXY(75, $altura);
+            $pdf->Cell(8, 5, '-', 1, 0, 'C', false);
+            $pdf->setX(83);
+            $pdf->Cell(87, 5, '-', 1, 0, 'L', false);
+            $pdf->setX(172);
+            $pdf->Cell(10, 5, utf8_decode('IMPORTE:'), 0, 0, 'C', false);
+            $pdf->setX(184);
+            $pdf->Cell(20, 5, '-', 1, 0, 'C', false);
+            $pdf->setX(77);
+            $altura += 5;
+        }
+
+        $altura += 2;
+        // F-2
+        $pdf->setY($altura);
+        $pdf->setFont('Arial', 'B', 7);
+        $pdf->setX(5);
+        $pdf->Cell(50, 5, utf8_decode('Objetivo de Gestión (F-2)      :'), 0, 0, 'L', false);
+        $pdf->setFont('Arial', '', 7);
+        $pdf->setX(42);
+        $pdf->Cell(20, 5, utf8_decode('MODIFICA'), 0, 0, 'C', true);
+        $pdf->setX(64);
+        $pdf->Cell(10, 5, utf8_decode('CÓDIGO'), 0, 0, 'C', false);
+        foreach ($mot->objetivos_gestion_de() as $oins) {
+            $pdf->setXY(75, $altura);
+            $pdf->Cell(8, 5, utf8_decode($oins->codigo), 1, 0, 'C', false);
+            $pdf->setX(83);
+            $pdf->setFont('Arial', '', 6);
+            $pdf->Cell(87, 5, $this->ellipsis($pdf, $oins->descripcion, 87), 1, 0, 'L', false);
+            $pdf->setFont('Arial', '', 7);
+            $pdf->setXY(172, $altura);
+            $pdf->Cell(10, 5, utf8_decode('IMPORTE:'), 0, 0, 'C', false);
+            $pdf->setX(184);
+            $pdf->Cell(20, 5, utf8_decode($mot->og_de_importe . ' bs'), 1, 0, 'C', false);
+            $pdf->setX(77);
+            $altura += 5;
+        }
+
+        $altura += 2;
+        // F-2
+        $pdf->setY($altura);
+        $pdf->setFont('Arial', 'B', 7);
+        $pdf->setX(5);
+        $pdf->Cell(50, 5, utf8_decode('Objetivo de Gestión (F-2)      :'), 0, 0, 'L', false);
+        $pdf->setFont('Arial', '', 7);
+        $pdf->setX(42);
+        $pdf->Cell(20, 5, utf8_decode('INCREMENTA'), 0, 0, 'C', true);
+        $pdf->setX(64);
+        $pdf->Cell(10, 5, utf8_decode('CÓDIGO'), 0, 0, 'C', false);
+
+        if (count($objetivos['objetivos']) > 0) {
+            foreach ($objetivos['objetivos'] as $oins) {
+                $pdf->setXY(75, $altura);
+                $pdf->Cell(8, 5, utf8_decode($oins['codigo']), 1, 0, 'C', false);
+                $pdf->setX(83);
+                $pdf->setFont('Arial', '', 6);
+                $pdf->Cell(87, 5, $this->ellipsis($pdf, $oins['descripcion'], 87), 1, 0, 'L', false);
+                $pdf->setFont('Arial', '', 7);
+                $pdf->setXY(172, $altura);
+                $pdf->Cell(10, 5, utf8_decode('IMPORTE:'), 0, 0, 'C', false);
+                $pdf->setX(184);
+                $pdf->Cell(20, 5, utf8_decode($mot->og_de_importe . ' bs'), 1, 0, 'C', false);
+                $pdf->setX(77);
+                $altura += 5;
+            }
+        } else {
+            $pdf->setXY(75, $altura);
+            $pdf->Cell(8, 5, '-', 1, 0, 'C', false);
+            $pdf->setX(83);
+            $pdf->Cell(87, 5, '-', 1, 0, 'L', false);
+            $pdf->setX(172);
+            $pdf->Cell(10, 5, utf8_decode('IMPORTE:'), 0, 0, 'C', false);
+            $pdf->setX(184);
+            $pdf->Cell(20, 5, '-', 1, 0, 'C', false);
+            $pdf->setX(77);
+            $altura += 5;
+        }
+
+        $altura += 2;
+        // F-3 F-3A
+        $pdf->setY($altura);
+        $pdf->setFont('Arial', 'B', 7);
+        $pdf->setX(5);
+        $pdf->Cell(50, 5, utf8_decode('Tarea o Proyecto (F-3; F-3A) :'), 0, 0, 'L', false);
+        $pdf->setFont('Arial', '', 7);
+        $pdf->setX(42);
+        $pdf->Cell(20, 5, utf8_decode('MODIFICA'), 0, 0, 'C', true);
+        $pdf->setX(64);
+        $pdf->Cell(10, 5, utf8_decode('CÓDIGO'), 0, 0, 'C', false);
+        foreach ($mot->tareas_proyectos_de() as $op) {
+            $pdf->setXY(75, $altura);
+            $pdf->Cell(8, 5, utf8_decode($op->id), 1, 0, 'C', false);
+            $pdf->setX(83);
+            $pdf->setFont('Arial', '', 6);
+            $pdf->Cell(87, 5, $this->ellipsis($pdf, $op->descripcion, 87), 1, 0, 'L', false);
+            $pdf->setFont('Arial', '', 7);
+            $pdf->setXY(172, $altura);
+            $pdf->Cell(10, 5, utf8_decode('IMPORTE:'), 0, 0, 'C', false);
+            $pdf->setX(184);
+            $pdf->Cell(20, 5, utf8_decode($mot->tp_de_importe . ' bs'), 1, 0, 'C', false);
+            $pdf->setX(77);
+
+            $altura += 5;
+        }
+        $altura += 2;
+        // F-3 F-3A
+        $pdf->setY($altura);
+        $pdf->setFont('Arial', 'B', 7);
+        $pdf->setX(5);
+        $pdf->Cell(50, 5, utf8_decode('Tarea o Proyecto (F-3; F-3A) :'), 0, 0, 'L', false);
+        $pdf->setFont('Arial', '', 7);
+        $pdf->setX(42);
+        $pdf->Cell(20, 5, utf8_decode('INCREMENTA'), 0, 0, 'C', true);
+        $pdf->setX(64);
+        $pdf->Cell(10, 5, utf8_decode('CÓDIGO'), 0, 0, 'C', false);
+
+        if (count($objetivos['operaciones']) > 0) {
+            foreach ($objetivos['operaciones'] as $op) {
+                $pdf->setXY(75, $altura);
+                $pdf->Cell(8, 5, utf8_decode($op['id']), 1, 0, 'C', false);
+                $pdf->setX(83);
+                $pdf->setFont('Arial', '', 6);
+                $pdf->Cell(87, 5, $this->ellipsis($pdf, $op['descripcion'], 87), 1, 0, 'L', false);
+                $pdf->setFont('Arial', '', 7);
+                $pdf->setXY(172, $altura);
+                $pdf->Cell(10, 5, utf8_decode('IMPORTE:'), 0, 0, 'C', false);
+                $pdf->setX(184);
+                $pdf->Cell(20, 5, utf8_decode($mot->tp_de_importe . ' bs'), 1, 0, 'C', false);
+                $pdf->setX(77);
+
+                $altura += 5;
+            }
+        } else {
+            $pdf->setXY(75, $altura);
+            $pdf->Cell(8, 5, '-', 1, 0, 'C', false);
+            $pdf->setX(83);
+            $pdf->Cell(87, 5, '-', 1, 0, 'L', false);
+            $pdf->setX(172);
+            $pdf->Cell(10, 5, utf8_decode('IMPORTE:'), 0, 0, 'C', false);
+            $pdf->setX(184);
+            $pdf->Cell(20, 5, '-', 1, 0, 'C', false);
+            $pdf->setX(77);
+            $altura += 5;
+        }
+        $altura += 4;
+        // Linea separadora
+        $pdf->SetLineWidth(0.25);
+        $pdf->Line(3, $altura, 207, $altura);
+        $pdf->Ln();
+
+        $ancho = 10;
+        $altura += 3;
+        $pdf->setY($altura);
+        $pdf->setFont('Arial', 'B', 7);
+        $pdf->setX(10);
+        $pdf->Cell(50, 3, utf8_decode('Fuente de Financiamiento :'), 0, 0, 'L', false);
+        // $pdf->setX(62);
+        // $pdf->Cell(8, 3, utf8_decode('1'), 1, 0, 'C', false);
+        // $pdf->setX(70);
+        // $pdf->Cell(5, 3, utf8_decode('1'), 1, 0, 'C', false);
+
+        $financiamientos = MotPP::where('id_mot', '=', $mot->id_mot)->get();
+        $altura          = $altura + 5;
+        //Organismos financiadores
+        foreach ($financiamientos as $fin) {
+            if ($fin->accion == 'DE') {
+                // Fuentes de financiamiento
+                $pdf->setY($altura);
+                $pdf->setFont('Arial', 'B', 7);
+                $pdf->setX(10);
+                $pdf->Cell(50, 5, utf8_decode('Organismo Financiador     :'), 0, 0, 'L', false);
+                $pdf->setFont('Arial', '', 7);
+                $pdf->setX(62);
+                $pdf->Cell(8, 5, utf8_decode(substr($fin->of->codigo, 0, 1)), 1, 0, 'C', false);
+                $pdf->setX(70);
+                $pdf->Cell(5, 5, utf8_decode(substr($fin->of->codigo, 1, 1)), 1, 0, 'C', false);
+                $pdf->setX(75);
+                $pdf->Cell(7, 5, utf8_decode(substr($fin->of->codigo, 2, 1)), 1, 0, 'C', false);
+                $pdf->setX(88);
+                $pdf->Cell(60, 5, utf8_decode($fin->of->descripcion), 1, 0, 'C', false);
+                $altura = $altura + 5;
+            } else {
+                $altura = $altura;
+            }
+            $pdf->setXY(45, $altura - 2);
+            $pdf->Cell(10, 5, utf8_decode($fin->accion), 0, 0, 'C', false);
+
+            $altura = $altura + 3;
+            $pdf->setY($altura);
+            $pdf->setFont('Arial', 'B', 7);
+            $pdf->setX($ancho);
+            $pdf->MultiCell(35, 5, utf8_decode('Partidas Presupuestarias y Descripción                         :'), 0, 'L', false);
+
+            $movimientos = MotMov::where('id_mot_pp', '=', $fin->id_mot_pp)->get();
+            $total       = 0;
+            foreach ($movimientos as $mov) {
+                $pdf->setY($altura);
+                $pdf->setFont('Arial', '', 7);
+                $pdf->setXY(62, $altura + 2);
+                $pdf->Cell(25, 5, utf8_decode($mov->partida_codigo), 1, 0, 'C', false);
+                $pdf->setX(87);
+                $accion = '5';
+                for ($i = 3; $i < 5; $i++) {
+                    if (substr($mov->partida_codigo, $i, 1) == 0) {
+                        $accion = $i;
+                        break;
+                    }
+                }
+                $partida = null;
+                switch ($accion) {
+                    case '3':
+                        $partida = DB::table('rl_clasificador_tercero')->where('codigo', '=', $mov->partida_codigo)->first();
+                        $detalle = DB::table('rl_detalleClasiTercero')->where('id', '=', $mov->id_detalle)->first();
+                        break;
+                    case '4':
+                        $partida = DB::table('rl_clasificador_cuarto')->where('codigo', '=', $mov->partida_codigo)->first();
+                        $detalle = DB::table('rl_detalleClasiCuarto')->where('id', '=', $mov->id_detalle)->first();
+                        break;
+                    case '5':
+                        $partida = DB::table('rl_clasificador_quinto')->where('codigo', '=', $mov->partida_codigo)->first();
+                        $detalle = DB::table('rl_detalleClasiQuinto')->where('id', '=', $mov->id_detalle)->first();
+                        break;
+                }
+                $pdf->Cell(70, 5, utf8_decode($detalle->titulo), 1, 0, 'L', false);
+                $pdf->setX(157);
+                $pdf->Cell(20, 5, utf8_decode(con_separador_comas($mov->partida_monto) . ' bs'), 1, 0, 'C', false);
+                $altura = $altura + 5;
+                $total  = $total + $mov->partida_monto;
+            }
+            // Total 1 1
+            $altura = $altura + 2;
+            $pdf->setXY(62, $altura);
+            $pdf->setFont('Arial', 'B', 7);
+            $pdf->Cell(95, 5, utf8_decode('TOTAL'), 1, 0, 'R', true);
+            $pdf->setX(157);
+            $pdf->Cell(20, 5, utf8_decode(con_separador_comas($total) . ' bs'), 1, 0, 'C', true);
+            $altura = $altura + 5;
+
+            if ($fin->accion == 'A') {
+                $altura = $altura + 3;
+            }
+        }
+
+        // Fecha
+        $pdf->setFont('Arial', 'B', 8);
+        $pdf->setXY(30, -20);
+        $pdf->Cell(30, 5, utf8_decode('Fecha de Tramite    :'), 0, 0, 'L', false);
+        $pdf->setX(70);
+        $pdf->Cell(15, 5, utf8_decode('Dia'), 1, 0, 'C', false);
+        $pdf->setX(85);
+        $pdf->Cell(15, 5, utf8_decode('Mes'), 1, 0, 'C', false);
+        $pdf->setX(100);
+        $pdf->Cell(15, 5, utf8_decode('Año'), 1, 0, 'C', false);
+
+        $pdf->setY(-15);
+        $pdf->setX(70);
+        $pdf->MultiCell(45, 5, utf8_decode($mot->created_at), 1, 'C', false);
 
         $nombreArchivo = 'MotN' . $mot->nro . '-' . date('Y-m-d_H-i-s') . '.pdf';
 
@@ -438,7 +917,7 @@ class ControladorReportePdf extends Controller
             $pdf->setX(75);
             $pdf->Cell(10, 5, utf8_decode($area->codigo_areas_estrategicas), 1, 0, 'C', false);
             $pdf->setX(85);
-            $pdf->Cell(100, 5, utf8_decode(strtoupper($area->descripcion)), 1, 0, 'L', false);
+            $pdf->Cell(100, 5, $this->ellipsis($pdf, $area->descripcion, 100), 1, 0, 'L', false);
             $pdf->setX(172);
 
             $altura += 5;
@@ -458,7 +937,7 @@ class ControladorReportePdf extends Controller
             $pdf->setX(75);
             $pdf->Cell(10, 5, utf8_decode($oins->codigo), 1, 0, 'C', false);
             $pdf->setX(85);
-            $pdf->Cell(100, 5, utf8_decode($oins->descripcion), 1, 'L', false);
+            $pdf->Cell(100, 5, $this->ellipsis($pdf, $oins->descripcion, 100), 1, 'L', false);
             $pdf->setX(172);
 
             $altura += 5;
@@ -608,7 +1087,6 @@ class ControladorReportePdf extends Controller
                 } else {
                     $movimientosGrupo[$partidaGrupo]['monto'] += $mov->partida_monto;
                 }
-
             }
 
             $total = 0;
@@ -618,8 +1096,8 @@ class ControladorReportePdf extends Controller
                 $pdf->Cell(25, 5, utf8_decode($key), 1, 0, 'C', false);
                 $pdf->setX(87);
 
-                $pdf->Cell(70, 5, utf8_decode($movimientosGrupo[$key]['titulo']), 1, 0, 'L', false);
-                $pdf->setX(157);
+                $pdf->Cell(80, 5, $this->ellipsis($pdf, $movimientosGrupo[$key]['titulo'], 80), 1, 0, 'L', false);
+                $pdf->setX(167);
                 $pdf->Cell(25, 5, utf8_decode(con_separador_comas($movimientosGrupo[$key]['monto']) . ' bs'), 1, 0, 'C', false);
                 $altura = $altura + 5;
 
@@ -629,10 +1107,10 @@ class ControladorReportePdf extends Controller
             // Total 2 2
             $pdf->setFont('Arial', 'B', 8);
             $pdf->setXY(62, $altura);
-            $pdf->Cell(95, 5, utf8_decode('TOTAL'), 1, 0, 'R', true);
-            $pdf->setX(157);
+            $pdf->Cell(105, 5, utf8_decode('TOTAL'), 1, 0, 'R', true);
+            $pdf->setX(167);
             $pdf->Cell(25, 5, utf8_decode(con_separador_comas($total) . ' bs'), 1, 0, 'C', true);
-            $altura = $altura + 5;
+            $altura = $altura + 10;
         }
 
         $pdf->setFont('Arial', 'B', 8);
@@ -813,7 +1291,7 @@ class ControladorReportePdf extends Controller
             $pdf->setX(75);
             $pdf->Cell(10, 5, utf8_decode($area->codigo_areas_estrategicas), 1, 0, 'C', false);
             $pdf->setX(85);
-            $pdf->Cell(100, 5, utf8_decode(strtoupper($area->descripcion)), 1, 0, 'L', false);
+            $pdf->Cell(100, 5, $this->ellipsis($pdf, $area->descripcion, 100), 1, 0, 'L', false);
             $pdf->setX(172);
 
             $altura += 5;
@@ -833,7 +1311,7 @@ class ControladorReportePdf extends Controller
             $pdf->setX(75);
             $pdf->Cell(10, 5, utf8_decode($oins->codigo), 1, 0, 'C', false);
             $pdf->setX(85);
-            $pdf->Cell(100, 5, utf8_decode($oins->descripcion), 1, 'L', false);
+            $pdf->Cell(100, 5, $this->ellipsis($pdf, $oins->descripcion, 100), 1, 'L', false);
             $pdf->setX(172);
 
             $altura += 5;
@@ -975,8 +1453,8 @@ class ControladorReportePdf extends Controller
                         $detalle = DB::table('rl_detalleClasiQuinto')->where('id', '=', $mov->id_detalle)->first();
                         break;
                 }
-                $pdf->Cell(70, 5, utf8_decode($detalle->titulo), 1, 0, 'L', false);
-                $pdf->setX(157);
+                $pdf->Cell(80, 5, $this->ellipsis($pdf, $detalle->titulo, 80), 1, 0, 'L', false);
+                $pdf->setX(167);
                 $pdf->Cell(25, 5, utf8_decode(con_separador_comas($mov->partida_monto) . ' bs'), 1, 0, 'C', false);
                 $altura = $altura + 5;
 
@@ -986,10 +1464,10 @@ class ControladorReportePdf extends Controller
             // Total 2 2
             $pdf->setFont('Arial', 'B', 8);
             $pdf->setXY(62, $altura);
-            $pdf->Cell(95, 5, utf8_decode('TOTAL'), 1, 0, 'R', true);
-            $pdf->setX(157);
+            $pdf->Cell(105, 5, utf8_decode('TOTAL'), 1, 0, 'R', true);
+            $pdf->setX(167);
             $pdf->Cell(25, 5, utf8_decode(con_separador_comas($total) . ' bs'), 1, 0, 'C', true);
-            $altura = $altura + 5;
+            $altura = $altura + 10;
         }
 
         // Fecha
@@ -1104,4 +1582,45 @@ class ControladorReportePdf extends Controller
             ->get();
         return $gestiones;
     }
+
+    public function getObjetivos($id_mot)
+    {
+        $data = Mot::join('mot_partidas_presupuestarias as motpp', 'motpp.id_mot', '=', 'mot.id_mot')
+            ->join('mot_movimiento as motmov', 'motmov.id_mot_pp', '=', 'motpp.id_mot_pp')
+            ->join('rl_medida_bienservicio as mbs', 'mbs.id', '=', 'motmov.id_mbs')
+            ->join('rl_formulario5 as f5', 'f5.id', '=', 'mbs.formulario5_id')
+            ->join('rl_formulario4 as f4', 'f4.id', '=', 'f5.formulario4_id')
+            ->join('rl_operaciones as op', 'op.id', '=', 'f5.operacion_id')
+            ->join('formulario2_objInstitucional as f2_oins', 'f2_oins.formulario2_id', '=', 'f4.formulario2_id')
+            ->join('rl_objetivo_institucional as oins', 'oins.id', '=', 'f2_oins.objInstitucional_id')
+            ->join('rl_areas_estrategicas as ae', 'ae.id', '=', 'op.area_estrategica_id')
+            ->where('mot.id_mot', $id_mot)
+            ->where('motpp.accion', 'A')
+            ->select(
+                'op.id as op_id', 'op.descripcion as op_descripcion',
+                'oins.id as oins_id', 'oins.codigo as oins_codigo', 'oins.descripcion as oins_descripcion',
+                'ae.id as ae_id', 'ae.codigo_areas_estrategicas as ae_codigo', 'ae.descripcion as ae_descripcion'
+            )
+            ->get();
+
+        return [
+            'operaciones' => $data->map(fn($item) => [
+                'id'          => $item->op_id,
+                'descripcion' => $item->op_descripcion,
+            ])->unique('id')->values(),
+
+            'objetivos'   => $data->map(fn($item) => [
+                'id'          => $item->oins_id,
+                'codigo'      => $item->oins_codigo,
+                'descripcion' => $item->oins_descripcion,
+            ])->unique('id')->values(),
+
+            'areas'       => $data->map(fn($item) => [
+                'id'          => $item->ae_id,
+                'codigo'      => $item->ae_codigo,
+                'descripcion' => $item->ae_descripcion,
+            ])->unique('id')->values(),
+        ];
+    }
+
 }

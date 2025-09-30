@@ -7,7 +7,7 @@ use App\Models\Configuracion_poa\Configuracion_formulado;
 use App\Models\FutMot\Mot;
 use App\Models\FutMot\MotMov;
 use App\Models\FutMot\MotPP;
-use App\Models\Gestion;
+use App\Models\Gestiones;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,15 +21,16 @@ class ControladorMOT extends Controller
         $data['menu'] = 20;
         if (Auth::user()->id_unidad_carrera != null) {
             $data['carrera_unidad'] = UnidadCarreraArea::where('id', Auth::user()->id_unidad_carrera)->get();
-            $data['gestion']        = Gestion::get();
+            $data['unidades']       = UnidadCarreraArea::get();
+            $data['gestiones']      = Gestiones::get();
 
-            return view('administrador.mot.modificaciones_presupuestarias', $data);
+            return view('administrador.mot.inicio', $data);
         } else {
-            $data['tipo_error'] = 'NOTA!';
-            $data['mensaje']    = 'Lo siento no tiene acceso!';
-            return view('formulacion.errores.formulacion_error', $data);
-        }
+            $data['unidades']  = UnidadCarreraArea::get();
+            $data['gestiones'] = Gestiones::get();
 
+            return view('administrador.mot.inicio', $data);
+        }
     }
 
     public function selectGestiones(Request $req)
@@ -153,7 +154,7 @@ class ControladorMOT extends Controller
     }
     public function modificacionP($id_mot)
     {
-        $id_mot        = Crypt::decryptString($id_mot);
+        // $id_mot        = Crypt::decryptString($id_mot);
         $mot           = Mot::where('id_mot', '=', $id_mot)->first();
         $configuracion = DB::table('rl_configuracion_formulado as rcf')
             ->join('rl_formulado_tipo as rft', 'rcf.formulado_id', '=', 'rft.id')

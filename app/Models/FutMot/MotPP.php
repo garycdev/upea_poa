@@ -29,4 +29,26 @@ class MotPP extends Model
     {
         return $this->hasMany(MotMov::class, 'id_mot_pp', 'id_mot_pp');
     }
+    public function mot()
+    {
+        return $this->hasOne(Mot::class, 'id_mot', 'id_mot');
+    }
+
+    public function mot_a($id_mot)
+    {
+        return MotPP::query()
+            ->select('*')
+            ->where('mot_partidas_presupuestarias.accion', 'A')
+            ->where('mot_partidas_presupuestarias.id_mot', $id_mot)
+            ->first();
+    }
+
+    public function motpp_a($id_mot)
+    {
+        return MotPP::query()
+            ->select('*')
+            ->where('mot_partidas_presupuestarias.accion', 'A')
+            ->where('mot_partidas_presupuestarias.id_mot', $id_mot)
+            ->get();
+    }
 }

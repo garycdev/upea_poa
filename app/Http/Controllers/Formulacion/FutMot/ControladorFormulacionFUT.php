@@ -181,7 +181,7 @@ class ControladorFormulacionFUT extends Controller
 
         $nuevoFut                             = new Fut();
         $nuevoFut->id_configuracion_formulado = $req->input('id_conformulado');
-        $nuevoFut->nro                        = $req->input('nro_fut');
+        $nuevoFut->nro                        = intval($req->input('nro_fut'));
         $nuevoFut->area_estrategica           = $areas_estrategicas;
         $nuevoFut->objetivo_gestion           = $objetivo_institucional;
         $nuevoFut->tarea_proyecto             = $operacion;
@@ -362,6 +362,7 @@ class ControladorFormulacionFUT extends Controller
         $fut->nro_preventivo   = $req->nro_preventivo;
         $fut->observacion      = $req->observacion;
         $fut->estado           = $req->estado;
+
         // Devuelve todos los montos a medida bien servicio
         if ($req->estado == 'rechazado') {
             $fut->importe = 0;
@@ -375,12 +376,25 @@ class ControladorFormulacionFUT extends Controller
                 $mbs                    = Medida_bienservicio::find($mov->id_mbs);
                 $mbs->total_presupuesto = $mbs->total_presupuesto + $mov->partida_monto;
                 $mbs->save();
+
+                $mov->descripcion = 'revertido';
+                $mov->save();
             }
         }
 
         $fut->save();
 
         session()->flash('message', 'Formulario validado exitosamente.');
+        return redirect()->back();
+    }
+
+    public function ejecutarFormulario(Request $req)
+    {
+        $fut         = Fut::find($req->id_fut);
+        $fut->estado = 'ejecutado';
+        $fut->save();
+
+        session()->flash('message', 'Formulario ejecutado exitosamente.');
         return redirect()->back();
     }
 
@@ -427,12 +441,12 @@ class ControladorFormulacionFUT extends Controller
 
     public function abrirModal($id_fut)
     {
-        $data['fut'] = Fut::find($id_fut);
+        $data['fut']          = Fut::find($id_fut);
         $fecha_actual         = Carbon::now()->format('Y-m-d');
         $data['fecha_actual'] = $fecha_actual;
         $hora_actual          = Carbon::now()->format('H:i');
         $data['hora_actual']  = $hora_actual;
 
-        return view('formulacion.fut.modal', $data);
+        return view('formulacion.fut.modal', $data)->render();
     }
 }

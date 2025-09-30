@@ -71,6 +71,9 @@
                                                                     @endphp
                                                                 @endforeach
                                                             </ul>
+                                                            @php
+                                                                $total2 = 0;
+                                                            @endphp
                                                             @if ($item->accion == 'DE')
                                                                 @php
                                                                     $total2 = $total;

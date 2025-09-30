@@ -135,7 +135,7 @@
         });
     }
 
-    function motDe_select2(valor) {
+    function mot_de_select2(valor) {
         $('.select2_mot_de').select2({
             dropdownParent: $(valor),
             theme: "bootstrap-5",
@@ -145,7 +145,7 @@
         });
     }
 
-    function motA_select2(valor) {
+    function mot_a_select2(valor) {
         $('.select2_mot_a').select2({
             dropdownParent: $(valor),
             theme: "bootstrap-5",
@@ -154,7 +154,6 @@
             dropdownCssClass: "select2--small",
         });
     }
-
 
     const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     // For Live Projects
@@ -177,7 +176,7 @@
     });
 
     function conSeparadorComas(valor) {
-        return valor.toLocaleString("en-US", {
+        return Number(valor).toLocaleString("en-US", {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
         });

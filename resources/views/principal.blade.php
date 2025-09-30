@@ -46,6 +46,7 @@
     <!-- End Go Top Area -->
 
     @include('plantilla_admin.scripts')
+    @include('plantilla_admin.modalScripts')
     @yield('scripts')
 </body>
 

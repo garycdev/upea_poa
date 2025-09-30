@@ -1,5 +1,5 @@
 @extends('principal')
-@section('titulo', 'FUT')
+@section('titulo', 'MOT')
 @section('estilos')
     <link rel="stylesheet" href="{{ asset('rodry/estilo_carrera.css') }}">
     <style>
@@ -14,7 +14,7 @@
             <div class="row align-items-center">
                 <div class="col-lg-12 col-sm-12">
                     <div class="page-title">
-                        <h5>FORMULARIO UNICO DE TRAMITE (FUT)</h5>
+                        <h5>MODIFICACIONES PRESUPUESTARIAS (MOT)</h5>
                         @if (isset(Auth::user()->id_unidad_carrera))
                             <h5>{{ $carrera_unidad[0]->nombre_completo }}</h5>
                         @endif
@@ -41,9 +41,9 @@
                                 @endforeach
                             </select>
                             <div id="id_unidad_carrera"></div> --}}
-                            <legend>Ingrese el Nro FUT</legend>
+                            <legend>Ingrese el Nro MOT</legend>
                             <input type="text" id="nro" class="form-control" maxlength="4"
-                                placeholder="Nro FUT, ej: 0001" inputmode="numeric" pattern="\d{4}">
+                                placeholder="Nro MOT, ej: 0001" inputmode="numeric" pattern="\d{4}">
                             <div id="_nro"></div>
                         </fieldset>
                     </div>
@@ -63,7 +63,7 @@
                     </div>
                 </div>
                 <div>
-                    <table class="table dataTable" id="tablaFut">
+                    <table class="table dataTable" id="tablaMot">
                         <thead>
                             <tr>
                                 <th>Nro</th>
@@ -87,7 +87,7 @@
 @section('scripts')
     <script>
         $(document).ready(function() {
-            let tabla = $('#tablaFut').DataTable();
+            let tabla = $('#tablaMot').DataTable();
 
             $(document).on('keyup change', '#nro, #gestion', function() {
                 let id_gestion = $('#gestion').val();
@@ -95,7 +95,7 @@
                 let nro = $('#nro').val();
 
                 $.ajax({
-                    url: "{{ route('fut.buscar') }}",
+                    url: "{{ route('mot.buscar') }}",
                     type: "POST",
                     dataType: "json",
                     data: {
@@ -107,25 +107,25 @@
                         // console.log(response);
                         tabla.clear().draw();
                         const detalleUrlTemplate =
-                            "{{ route('fut.detalle', ['id_fut' => ':ELEMENT_ID']) }}";
+                            "{{ route('mot.detalle', ['id_mot' => ':ELEMENT_ID']) }}";
                         const pdfUrlTemplate =
-                            "{{ route('pdfFut', ['id_fut' => ':ELEMENT_ID']) }}"
+                            "{{ route('pdfMot', ['id_mot' => ':ELEMENT_ID']) }}"
                         const pdfSolicitudTemplate =
-                            "{{ route('fut.pdf', ['id_fut' => ':ELEMENT_ID']) }}"
+                            "{{ route('mot.pdf', ['id_mot' => ':ELEMENT_ID']) }}"
                         const carreraUrlTemplate =
-                            "{{ route('fut.listar', ['id_conformulado' => ':CONFIG_ID', 'id_carrera' => ':CARRERA_ID']) }}"
+                            "{{ route('mot.listar', ['id_conformulado' => ':CONFIG_ID', 'id_carrera' => ':CARRERA_ID']) }}"
 
-                        let fut = response.data
-                        fut.forEach(element => {
+                        let mot = response.data
+                        mot.forEach(element => {
                             const urlDetalle = detalleUrlTemplate.replace(
                                 ':ELEMENT_ID',
-                                element.id_fut);
+                                element.id_mot);
                             const urlPdf = pdfUrlTemplate.replace(
                                 ':ELEMENT_ID',
-                                element.id_fut);
+                                element.id_mot);
                             const urlPdfSolicitud = pdfSolicitudTemplate.replace(
                                 ':ELEMENT_ID',
-                                element.id_fut);
+                                element.id_mot);
                             const urlCarrera = carreraUrlTemplate.replace(
                                     ':CONFIG_ID',
                                     element.id_configuracion_formulado)
@@ -143,7 +143,7 @@
                                         class="badge bg-${element.estado == 'ejecutado' ? 'success' : (element.estado == 'rechazado' ? 'danger' : (element.estado == 'aprobado' ? 'primary' : 'warning'))}">
                                         ${element.estado}
                                     </span>`,
-                                `<button type="button" class="btn btn-outline-primary btn-validar" data-id="${element.id_fut}" style="display:${element.estado == 'elaborado' ? 'inline-block' : 'none'}">
+                                `<button type="button" class="btn btn-outline-primary btn-validar-mot" data-id="${element.id_mot}" style="display:${element.estado == 'elaborado' ? 'inline-block' : 'none'}">
                                     Validar
                                 </button>`,
                                 `<a href="${urlDetalle}" target="_blank" class="btn btn-outline-primary">

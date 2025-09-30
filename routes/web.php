@@ -28,6 +28,7 @@ use App\Http\Controllers\Formulacion\Controlador_formulacion;
 use App\Http\Controllers\Formulacion\Controlador_formulario2;
 use App\Http\Controllers\Formulacion\Controlador_formulario5;
 use App\Http\Controllers\Formulacion\FutMot\ControladorFormulacionFUT;
+use App\Http\Controllers\Formulacion\FutMot\ControladorFormulacionMOT;
 use App\Http\Controllers\Usuario\Administracion_usuario;
 use App\Http\Controllers\Usuario_controlador;
 use Illuminate\Support\Facades\Route;
@@ -597,6 +598,7 @@ Route::prefix('/poa')->middleware(['autenticados'])->group(function () {
             Route::post('/buscar', 'buscarCorrelativo')->name('fut.buscar');
             Route::get('/modal/{id_fut}', 'abrirModal')->name('fut.modal');
             Route::post('/validar', 'validarFormulario')->name('fut.validar');
+            Route::post('/ejecutar', 'ejecutarFormulario')->name('fut.ejecutar');
 
             Route::get('/get', 'getOperacionObjetivo')->name('fut.operacion_objetivo');
         });
@@ -619,10 +621,29 @@ Route::prefix('/poa')->middleware(['autenticados'])->group(function () {
         Route::post('/obtener', 'getPartidasDe')->name('getPartidasDe');
         Route::post('/partida', 'postPartidaDe')->name('postPartidaDe');
         Route::post('/obtenera', 'getPartidasA')->name('getPartidasA');
-        Route::post('/partidaa', 'postPartidaA')->name('postPartidaA');
+        Route::post('/partida', 'postPartidaA')->name('postPartidaA');
         // Route::get('/motnro', 'getNro')->name('getNro');
 
         Route::post('/modificacion', 'postModificacion')->name('postModificacion');
+
+        Route::prefix('formulacion')->controller(ControladorFormulacionMOT::class)->group(function () {
+            Route::get('/', 'inicio')->name('mot.inicio');
+            Route::get('/lista/{id_conformulado}/{id_carrera?}', 'listarFormularios')->name('mot.listar');
+            Route::get('/formulario/{id_formulado}/{gestiones_id}/{id_conformulado}', 'formulario')->name('mot.formulario');
+            Route::post('/formulario', 'realizarModificacion')->name('mot.modificacion');
+            Route::post('/detalle', 'editarMonto')->name('mot.editar.monto');
+            Route::delete('/detalle', 'eliminarMonto')->name('mot.eliminar.monto');
+            Route::get('/detalle/{id_mot}', 'formular')->name('mot.detalle');
+            Route::post('/objetivos', 'objetivos')->name('mot.objetivos');
+            Route::post('/agregar', 'agregar')->name('mot.agregar');
+
+            Route::post('/buscar', 'buscarCorrelativo')->name('mot.buscar');
+            Route::get('/modal/{id_mot}', 'abrirModal')->name('mot.modal');
+            Route::post('/validar', 'validarFormulario')->name('mot.validar');
+            Route::post('/ejecutar', 'ejecutarFormulario')->name('mot.ejecutar');
+
+            Route::get('/get', 'getOperacionObjetivo')->name('mot.operacion_objetivo');
+        });
     });
 
     Route::prefix('reporte')->controller(ControladorReportePdf::class)->group(function () {
@@ -636,6 +657,7 @@ Route::prefix('/poa')->middleware(['autenticados'])->group(function () {
         Route::get('/futPdf/{id_fut}', 'generarPdfFut')->name('pdfFut');
 
         Route::get('/fut/formulacion/{id_fut}', 'formulacionPdfFut')->name('fut.pdf');
+        Route::get('/mot/formulacion/{id_mot}', 'formulacionPdfMot')->name('mot.pdf');
     });
 });
 
