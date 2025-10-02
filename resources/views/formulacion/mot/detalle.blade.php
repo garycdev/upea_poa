@@ -16,7 +16,7 @@
             </h5>
             <div class="page-title my-auto col-md-3 col-12">
                 <div
-                    class="alert alert-{{ $mot->estado == 'ejecutado' ? 'success' : ($mot->estado == 'rechazado' ? 'danger' : ($mot->estado == 'aprobado' ? 'primary' : 'warning')) }}">
+                    class="alert alert-{{ $mot->estado == 'aprobado' ? 'success' : ($mot->estado == 'rechazado' ? 'danger' : ($mot->estado == 'verificado' ? 'primary' : ($mot->estado == 'elaborado' ? 'info' : 'warning'))) }}">
                     <p>Estado: <strong>{{ $mot->estado }}</strong></p>
                     @if (isset($mot->observacion))
                         <p>Observacion: {{ $mot->observacion }}</p>
@@ -30,15 +30,17 @@
                             </button>
                         @endif
                     @endcan
-                    @if ($mot->estado == 'aprobado' && Auth::user()->id_unidad_carrera == $mot->id_unidad_carrera)
+                    {{-- @if ($mot->estado == 'pendiente' && Auth::user()->id_unidad_carrera == $mot->id_unidad_carrera)
                         <button type="button" class="btn btn-success btn-modal-ejecutar-mot" data-id="{{ $mot->id_mot }}">
                             Ejecutar modificación
                         </button>
+                    @endif --}}
+                    @if ($mot->estado != 'pendiente')
+                        <a href="{{ route('mot.pdf', $mot->id_mot) }}" class="btn btn-warning" target="_blank"
+                            style="display:inline-block">
+                            <i class="ri-file-pdf-line"></i> Solicitud
+                        </a>
                     @endif
-                    <a href="{{ route('mot.pdf', $mot->id_mot) }}" class="btn btn-warning" target="_blank"
-                        style="display:inline-block">
-                        <i class="ri-file-pdf-line"></i> Solicitud
-                    </a>
                     @if ($mot->estado == 'aprobado' || $mot->estado == 'ejecutado')
                         <a href="{{ route('pdfMot', $mot->id_mot) }}" class="btn btn-danger" target="_blank"
                             style="display:inline-block">
@@ -85,7 +87,8 @@
                                 {{ con_separador_comas($total_total) }}&nbsp;bs.
                             </strong>
                         </div>
-                    @elseif (Auth::user()->id_unidad_carrera == $mot->id_unidad_carrera && $mot->estado == 'elaborado')
+                    @elseif (Auth::user()->id_unidad_carrera == $mot->id_unidad_carrera &&
+                            ($mot->estado == 'elaborado' || $mot->estado == 'pendiente'))
                         @php
                             $total_total = 0;
                             foreach ($mot->total as $value) {
@@ -94,13 +97,21 @@
                                 }
                             }
                         @endphp
-                        <div class="alert fs-6 alert-info">
+                        <div class="alert fs-5 alert-primary">
                             <strong>
                                 Monto disponible para modificaciones:
                                 {{ con_separador_comas($mot->mot_a()->saldo) }}&nbsp;bs.
                             </strong>
                         </div>
                     @elseif ($mot->estado == 'aprobado')
+                        @php
+                            $total_total = 0;
+                            foreach ($mot->total as $value) {
+                                if ($value->descripcion == 'incrementa') {
+                                    $total_total += $value->partida_monto;
+                                }
+                            }
+                        @endphp
                         <div class="alert fs-6 alert-primary">
                             <strong>
                                 Monto aprobado :
@@ -108,6 +119,14 @@
                             </strong>
                         </div>
                     @elseif ($mot->estado == 'ejecutado')
+                        @php
+                            $total_total = 0;
+                            foreach ($mot->total as $value) {
+                                if ($value->descripcion == 'incrementa') {
+                                    $total_total += $value->partida_monto;
+                                }
+                            }
+                        @endphp
                         <div class="alert fs-6 alert-success">
                             <strong>
                                 Monto ejecutado exitosamente :
@@ -156,6 +175,9 @@
                                                     </thead>
 
                                                     <tbody>
+                                                        @php
+                                                            $movsDe = 0;
+                                                        @endphp
                                                         @foreach ($item->mov as $mov)
                                                             <tr>
                                                                 <td>
@@ -166,7 +188,8 @@
                                                                     {{ con_separador_comas($mov->partida_monto) }}&nbsp;bs.
                                                                 </td>
                                                                 <td>
-                                                                    @if (Auth::user()->id_unidad_carrera == $mot->id_unidad_carrera && $mov->motpp->mot->estado == 'elaborado')
+                                                                    @if (Auth::user()->id_unidad_carrera == $mot->id_unidad_carrera &&
+                                                                            ($mov->motpp->mot->estado == 'elaborado' || $mov->motpp->mot->estado == 'pendiente'))
                                                                         @if ($item->accion == 'DE')
                                                                             @if ($item->saldo == $item->mot_a($item->id_mot)->saldo)
                                                                                 <button type="submit"
@@ -176,11 +199,13 @@
                                                                                     onclick="editarMonto({{ $mov->id_mot_mov }}, {{ $mov->id_mbs }}, {{ $mov->partida_monto }}, {{ $mov->mbs->total_presupuesto }}, '{{ $item->accion }}')">
                                                                                     <i class="ri-pencil-line"></i>
                                                                                 </button>
-                                                                                <button type="button"
-                                                                                    class="btn btn-outline-danger"
-                                                                                    onclick="eliminarMonto({{ $mov->id_mot_mov }})">
-                                                                                    <i class="ri-delete-bin-line"></i>
-                                                                                </button>
+                                                                                @if (count($item->mov) > 1)
+                                                                                    <button type="button"
+                                                                                        class="btn btn-outline-danger"
+                                                                                        onclick="eliminarMonto({{ $mov->id_mot_mov }}, '{{ $item->accion }}')">
+                                                                                        <i class="ri-delete-bin-line"></i>
+                                                                                    </button>
+                                                                                @endif
                                                                             @endif
                                                                         @else
                                                                             <button type="submit"
@@ -210,16 +235,16 @@
 
                                                             <tr style="background: #77ff95aa">
                                                                 <td class="fw-bold" align="right" colspan="2">
-                                                                    Total disponible
+                                                                    Total modificado
                                                                 </td>
                                                                 <td class="fw-bold" colspan="2">
-                                                                    {{ con_separador_comas($saldoDisponible) }}&nbsp;bs.
+                                                                    {{ con_separador_comas($total) }}&nbsp;bs.
                                                                 </td>
                                                             </tr>
                                                         @else
                                                             <tr style="background: #77ff95aa">
                                                                 <td class="fw-bold" align="right" colspan="2">
-                                                                    Total modificado
+                                                                    Total agregado
                                                                 </td>
                                                                 <td class="fw-bold" colspan="2">
                                                                     {{ con_separador_comas($total) }}&nbsp;bs.
@@ -233,7 +258,7 @@
                                             @endif
                                         </td>
                                         <td>
-                                            @if ($item->accion == 'A' && $saldoDisponible > 0)
+                                            @if (Auth::user()->id_unidad_carrera == $mot->id_unidad_carrera && $item->accion == 'A' && $saldoDisponible > 0)
                                                 <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                                                     data-bs-target="#partidas_a"
                                                     onclick="agregarPartidaA({{ sin_separador_comas($saldoDisponible) }}, {{ $item->id_mot_pp }}, {{ $item->organismo_financiador }})">
@@ -262,11 +287,11 @@
                                         }
                                     }
                                 @endphp
-                                <tr style="background: {{ $total_de + $total_a == $mot->importe ? '#77ff95' : '#dc3545' }}"
-                                    class="fw-bold">
+                                <tr style="background: {{ $total_a == $mot->importe ? '#77ff95' : '#dc3545' }}"
+                                    class="fw-bold text-light">
                                     <td colspan="2" align="right">TOTAL: </td>
                                     <td>
-                                        {{ con_separador_comas($total_de + $total_a) }}&nbsp;bs.
+                                        {{ con_separador_comas($total_a) }}&nbsp;bs.
                                     </td>
                                     <td></td>
                                 </tr>
@@ -607,21 +632,34 @@
             $('#accion').val(accion)
         }
 
-        function eliminarMonto(id) {
-            $.ajax({
-                type: "POST",
-                url: "{{ route('mot.eliminar.monto') }}",
-                data: {
-                    _token: '{{ csrf_token() }}',
-                    _method: 'DELETE',
-                    id: id
-                },
-                dataType: "JSON",
-                success: function(response) {
-                    location.reload()
-                },
-                error: function(error) {
-                    console.log(error);
+        function eliminarMonto(id, accion) {
+            Swal.fire({
+                title: "¿Esta seguro de eliminar el monto?",
+                text: "Se eliminara la atribucion del monto previsto",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Si, eliminar"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ route('mot.eliminar.monto') }}",
+                        data: {
+                            _token: '{{ csrf_token() }}',
+                            _method: 'DELETE',
+                            id: id,
+                            accion: accion
+                        },
+                        dataType: "JSON",
+                        success: function(response) {
+                            location.reload()
+                        },
+                        error: function(error) {
+                            console.log(error);
+                        }
+                    });
                 }
             });
         }

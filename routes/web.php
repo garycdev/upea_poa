@@ -633,6 +633,7 @@ Route::prefix('/poa')->middleware(['autenticados'])->group(function () {
             Route::post('/formulario', 'realizarModificacion')->name('mot.modificacion');
             Route::post('/detalle', 'editarMonto')->name('mot.editar.monto');
             Route::delete('/detalle', 'eliminarMonto')->name('mot.eliminar.monto');
+            Route::delete('/eliminar', 'eliminarFormulario')->name('mot.eliminar');
             Route::get('/detalle/{id_mot}', 'formular')->name('mot.detalle');
             Route::post('/objetivos', 'objetivos')->name('mot.objetivos');
             Route::post('/agregar', 'agregar')->name('mot.agregar');

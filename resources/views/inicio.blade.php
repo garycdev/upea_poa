@@ -77,6 +77,11 @@
 
     <div class="overview-content-area">
         <div class="container-fluid">
+            {{-- <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                <strong>Recuerde tener un correo electronico valido</strong>
+                , se enviara notificaciones como seguimiento de cada tramite
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div> --}}
             <div class="row">
                 <div class="col-lg-6 col-md-6 col-sm-12 col-xxl-3">
                     <div class="single-audience d-flex justify-content-between align-items-center">
@@ -468,6 +473,18 @@
                         });
                     }
                 });
+            }
+
+            if (!localStorage.getItem("init_session")) {
+                Swal.fire({
+                    title: "¡Bienvenido al sistema del POA!",
+                    text: "Recuerde tener un correo electronico valido, se enviara notificaciones como seguimiento de cada tramite.",
+                    icon: "success",
+                    confirmButtonText: "Aceptar"
+                });
+
+                // marcar que ya lo mostró
+                localStorage.setItem("init_session", "true");
             }
         });
     </script>

@@ -227,12 +227,12 @@
             url: url,
             type: 'GET',
             success: function(html) {
-                $('#modalValidar').remove();
+                $('#modalValidarMot').remove();
 
                 $('body').append(html);
 
                 let modal = new bootstrap.Modal(document.getElementById(
-                    'modalValidar'));
+                    'modalValidarMot'));
                 modal.show();
             },
             error: function(xhr) {
@@ -255,7 +255,7 @@
             if (validarErroresModalMot()) {
                 Swal.fire({
                     title: "¿Esta seguro de validar el formulario?",
-                    text: "Esta accion no se puede deshacer",
+                    text: "Se enviara el formulario a la unidad de presupuestos",
                     icon: "warning",
                     showCancelButton: true,
                     confirmButtonColor: "#3085d6",

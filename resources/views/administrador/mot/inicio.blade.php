@@ -15,9 +15,6 @@
                 <div class="col-lg-12 col-sm-12">
                     <div class="page-title">
                         <h5>MODIFICACIONES PRESUPUESTARIAS (MOT)</h5>
-                        @if (isset(Auth::user()->id_unidad_carrera))
-                            <h5>{{ $carrera_unidad[0]->nombre_completo }}</h5>
-                        @endif
                     </div>
                 </div>
             </div>
@@ -104,7 +101,7 @@
                         nro: nro
                     },
                     success: function(response) {
-                        // console.log(response);
+                        console.log(response);
                         tabla.clear().draw();
                         const detalleUrlTemplate =
                             "{{ route('mot.detalle', ['id_mot' => ':ELEMENT_ID']) }}";
@@ -140,11 +137,14 @@
                                 `<span class="badge bg-dark">${element.formulado}</span>`,
                                 `${conSeparadorComas(element.importe)} bs.`,
                                 `<span
-                                        class="badge bg-${element.estado == 'ejecutado' ? 'success' : (element.estado == 'rechazado' ? 'danger' : (element.estado == 'aprobado' ? 'primary' : 'warning'))}">
+                                        class="badge bg-${element.estado == 'aprobado' ? 'success' : (element.estado == 'rechazado' ? 'danger' : (element.estado == 'verificado' ? 'primary' : element.estado == 'elaborado' ? 'info' : 'warning'))} text-${element.estado == 'elaborado' || element.estado == 'pendiente' ? 'dark' : 'light'}">
                                         ${element.estado}
                                     </span>`,
-                                `<button type="button" class="btn btn-outline-primary btn-validar-mot" data-id="${element.id_mot}" style="display:${element.estado == 'elaborado' ? 'inline-block' : 'none'}">
-                                    Validar
+                                `<button type="button" class="btn btn-outline-primary btn-validar-mot" data-id="${element.id_mot}" style="display:${element.estado == 'elaborado' && response.rol == 'planifica' ? 'inline-block' : 'none'}">
+                                    Validar formulario
+                                </button>
+                                <button type="button" class="btn btn-outline-success btn-validar-mot" data-id="${element.id_mot}" style="display:${element.estado == 'verificado' && response.rol == 'presupuesto' ? 'inline-block' : 'none'}">
+                                    Validar formulario
                                 </button>`,
                                 `<a href="${urlDetalle}" target="_blank" class="btn btn-outline-primary">
                                     <i class="ri-eye-fill"></i>

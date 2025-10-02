@@ -1,5 +1,5 @@
-<div class="modal fade" id="modalValidar" tabindex="-1" aria-labelledby="modalValidarLabel" aria-hidden="true">
-    <form action="{{ route('mot.validar') }}" method="POST" id="formValidar">
+<div class="modal fade" id="modalValidarMot" tabindex="-1" aria-labelledby="modalValidarLabel" aria-hidden="true">
+    <form action="{{ route('mot.validar') }}" method="POST" id="formValidarMot">
         @csrf
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -73,16 +73,16 @@
 
                                                             <tr style="background: #77ff95aa">
                                                                 <td class="fw-bold" align="right" colspan="2">
-                                                                    Total disponible
+                                                                    Total modificado
                                                                 </td>
                                                                 <td class="fw-bold" colspan="2">
-                                                                    {{ con_separador_comas($saldoDisponible) }}&nbsp;bs.
+                                                                    {{ con_separador_comas($total) }}&nbsp;bs.
                                                                 </td>
                                                             </tr>
                                                         @else
                                                             <tr style="background: #77ff95aa">
                                                                 <td class="fw-bold" align="right" colspan="2">
-                                                                    Total modificado
+                                                                    Total agregado
                                                                 </td>
                                                                 <td class="fw-bold" colspan="2">
                                                                     {{ con_separador_comas($total) }}&nbsp;bs.
@@ -182,21 +182,45 @@
                         <label for="observacion" class="form-label">
                             Observaciones <span class="text-muted">(opcional)</span>:
                         </label>
-                        <textarea class="form-control" name="observacion" id="observacion" placeholder="Observaciones" rows="3"
-                            required>{{ $mot->observacion ?? '' }}</textarea>
+                        <textarea class="form-control" name="observacion" id="observacion" placeholder="Observaciones" rows="3" required>{{ $mot->observacion ?? '' }}</textarea>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-danger btn-modal-submit-fut" data-estado="rechazado">
-                        Rechazar formulario
-                    </button>
-                    {{-- <button type="button" class="btn btn-warning btn-modal-submit-fut" data-estado="aprobado">
-                        Aprobar formulario
-                    </button> --}}
-                    <button type="button" class="btn btn-primary btn-modal-submit-fut" data-estado="aprobado">
-                        Aprobar formulario
-                    </button>
+                <div class="modal-footer d-flex justify-content-between">
+                    <div>
+                        @if ($mot->estado == 'verificado')
+                            <a href="{{ route('pdfMot', $mot->id_mot) }}" class="btn btn-outline-danger"
+                                target="_blank" style="display:inline-block">
+                                <i class="ri-file-pdf-line"></i> Formulario
+                            </a>
+                        @endif
+                        @if ($mot->estado != 'pendiente')
+                            <a href="{{ route('mot.pdf', $mot->id_mot) }}" class="btn btn-outline-primary"
+                                target="_blank" style="display:inline-block">
+                                <i class="ri-file-pdf-line"></i> Solicitud
+                            </a>
+                        @endif
+                    </div>
+                    <div>
+                        <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-danger btn-modal-submit-mot" data-estado="rechazado">
+                            Rechazar formulario
+                        </button>
+                        {{-- <button type="button" class="btn btn-warning btn-modal-submit-mot" data-estado="aprobado">
+                            Aprobar formulario
+                        </button> --}}
+                        @if (Auth::user()->rol_verifica() == 'planifica')
+                            <button type="button" class="btn btn-primary btn-modal-submit-mot"
+                                data-estado="verificado">
+                                Formulario verificado
+                            </button>
+                        @endif
+                        @if (Auth::user()->rol_verifica() == 'presupuesto')
+                            <button type="button" class="btn btn-success btn-modal-submit-mot"
+                                data-estado="verificado">
+                                Aprobar formulario
+                            </button>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>

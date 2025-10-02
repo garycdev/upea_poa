@@ -55,6 +55,7 @@
                                             data-form5="{{ $item->formulario5_id }}"
                                             data-id_detalle="{{ $item->id_detalle }}">
                                             {{ $item->partida }} - {{ $item->titulo_detalle }}
+                                            ({{ con_separador_comas($item->total_presupuesto) }})
                                         </option>
                                     @endforeach
                                     @foreach ($partidas_formulado4 as $item)
@@ -66,6 +67,7 @@
                                             data-form5="{{ $item->formulario5_id }}"
                                             data-id_detalle="{{ $item->id_detalle }}">
                                             {{ $item->partida }} - {{ $item->titulo_detalle }}
+                                            ({{ con_separador_comas($item->total_presupuesto) }})
                                         </option>
                                     @endforeach
                                     @foreach ($partidas_formulado5 as $item)
@@ -77,6 +79,7 @@
                                             data-form5="{{ $item->formulario5_id }}"
                                             data-id_detalle="{{ $item->id_detalle }}">
                                             {{ $item->partida }} - {{ $item->titulo_detalle }}
+                                            ({{ con_separador_comas($item->total_presupuesto) }})
                                         </option>
                                     @endforeach
                                 </select>
@@ -317,7 +320,19 @@
                     $('#total_agregado_error').text('');
                 }
 
-                $('#formularioMot').submit();
+                Swal.fire({
+                    title: "¿Esta seguro de registrar la modificación?",
+                    text: "Se atribuira el monto para modificaciones",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Si, registrar"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $('#formularioMot').submit();
+                    }
+                });
             });
 
             let $allOptions = $('#select-partida option').clone();

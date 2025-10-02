@@ -85,7 +85,7 @@
                                                     @endphp --}}
                                                     <td>
                                                         <span
-                                                            class="badge bg-{{ $item->estado == 'ejecutado' ? 'success' : ($item->estado == 'rechazado' ? 'danger' : ($item->estado == 'aprobado' ? 'primary' : 'warning')) }}">
+                                                            class="badge bg-{{ $item->estado == 'aprobado' ? 'success' : ($item->estado == 'rechazado' ? 'danger' : ($item->estado == 'verificado' ? 'primary' : ($item->estado == 'elaborado' ? 'info' : 'warning'))) }} text-{{ $item->estado == 'elaborado' || $item->estado == 'pendiente' ? 'dark' : 'light' }}">
                                                             {{ $item->estado }}
                                                         </span>
                                                     </td>
@@ -115,10 +115,12 @@
                                                             <i class="ri-eye-fill"></i>
                                                         </a>
                                                         {{-- @if (Auth::user()->id_unidad_carrera == $item->id_unidad_carrera) --}}
-                                                        <a href="{{ route('mot.pdf', $item->id_mot) }}"
-                                                            class="btn btn-outline-warning" target="_blank">
-                                                            <i class="ri-file-pdf-line"></i>
-                                                        </a>
+                                                        @if ($item->estado != 'pendiente')
+                                                            <a href="{{ route('mot.pdf', $item->id_mot) }}"
+                                                                class="btn btn-outline-warning" target="_blank">
+                                                                <i class="ri-file-pdf-line"></i>
+                                                            </a>
+                                                        @endif
                                                         {{-- @endif --}}
                                                         {{-- <a href="{{ route('pdfMot', $item->id_mot) }}"
                                                             class="btn btn-warning" target="_blank"
@@ -130,6 +132,13 @@
                                                                 class="btn btn-outline-danger" target="_blank">
                                                                 <i class="ri-file-pdf-line"></i>
                                                             </a>
+                                                        @endif
+                                                        @if ($item->estado == 'pendiente' || $item->estado == 'elaborado')
+                                                            <button type="button"
+                                                                class="btn btn-outline-danger btn-eliminar-mot"
+                                                                target="_blank" data-id="{{ $item->id_mot }}">
+                                                                <i class="ri-delete-bin-line"></i>
+                                                            </button>
                                                         @endif
                                                         {{-- <button class="btn btn-success">
                                                             <i class="ri-file-excel-line"></i>&nbsp;EXCEL
@@ -172,5 +181,40 @@
         //         $("#modalValidar .modal-body").html(html);
         //     });
         // }
+
+        $(document).ready(function() {
+            $(document).on('click', '.btn-eliminar-mot', function() {
+                let id = $(this).data('id')
+
+                Swal.fire({
+                    title: "¿Esta seguro de eliminar el formulario?",
+                    text: "Se eliminara las atribuciones de los montos previstos",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Si, eliminar"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            type: "POST",
+                            url: "{{ route('mot.eliminar') }}",
+                            data: {
+                                _token: '{{ csrf_token() }}',
+                                _method: 'DELETE',
+                                id_mot: id
+                            },
+                            dataType: "JSON",
+                            success: function(response) {
+                                location.reload()
+                            },
+                            error: function(error) {
+                                console.log(error);
+                            }
+                        });
+                    }
+                });
+            })
+        })
     </script>
 @endsection

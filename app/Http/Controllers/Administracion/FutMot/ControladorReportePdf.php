@@ -423,11 +423,11 @@ class ControladorReportePdf extends Controller
         $pdf->setXY(10, -26);
         $pdf->Cell(30, 5, utf8_decode('Unidad solicitante    :'), 0, 0, 'L', false);
         $pdf->setX(40);
-        $pdf->Cell(60, 5, utf8_decode('Lic. ' . $usuario->nombre . ' ' . $usuario->apellido), 1, 0, 'C', false);
+        $pdf->Cell(90, 5, utf8_decode('Lic. ' . $usuario->nombre . ' ' . $usuario->apellido), 1, 0, 'C', false);
 
         $pdf->setFont('Arial', '', 5);
         $pdf->setXY(40, -21);
-        $pdf->Cell(60, 5, utf8_decode($usuario->unidad_carrera->nombre_completo), 1, 0, 'C', false);
+        $pdf->Cell(90, 5, $this->ellipsis($pdf, $usuario->unidad_carrera->nombre_completo, 90), 1, 0, 'C', false);
 
         // Firmas
         $pdf->SetLineWidth(0.25);

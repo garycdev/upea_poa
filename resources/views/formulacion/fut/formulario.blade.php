@@ -216,6 +216,10 @@
 
                 tabla.row($(this).parents("tr")).remove().draw(false);
                 $('.monto_number').trigger('change');
+
+                if ($('.monto_number').length == 0) {
+                    $('#total_agregado').val(conSeparadorComas(0))
+                }
             });
 
             // $('#tabla-partidas tbody').on("input", ".validar_maximo", function() {
@@ -291,7 +295,19 @@
                     $('#total_agregado_error').text('');
                 }
 
-                $('#formularioFut').submit();
+                Swal.fire({
+                    title: "¿Esta seguro de registrar compra?",
+                    text: "Se atribuira el monto para gasto",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Si, registrar"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $('#formularioFut').submit();
+                    }
+                });
             });
         });
 

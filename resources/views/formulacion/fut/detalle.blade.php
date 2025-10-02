@@ -390,20 +390,32 @@
         }
 
         function eliminarMonto(id) {
-            $.ajax({
-                type: "POST",
-                url: "{{ route('fut.eliminar.monto') }}",
-                data: {
-                    _token: '{{ csrf_token() }}',
-                    _method: 'DELETE',
-                    id: id
-                },
-                dataType: "JSON",
-                success: function(response) {
-                    location.reload()
-                },
-                error: function(error) {
-                    console.log(error);
+            Swal.fire({
+                title: "¿Esta seguro de eliminar el monto?",
+                text: "Se eliminara la atribucion del monto previsto",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Si, registrar"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ route('fut.eliminar.monto') }}",
+                        data: {
+                            _token: '{{ csrf_token() }}',
+                            _method: 'DELETE',
+                            id: id
+                        },
+                        dataType: "JSON",
+                        success: function(response) {
+                            location.reload()
+                        },
+                        error: function(error) {
+                            console.log(error);
+                        }
+                    });
                 }
             });
         }

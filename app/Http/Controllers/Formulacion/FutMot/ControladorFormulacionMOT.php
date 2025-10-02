@@ -52,6 +52,7 @@ class ControladorFormulacionMOT extends Controller
                 ->join('rl_formulado_tipo as rft', 'rcf.formulado_id', '=', 'rft.id')
                 ->where('id_configuracion_formulado', '=', $id_conformulado)
                 ->where('id_unidad_carrera', '=', Auth::user()->id_unidad_carrera)
+                ->where('mot.estado', '<>', 'eliminado')
                 ->select('mot.*', 'rg.gestion', 'rft.descripcion')
                 ->orderBy('mot.id_mot', 'desc')
                 ->get();
@@ -66,6 +67,7 @@ class ControladorFormulacionMOT extends Controller
                 ->join('rl_formulado_tipo as rft', 'rcf.formulado_id', '=', 'rft.id')
                 ->where('id_configuracion_formulado', '=', $id_conformulado)
                 ->where('id_unidad_carrera', '=', $id_carrera)
+                ->where('mot.estado', '<>', 'eliminado')
                 ->select('mot.*', 'rg.gestion', 'rft.descripcion')
                 ->orderBy('mot.id_mot', 'desc')
                 ->get();
@@ -253,7 +255,8 @@ class ControladorFormulacionMOT extends Controller
         }
 
         session()->flash('message', 'Formulario realizado con éxito.');
-        return redirect()->route('mot.listar', [$req->input('id_conformulado'), Auth::user()->id_unidad_carrera]);
+        // return redirect()->route('mot.listar', [$req->input('id_conformulado'), Auth::user()->id_unidad_carrera]);
+        return redirect()->route('mot.detalle', $nuevoMot->id_mot);
     }
 
     public function formular($id_mot)
@@ -406,6 +409,17 @@ class ControladorFormulacionMOT extends Controller
             $motPP        = MotPP::find($mov->motpp->id_mot_pp);
             $saldo        = $motPP->mot_a($motPP->id_mot)->saldo + sin_separador_comas($req->monto_actual);
             $motPP->saldo = $saldo - sin_separador_comas($req->monto);
+
+            if ($motPP->saldo == 0) {
+                $mot         = Mot::find($motPP->id_mot);
+                $mot->estado = 'elaborado';
+                $mot->save();
+            } else {
+                $mot         = Mot::find($motPP->id_mot);
+                $mot->estado = 'pendiente';
+                $mot->save();
+            }
+
             $motPP->save();
 
             session()->flash('message', 'Monto modificado exitosamente.');
@@ -421,9 +435,17 @@ class ControladorFormulacionMOT extends Controller
             $mbs->total_presupuesto = $mbs->total_presupuesto + $mov->partida_monto;
             $mbs->save();
 
-            $mot          = Mot::find($mov->motpp->id_mot);
+            $motpp        = MotPP::find($mov->id_mot_pp);
+            $motpp->saldo = $motpp->saldo - $mov->partida_monto;
+            $motpp->save();
+
+            $mot          = Mot::find($motpp->id_mot);
             $mot->importe = $mot->importe - $mov->partida_monto;
             $mot->save();
+
+            $motpp_a        = $motpp->mot_a($mot->id_mot);
+            $motpp_a->saldo = $motpp_a->saldo - $mov->partida_monto;
+            $motpp_a->save();
 
             $mov->delete();
 
@@ -432,13 +454,24 @@ class ControladorFormulacionMOT extends Controller
             return response()->json([
                 'success' => true,
             ], 200);
-        } else {
+        } elseif ($req->accion == 'A') {
             $mov = MotMov::find($req->id);
             $mbs = Medida_bienservicio::find($mov->id_mbs);
 
             $motPP        = MotPP::find($mov->motpp->id_mot_pp);
             $saldo        = $motPP->mot_a($motPP->id_mot)->saldo + $mov->partida_monto;
             $motPP->saldo = $saldo;
+
+            if ($motPP->saldo == 0) {
+                $mot         = Mot::find($motPP->id_mot);
+                $mot->estado = 'elaborado';
+                $mot->save();
+            } else {
+                $mot         = Mot::find($motPP->id_mot);
+                $mot->estado = 'pendiente';
+                $mot->save();
+            }
+
             $motPP->save();
 
             $mbs->delete();
@@ -449,7 +482,46 @@ class ControladorFormulacionMOT extends Controller
             return response()->json([
                 'success' => true,
             ], 200);
+        } else {
+            session()->flash('error', 'Error en la transaccion.');
+
+            return response()->json([
+                'success' => false,
+            ], 200);
         }
+    }
+    public function eliminarFormulario(Request $req)
+    {
+        $mot  = Mot::find($req->id_mot);
+        $movs = MotMov::join('mot_partidas_presupuestarias as pp', 'pp.id_mot_pp', '=', 'mot_movimiento.id_mot_pp')
+            ->where('pp.id_mot', $mot->id_mot)
+            ->select('mot_movimiento.*')
+            ->get();
+
+        foreach ($movs as $mov) {
+            if ($mov->motpp->accion == 'DE') {
+                $mbs                    = Medida_bienservicio::find($mov->id_mbs);
+                $mbs->total_presupuesto = $mbs->total_presupuesto + $mov->partida_monto;
+                $mbs->save();
+
+                $mov->descripcion = 'revertido';
+            } else {
+                $mbs = Medida_bienservicio::find($mov->id_mbs);
+                $mbs->delete();
+
+                $mov->descripcion = 'eliminado';
+            }
+
+            $mov->save();
+        }
+
+        $mot->estado = 'eliminado';
+        $mot->save();
+
+        session()->flash('message', 'Formulario eliminado exitosamente.');
+        return response()->json([
+            'success' => false,
+        ], 200);
     }
 
     public function agregar(Request $req)
@@ -479,6 +551,12 @@ class ControladorFormulacionMOT extends Controller
 
         $motPP        = MotPP::find($req->id_mot_pp);
         $motPP->saldo = $motPP->saldo - sin_separador_comas($req->total_presupuesto);
+
+        if ($motPP->saldo == 0) {
+            $mot         = Mot::find($motPP->id_mot);
+            $mot->estado = 'elaborado';
+            $mot->save();
+        }
         $motPP->save();
 
         session()->flash('mensaje', 'Movimiento agregado correctamente');
@@ -570,10 +648,23 @@ class ControladorFormulacionMOT extends Controller
             $mot = [];
         }
 
+        if (isset(Auth::user()->unidad_carrera)) {
+            if (stripos(Auth::user()->unidad_carrera->nombre_completo, 'PLANIFICA') !== false) {
+                $user = 'planifica';
+            } elseif (stripos(Auth::user()->unidad_carrera->nombre_completo, 'PRESUPUESTO') !== false) {
+                $user = 'presupuesto';
+            } else {
+                $user = 'user';
+            }
+        } else {
+            $user = '';
+        }
+
         return response()->json([
             'nro'          => $nro,
             'gestiones_id' => $gestiones_id,
             'data'         => $mot,
+            'rol'          => $user,
         ], 200);
     }
 

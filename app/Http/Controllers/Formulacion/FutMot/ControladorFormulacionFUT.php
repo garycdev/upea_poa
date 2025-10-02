@@ -432,10 +432,19 @@ class ControladorFormulacionFUT extends Controller
             $fut = [];
         }
 
+        if (stripos(Auth::user()->unidad_carrera->nombre_completo, 'PLANIFICA') !== false) {
+            $user = 'planifica';
+        } elseif (stripos(Auth::user()->unidad_carrera->nombre_completo, 'PRESUPUESTO') !== false) {
+            $user = 'presupuesto';
+        } else {
+            $user = '';
+        }
+
         return response()->json([
             'nro'          => $nro,
             'gestiones_id' => $gestiones_id,
             'data'         => $fut,
+            'rol'          => $user,
         ], 200);
     }
 

@@ -209,6 +209,15 @@
 
                     <ul class="sidemenu-nav-second-level">
                         @can('formulacion_poa')
+                            <li class=" @if ($menu == '23') {{ 'active' }} @endif ">
+                                <a href="{{ route('mot_inicio') }}">
+                                    <span class="menu-title">Restricción modificaciones</span>
+                                </a>
+                            </li>
+                        @endcan
+                    </ul>
+                    <ul class="sidemenu-nav-second-level">
+                        @can('formulacion_poa')
                             <li class=" @if ($menu == '20') {{ 'active' }} @endif ">
                                 <a href="{{ route('mot_inicio') }}">
                                     <span class="menu-title">Modificaciones<br>presupuestarias (MOT)</span>
