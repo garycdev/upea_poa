@@ -152,7 +152,7 @@
                                 <a href="${urlPdfSolicitud}" class="btn btn-outline-warning" target="_blank">
                                     <i class="ri-file-pdf-line"></i>
                                 </a>
-                                <a href="${urlPdf}" class="btn btn-outline-danger" target="_blank" style="display:${element.estado == 'aprobado' || element.estado == 'ejecutado' ? 'inline-block' : 'none'}">
+                                <a href="${urlPdf}" class="btn btn-outline-danger" target="_blank" style="display:${element.estado == 'verificado' || element.estado == 'aprobado' ? 'inline-block' : 'none'}">
                                     <i class="ri-file-pdf-line"></i>
                                 </a>`
                             ]).draw(false);

@@ -27,8 +27,8 @@ class ControladorFUT extends Controller
 
             return view('administrador.fut.inicio', $data);
         } else {
-            $data['unidades']       = UnidadCarreraArea::get();
-            $data['gestiones']      = Gestiones::get();
+            $data['unidades']  = UnidadCarreraArea::get();
+            $data['gestiones'] = Gestiones::get();
 
             return view('administrador.fut.inicio', $data);
         }
@@ -99,6 +99,7 @@ class ControladorFUT extends Controller
             $fut = Fut::join('rl_configuracion_formulado as rcf', 'fut.id_configuracion_formulado', '=', 'rcf.id')
                 ->join('rl_gestiones as rg', 'rcf.gestiones_id', '=', 'rg.id')
                 ->join('rl_formulado_tipo as rft', 'rcf.formulado_id', '=', 'rft.id')
+                ->where('fut.estado', '<>', 'eliminado')
                 ->where('id_configuracion_formulado', '=', $id_conformulado)
                 ->where('id_unidad_carrera', '=', Auth::user()->id_unidad_carrera)
                 ->select('fut.*', 'rg.gestion', 'rft.descripcion')
@@ -111,6 +112,7 @@ class ControladorFUT extends Controller
             $fut = Fut::join('rl_configuracion_formulado as rcf', 'fut.id_configuracion_formulado', '=', 'rcf.id')
                 ->join('rl_gestiones as rg', 'rcf.gestiones_id', '=', 'rg.id')
                 ->join('rl_formulado_tipo as rft', 'rcf.formulado_id', '=', 'rft.id')
+                ->where('fut.estado', '<>', 'eliminado')
                 ->where('id_configuracion_formulado', '=', $id_conformulado)
                 ->where('id_unidad_carrera', '=', $id_carrera)
                 ->select('fut.*', 'rg.gestion', 'rft.descripcion')

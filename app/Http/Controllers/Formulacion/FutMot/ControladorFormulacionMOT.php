@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Formulacion\FutMot;
 
 use App\Http\Controllers\Controller;
+use App\Mail\NotificacionGeneral;
 use App\Models\Configuracion\UnidadCarreraArea;
 use App\Models\FutMot\Mot;
 use App\Models\FutMot\MotMov;
@@ -14,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class ControladorFormulacionMOT extends Controller
 {
@@ -124,6 +126,7 @@ class ControladorFormulacionMOT extends Controller
             ->join('rl_formulario5 as f5', 'f5.id', '=', 'mbs.formulario5_id')
             ->join('rl_financiamiento_tipo as ft', 'ft.id', '=', 'mbs.tipo_financiamiento_id')
             ->where('mbs.total_presupuesto', '>', 0.00)
+            ->where('c3.modificacion', true)
         // ->where('mbs.formulario5_id', '=', $formulario5)
         // ->where('mbs.tipo_financiamiento_id', '=', $financiamiento)
             ->where('f5.gestion_id', $gestiones_id)
@@ -137,6 +140,7 @@ class ControladorFormulacionMOT extends Controller
             ->join('rl_formulario5 as f5', 'f5.id', '=', 'mbs.formulario5_id')
             ->join('rl_financiamiento_tipo as ft', 'ft.id', '=', 'mbs.tipo_financiamiento_id')
             ->where('mbs.total_presupuesto', '>', 0.00)
+            ->where('c4.modificacion', true)
         // ->where('mbs.formulario5_id', '=', $formulario5)
         // ->where('mbs.tipo_financiamiento_id', '=', $financiamiento)
             ->where('f5.gestion_id', $gestiones_id)
@@ -150,6 +154,7 @@ class ControladorFormulacionMOT extends Controller
             ->join('rl_formulario5 as f5', 'f5.id', '=', 'mbs.formulario5_id')
             ->join('rl_financiamiento_tipo as ft', 'ft.id', '=', 'mbs.tipo_financiamiento_id')
             ->where('mbs.total_presupuesto', '>', 0.00)
+            ->where('c5.modificacion', true)
         // ->where('mbs.formulario5_id', '=', $formulario5)
         // ->where('mbs.tipo_financiamiento_id', '=', $financiamiento)
             ->where('f5.gestion_id', $gestiones_id)
@@ -259,6 +264,9 @@ class ControladorFormulacionMOT extends Controller
         return redirect()->route('mot.detalle', $nuevoMot->id_mot);
     }
 
+    /**
+     * FORMULAR MOT USUARIO
+     */
     public function formular($id_mot)
     {
         $mot           = Mot::where('id_mot', '=', $id_mot)->first();
@@ -329,6 +337,7 @@ class ControladorFormulacionMOT extends Controller
 
         $partidas = MotPP::join('mot_movimiento as mm', 'mm.id_mot_pp', '=', 'mot_partidas_presupuestarias.id_mot_pp')
             ->where('mot_partidas_presupuestarias.accion', 'DE')
+            ->where('mot_partidas_presupuestarias.id_mot', $id_mot)
             ->pluck('mm.partida_codigo')
             ->toArray();
 
@@ -596,6 +605,28 @@ class ControladorFormulacionMOT extends Controller
 
                 $mov->save();
             }
+
+            Mail::to('geco.yak77@gmail.com')->send(new NotificacionGeneral(
+                "Formulario MOT N°" . formatear_con_ceros($mot->nro) . " rechazado.",
+                "Su formulario de modificacion MOT N°" . formatear_con_ceros($mot->nro) . " ha sido rechazado, puede revisarlo dando click al siguiente enlace.",
+                route('mot.detalle', $mot->id_mot),
+                'text-danger'
+            ));
+
+        } elseif ($req->estado == 'verificado') {
+            Mail::to('geco.yak77@gmail.com')->send(new NotificacionGeneral(
+                "Formulario MOT N°" . formatear_con_ceros($mot->nro) . " verificado.",
+                "Su formulario de modificacion MOT N°" . formatear_con_ceros($mot->nro) . " ya ha sido verificado por planificación, puede revisarlo dando click al siguiente enlace.",
+                route('mot.detalle', $mot->id_mot),
+                'text-primary'
+            ));
+        } elseif ($req->estado == 'aprobado') {
+            Mail::to('geco.yak77@gmail.com')->send(new NotificacionGeneral(
+                "Formulario MOT N°" . formatear_con_ceros($mot->nro) . " aprobado.",
+                "Su formulario de modificacion MOT N°" . formatear_con_ceros($mot->nro) . " ya ha sido aprobado para ser modificado, puede revisarlo dando click al siguiente enlace.",
+                route('mot.detalle', $mot->id_mot),
+                'text-success'
+            ));
         }
 
         $mot->save();

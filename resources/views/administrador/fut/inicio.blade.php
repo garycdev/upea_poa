@@ -140,11 +140,14 @@
                                 `<span class="badge bg-dark">${element.formulado}</span>`,
                                 `${conSeparadorComas(element.importe)} bs.`,
                                 `<span
-                                        class="badge bg-${element.estado == 'ejecutado' ? 'success' : (element.estado == 'rechazado' ? 'danger' : (element.estado == 'aprobado' ? 'primary' : 'warning'))}">
-                                        ${element.estado}
-                                    </span>`,
-                                `<button type="button" class="btn btn-outline-primary btn-validar" data-id="${element.id_fut}" style="display:${element.estado == 'elaborado' ? 'inline-block' : 'none'}">
-                                    Validar
+                                    class="badge bg-${element.estado == 'aprobado' ? 'success' : (element.estado == 'rechazado' ? 'danger' : (element.estado == 'verificado' ? 'primary' : element.estado == 'elaborado' ? 'info' : 'warning'))} text-${element.estado == 'elaborado' ? 'dark' : 'light'}">
+                                    ${element.estado}
+                                </span>`,
+                                `<button type="button" class="btn btn-outline-primary btn-validar" data-id="${element.id_fut}" style="display:${element.estado == 'elaborado' && response.rol == 'planifica' ? 'inline-block' : 'none'}">
+                                    Validar formulario
+                                </button>
+                                <button type="button" class="btn btn-outline-success btn-validar" data-id="${element.id_fut}" style="display:${element.estado == 'verificado' && response.rol == 'presupuesto' ? 'inline-block' : 'none'}">
+                                    Validar formulario
                                 </button>`,
                                 `<a href="${urlDetalle}" target="_blank" class="btn btn-outline-primary">
                                     <i class="ri-eye-fill"></i>
@@ -152,7 +155,7 @@
                                 <a href="${urlPdfSolicitud}" class="btn btn-outline-warning" target="_blank">
                                     <i class="ri-file-pdf-line"></i>
                                 </a>
-                                <a href="${urlPdf}" class="btn btn-outline-danger" target="_blank" style="display:${element.estado == 'aprobado' || element.estado == 'ejecutado' ? 'inline-block' : 'none'}">
+                                <a href="${urlPdf}" class="btn btn-outline-danger" target="_blank" style="display:${element.estado == 'verificado' || element.estado == 'aprobado' ? 'inline-block' : 'none'}">
                                     <i class="ri-file-pdf-line"></i>
                                 </a>`
                             ]).draw(false);

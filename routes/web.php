@@ -592,7 +592,8 @@ Route::prefix('/poa')->middleware(['autenticados'])->group(function () {
             Route::get('/formulario/{id_formulado}/{gestiones_id}/{id_conformulado}', 'formulario')->name('fut.formulario');
             Route::post('/formulario', 'realizarCompra')->name('fut.compra');
             Route::post('/detalle', 'editarMonto')->name('fut.editar.monto');
-            Route::delete('/detalle', 'eliminarMonto')->name('fut.eliminar.monto');
+            Route::delete('/eliminar', 'eliminarMonto')->name('fut.eliminar.monto');
+            Route::delete('/detalle', 'eliminarFormulario')->name('fut.eliminar');
             Route::get('/detalle/{id_fut}', 'formular')->name('fut.detalle');
 
             Route::post('/buscar', 'buscarCorrelativo')->name('fut.buscar');
@@ -625,6 +626,10 @@ Route::prefix('/poa')->middleware(['autenticados'])->group(function () {
         // Route::get('/motnro', 'getNro')->name('getNro');
 
         Route::post('/modificacion', 'postModificacion')->name('postModificacion');
+
+        Route::get('/partidas', 'partidasHabilitadas')->name('mot.partidas');
+        Route::post('/partidas', 'inhabilitarPartida')->name('mot.partidas.inhabilitar');
+        Route::put('/partidas', 'habilitarPartida')->name('mot.partidas.habilitar');
 
         Route::prefix('formulacion')->controller(ControladorFormulacionMOT::class)->group(function () {
             Route::get('/', 'inicio')->name('mot.inicio');

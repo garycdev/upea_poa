@@ -6,6 +6,7 @@ use App\Models\Configuracion\UnidadCarreraArea;
 use App\Models\Configuracion_poa\Configuracion_formulado;
 use App\Models\Pei\Objetivo_institucional;
 use App\Models\Poa\Operacion;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -34,6 +35,8 @@ class Mot extends Model
         'respaldo_tramite',
         'fecha_tramite',
         'unidad_solicitante',
+        'id_unidad_verifica',
+        'id_unidad_aprueba',
     ];
 
     protected $casts = [
@@ -99,6 +102,14 @@ class Mot extends Model
     public function unidad_carrera()
     {
         return $this->hasOne(UnidadCarreraArea::class, 'id', 'id_unidad_carrera');
+    }
+    public function unidad_verifica()
+    {
+        return $this->hasOne(User::class, 'id', 'id_unidad_verifica');
+    }
+    public function unidad_aprueba()
+    {
+        return $this->hasOne(User::class, 'id', 'id_unidad_aprueba');
     }
 
     public function getTotalPresupuestoAttribute()

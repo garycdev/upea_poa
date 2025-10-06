@@ -18,7 +18,32 @@ class Usuario_controlador extends Controller
 {
 
     //validar usuario
-    public function validar_usuario(Request $request)
+    public function validar_usuario(Request $req)
+    {
+        $req->validate([
+            'usuario'  => 'required',
+            'password' => 'required',
+        ], [
+            'usuario.required'  => 'El usuario es requerido',
+            'password.required' => 'La contraseña es requerida',
+        ]);
+
+        $user = User::where('usuario', $req->usuario)->first();
+        if (! $user) {
+            session()->flash('error', 'El usuario no existe');
+            return redirect()->back();
+        }
+        if (Auth::attempt(['usuario' => $req->usuario, 'password' => $req->password, 'estado' => 'activo', 'deleted_at' => null])) {
+            $req->session()->regenerate();
+
+            session()->flash('mensaje', 'Inicio de session con exito!');
+            return redirect()->intended(route('inicio'));
+        } else {
+            session()->flash('error', 'Contraseña invalida!');
+            return redirect()->back();
+        }
+    }
+    public function validar_usuario_old(Request $request)
     {
         $mensaje = 'Usuario, contraseña o captcha invalidos';
         $valores = Validator::make($request->all(), [

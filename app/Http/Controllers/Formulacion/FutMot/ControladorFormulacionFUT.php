@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Formulacion\FutMot;
 
 use App\Http\Controllers\Controller;
+use App\Mail\NotificacionGeneral;
 use App\Models\Configuracion\UnidadCarreraArea;
 use App\Models\FutMot\Fut;
 use App\Models\FutMot\FutMov;
@@ -13,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class ControladorFormulacionFUT extends Controller
 {
@@ -49,6 +51,7 @@ class ControladorFormulacionFUT extends Controller
             $fut = Fut::join('rl_configuracion_formulado as rcf', 'fut.id_configuracion_formulado', '=', 'rcf.id')
                 ->join('rl_gestiones as rg', 'rcf.gestiones_id', '=', 'rg.id')
                 ->join('rl_formulado_tipo as rft', 'rcf.formulado_id', '=', 'rft.id')
+                ->where('fut.estado', '<>', 'eliminado')
                 ->where('id_configuracion_formulado', '=', $id_conformulado)
                 ->where('id_unidad_carrera', '=', Auth::user()->id_unidad_carrera)
                 ->select('fut.*', 'rg.gestion', 'rft.descripcion')
@@ -63,6 +66,7 @@ class ControladorFormulacionFUT extends Controller
             $fut = Fut::join('rl_configuracion_formulado as rcf', 'fut.id_configuracion_formulado', '=', 'rcf.id')
                 ->join('rl_gestiones as rg', 'rcf.gestiones_id', '=', 'rg.id')
                 ->join('rl_formulado_tipo as rft', 'rcf.formulado_id', '=', 'rft.id')
+                ->where('fut.estado', '<>', 'eliminado')
                 ->where('id_configuracion_formulado', '=', $id_conformulado)
                 ->where('id_unidad_carrera', '=', $id_carrera)
                 ->select('fut.*', 'rg.gestion', 'rft.descripcion')
@@ -353,6 +357,32 @@ class ControladorFormulacionFUT extends Controller
             ], 403);
         }
     }
+    public function eliminarFormulario(Request $req)
+    {
+        $fut  = Fut::find($req->id_fut);
+        $movs = FutMov::join('fut_partidas_presupuestarias as pp', 'pp.id_fut_pp', '=', 'fut_movimiento.id_fut_pp')
+            ->where('pp.id_fut', $fut->id_fut)
+            ->select('fut_movimiento.*')
+            ->get();
+
+        foreach ($movs as $mov) {
+            $mbs                    = Medida_bienservicio::find($mov->id_mbs);
+            $mbs->total_presupuesto = $mbs->total_presupuesto + $mov->partida_monto;
+            $mbs->save();
+
+            $mov->descripcion = 'revertido';
+
+            $mov->save();
+        }
+
+        $fut->estado = 'eliminado';
+        $fut->save();
+
+        session()->flash('message', 'Formulario eliminado exitosamente.');
+        return response()->json([
+            'success' => false,
+        ], 200);
+    }
 
     public function validarFormulario(Request $req)
     {
@@ -380,6 +410,27 @@ class ControladorFormulacionFUT extends Controller
                 $mov->descripcion = 'revertido';
                 $mov->save();
             }
+            Mail::to('geco.yak77@gmail.com')->send(new NotificacionGeneral(
+                "Formulario FUT N°" . formatear_con_ceros($fut->nro) . " rechazado.",
+                "Su formulario de compra FUT N°" . formatear_con_ceros($fut->nro) . " ha sido rechazado, puede revisarlo dando click al siguiente enlace.",
+                route('fut.detalle', $fut->id_fut),
+                'text-danger'
+            ));
+
+        } elseif ($req->estado == 'verificado') {
+            Mail::to('geco.yak77@gmail.com')->send(new NotificacionGeneral(
+                "Formulario FUT N°" . formatear_con_ceros($fut->nro) . " verificado.",
+                "Su formulario de compra FUT N°" . formatear_con_ceros($fut->nro) . " ya ha sido verificado por planificación, puede revisarlo dando click al siguiente enlace.",
+                route('fut.detalle', $fut->id_fut),
+                'text-primary'
+            ));
+        } elseif ($req->estado == 'aprobado') {
+            Mail::to('geco.yak77@gmail.com')->send(new NotificacionGeneral(
+                "Formulario FUT N°" . formatear_con_ceros($fut->nro) . " aprobado.",
+                "Su formulario de compra FUT N°" . formatear_con_ceros($fut->nro) . " ya ha sido aprobado para compra, puede revisarlo dando click al siguiente enlace.",
+                route('fut.detalle', $fut->id_fut),
+                'text-success'
+            ));
         }
 
         $fut->save();
@@ -408,6 +459,7 @@ class ControladorFormulacionFUT extends Controller
                 ->join('rl_unidad_carrera as uc', 'uc.id', '=', 'fut.id_unidad_carrera')
                 ->join('rl_formulado_tipo as rft', 'rft.id', '=', 'rcf.formulado_id')
                 ->join('rl_gestiones as rg', 'rg.id', '=', 'rcf.gestiones_id')
+                ->where('fut.estado', '<>', 'eliminado')
                 ->where('fut.nro', 'like', '%' . $nro . '%')
                 ->where('rcf.gestiones_id', $gestiones_id)
                 ->select('fut.*', 'uc.nombre_completo as carrera', 'rft.descripcion as formulado', 'rg.gestion')
@@ -417,6 +469,7 @@ class ControladorFormulacionFUT extends Controller
                 ->where('nro', 'like', '%' . $nro . '%')
                 ->join('rl_unidad_carrera as uc', 'uc.id', '=', 'fut.id_unidad_carrera')
                 ->join('rl_formulado_tipo as rft', 'rft.id', '=', 'rcf.formulado_id')
+                ->where('fut.estado', '<>', 'eliminado')
                 ->join('rl_gestiones as rg', 'rg.id', '=', 'rcf.gestiones_id')
                 ->select('fut.*', 'uc.nombre_completo as carrera', 'rft.descripcion as formulado', 'rg.gestion')
                 ->get();
@@ -424,6 +477,7 @@ class ControladorFormulacionFUT extends Controller
             $fut = Fut::join('rl_configuracion_formulado as rcf', 'rcf.id', '=', 'fut.id_configuracion_formulado')
                 ->join('rl_unidad_carrera as uc', 'uc.id', '=', 'fut.id_unidad_carrera')
                 ->join('rl_formulado_tipo as rft', 'rft.id', '=', 'rcf.formulado_id')
+                ->where('fut.estado', '<>', 'eliminado')
                 ->join('rl_gestiones as rg', 'rg.id', '=', 'rcf.gestiones_id')
                 ->where('rcf.gestiones_id', $gestiones_id)
                 ->select('fut.*', 'uc.nombre_completo as carrera', 'rft.descripcion as formulado', 'rg.gestion')

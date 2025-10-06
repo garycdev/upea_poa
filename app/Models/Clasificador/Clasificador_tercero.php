@@ -18,6 +18,7 @@ class Clasificador_tercero extends Model
         'titulo',
         'descripcion',
         'id_clasificador_segundo',
+        'modificacion'
     ];
     public $timestamps = false;
     //relacion con clasificador cuarto

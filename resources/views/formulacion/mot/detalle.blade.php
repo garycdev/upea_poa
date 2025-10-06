@@ -24,17 +24,17 @@
                 </div>
                 <div class="d-flex align-items-center justify-content-evenly">
                     @can('Validar_seguimiento')
-                        @if ($mot->estado == 'elaborado')
+                        @if ($mot->estado == 'elaborado' && Auth::user()->rol_verifica() == 'planifica')
                             <button type="button" class="btn btn-primary d-inline btn-validar-mot" data-id="{{ $mot->id_mot }}">
-                                Validar solicitud
+                                Formulario verificado
+                            </button>
+                        @endif
+                        @if ($mot->estado == 'verificado' && Auth::user()->rol_verifica() == 'presupuesto')
+                            <button type="button" class="btn btn-success d-inline btn-validar-mot" data-id="{{ $mot->id_mot }}">
+                                Aprobar modificaciones
                             </button>
                         @endif
                     @endcan
-                    {{-- @if ($mot->estado == 'pendiente' && Auth::user()->id_unidad_carrera == $mot->id_unidad_carrera)
-                        <button type="button" class="btn btn-success btn-modal-ejecutar-mot" data-id="{{ $mot->id_mot }}">
-                            Ejecutar modificación
-                        </button>
-                    @endif --}}
                     @if ($mot->estado != 'pendiente')
                         <a href="{{ route('mot.pdf', $mot->id_mot) }}" class="btn btn-warning" target="_blank"
                             style="display:inline-block">

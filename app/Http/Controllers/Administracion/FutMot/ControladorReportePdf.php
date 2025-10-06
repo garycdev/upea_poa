@@ -470,6 +470,7 @@ class ControladorReportePdf extends Controller
         //     ->header('Content-Disposition', 'inline; filename=nombre_del_pdf.pdf'); // Mostrar en línea en el navegador
     }
 
+    // PDF Formulario unico de tramite (FUT)
     public function formulacionPdfMot(Request $req, $id_mot)
     {
         $mot       = Mot::where('id_mot', '=', $id_mot)->first();
@@ -822,20 +823,94 @@ class ControladorReportePdf extends Controller
             }
         }
 
+        $pdf->setFont('Arial', 'B', 7);
+        // Respaldo tramite
+        $pdf->setXY(10, -70);
+        $pdf->Cell(30, 5, utf8_decode('Respaldo de Tramite           :'), 0, 0, 'L', false);
+        $pdf->setFont('Arial', '', 7);
+        $pdf->setX(45);
+        $pdf->Cell(150, 5, utf8_decode($mot->respaldo_tramite ?? '-'), 1, 0, 'L', false);
+
         // Fecha
-        $pdf->setFont('Arial', 'B', 8);
-        $pdf->setXY(30, -20);
-        $pdf->Cell(30, 5, utf8_decode('Fecha de Tramite    :'), 0, 0, 'L', false);
-        $pdf->setX(70);
-        $pdf->Cell(15, 5, utf8_decode('Dia'), 1, 0, 'C', false);
-        $pdf->setX(85);
-        $pdf->Cell(15, 5, utf8_decode('Mes'), 1, 0, 'C', false);
-        $pdf->setX(100);
-        $pdf->Cell(15, 5, utf8_decode('Año'), 1, 0, 'C', false);
+        $pdf->setFont('Arial', 'B', 7);
+        $pdf->setXY(10, -65);
+        $pdf->Cell(30, 5, utf8_decode('Fecha de Inicio de Tramite :'), 0, 0, 'L', false);
+        $pdf->setFont('Arial', '', 7);
+        $pdf->setX(45);
+        $pdf->Cell(20, 5, utf8_decode('Dia'), 1, 0, 'C', false);
+        $pdf->setX(65);
+        $pdf->Cell(10, 5, utf8_decode('Mes'), 1, 0, 'C', false);
+        $pdf->setX(75);
+        $pdf->Cell(10, 5, utf8_decode('Año'), 1, 0, 'C', false);
+
+        $pdf->setY(-60);
+        $pdf->setX(45);
+        $pdf->MultiCell(40, 8, utf8_decode($mot->fecha_tramite ?? '-'), 1, 'C', false);
+        $usuario = User::where('id', '=', $mot->id_usuario)->first();
+
+        // Unidad
+        $pdf->setFont('Arial', 'B', 5);
+        $pdf->setY(-50);
+        $pdf->setX(10);
+        $pdf->Cell(65, 5, 'Elaborado por:', 1, 0, 'C', false);
+        $pdf->setX(75);
+        $pdf->Cell(65, 5, 'Verificado por:', 1, 0, 'C', false);
+        $pdf->setX(140);
+        $pdf->Cell(65, 5, 'Aprobado por:', 1, 0, 'C', false);
+        $pdf->setFont('Arial', '', 5);
+
+        $pdf->setY(-45);
+        $pdf->setX(10);
+        $pdf->Cell(65, 18, '', 1, 0, 'C', false);
+        $pdf->setX(75);
+        $pdf->Cell(65, 18, '', 1, 0, 'C', false);
+        $pdf->setX(140);
+        $pdf->Cell(65, 18, '', 1, 0, 'C', false);
+
+        $pdf->setY(-32);
+        $pdf->setX(10);
+        $pdf->Cell(65, 5, 'Lic. ' . $usuario->nombre . ' ' . $usuario->apellido, 0, 0, 'C', false);
+        $pdf->setX(75);
+        if ($mot->unidad_verifica) {
+            $pdf->Cell(65, 5, 'Lic. ' . $mot->unidad_verifica->nombre . ' ' . $mot->unidad_verifica->apellido, 0, 0, 'C', false);
+        } else {
+            $pdf->Cell(65, 5, '-', 0, 0, 'C', false);
+        }
+        $pdf->setX(140);
+        if ($mot->unidad_aprueba) {
+            $pdf->Cell(65, 5, 'Lic. ' . $mot->unidad_aprueba->nombre . ' ' . $mot->unidad_aprueba->apellido, 0, 0, 'C', false);
+        } else {
+            $pdf->Cell(65, 5, '-', 0, 0, 'C', false);
+        }
+
+        $pdf->setY(-27);
+        $pdf->setX(10);
+        $pdf->Cell(65, 20, '', 1, 0, 'C', false);
+        $pdf->setX(75);
+        $pdf->Cell(65, 20, '', 1, 0, 'C', false);
+        $pdf->setX(140);
+        $pdf->Cell(65, 20, '', 1, 0, 'C', false);
 
         $pdf->setY(-15);
-        $pdf->setX(70);
-        $pdf->MultiCell(45, 5, utf8_decode($mot->created_at), 1, 'C', false);
+        $pdf->setX(10);
+        $pdf->Cell(65, 5, $this->ellipsis($pdf, $mot->unidad_carrera->nombre_completo, 90), 0, 0, 'C', false);
+        $pdf->setX(75);
+        $pdf->Cell(65, 5, utf8_decode('UNIDAD DE DESARROLLO ESTRATÉGICO Y PLANIFICACIÓN'), 0, 0, 'C', false);
+        $pdf->setX(140);
+        $pdf->Cell(65, 5, 'UNIDAD DE PRESUPUESTOS', 0, 0, 'C', false);
+
+        $pdf->setY(-12);
+        $pdf->setX(10);
+        $pdf->Cell(65, 5, $this->ellipsis($pdf, $mot->unidad_carrera->nombre_completo, 90), 0, 0, 'C', false);
+        $pdf->setX(75);
+        $pdf->Cell(65, 5, utf8_decode('UNIDAD DE DESARROLLO ESTRATÉGICO Y PLANIFICACIÓN'), 0, 0, 'C', false);
+        $pdf->setX(140);
+        $pdf->Cell(65, 5, 'UNIDAD DE PRESUPUESTOS', 0, 0, 'C', false);
+
+        // Nota
+        $pdf->setFont('Arial', '', 6);
+        $pdf->setXY(5, -5);
+        $pdf->Cell(200, 3, utf8_decode('NOTA: La Unidad de Presupuestos remitirá una copia de la Modificación Presupuestaria realizada en el SIGEP a la Unidad de Planificación.'), 0, 0, 'L', false);
 
         $nombreArchivo = 'MotN' . $mot->nro . '-' . date('Y-m-d_H-i-s') . '.pdf';
 
@@ -1470,21 +1545,94 @@ class ControladorReportePdf extends Controller
             $altura = $altura + 10;
         }
 
+        $pdf->setFont('Arial', 'B', 7);
+        // Respaldo tramite
+        $pdf->setXY(10, -70);
+        $pdf->Cell(30, 5, utf8_decode('Respaldo de Tramite           :'), 0, 0, 'L', false);
+        $pdf->setFont('Arial', '', 7);
+        $pdf->setX(45);
+        $pdf->Cell(150, 5, utf8_decode($fut->respaldo_tramite ?? '-'), 1, 0, 'L', false);
+
         // Fecha
-        $pdf->setFont('Arial', 'B', 8);
-        $pdf->setXY(30, -20);
-        $pdf->Cell(30, 5, utf8_decode('Fecha de Tramite    :'), 0, 0, 'L', false);
-        $pdf->setX(70);
-        $pdf->Cell(15, 5, utf8_decode('Dia'), 1, 0, 'C', false);
-        $pdf->setX(85);
-        $pdf->Cell(15, 5, utf8_decode('Mes'), 1, 0, 'C', false);
-        $pdf->setX(100);
-        $pdf->Cell(15, 5, utf8_decode('Año'), 1, 0, 'C', false);
+        $pdf->setFont('Arial', 'B', 7);
+        $pdf->setXY(10, -65);
+        $pdf->Cell(30, 5, utf8_decode('Fecha de Inicio de Tramite :'), 0, 0, 'L', false);
+        $pdf->setFont('Arial', '', 7);
+        $pdf->setX(45);
+        $pdf->Cell(20, 5, utf8_decode('Dia'), 1, 0, 'C', false);
+        $pdf->setX(65);
+        $pdf->Cell(10, 5, utf8_decode('Mes'), 1, 0, 'C', false);
+        $pdf->setX(75);
+        $pdf->Cell(10, 5, utf8_decode('Año'), 1, 0, 'C', false);
+
+        $pdf->setY(-60);
+        $pdf->setX(45);
+        $pdf->MultiCell(40, 8, utf8_decode($fut->fecha_tramite ?? '-'), 1, 'C', false);
+        $usuario = User::where('id', '=', $fut->id_usuario)->first();
+
+        // Unidad
+        $pdf->setFont('Arial', 'B', 5);
+        $pdf->setY(-50);
+        $pdf->setX(10);
+        $pdf->Cell(65, 5, 'Elaborado por:', 1, 0, 'C', false);
+        $pdf->setX(75);
+        $pdf->Cell(65, 5, 'Verificado por:', 1, 0, 'C', false);
+        $pdf->setX(140);
+        $pdf->Cell(65, 5, 'Aprobado por:', 1, 0, 'C', false);
+        $pdf->setFont('Arial', '', 5);
+
+        $pdf->setY(-45);
+        $pdf->setX(10);
+        $pdf->Cell(65, 18, '', 1, 0, 'C', false);
+        $pdf->setX(75);
+        $pdf->Cell(65, 18, '', 1, 0, 'C', false);
+        $pdf->setX(140);
+        $pdf->Cell(65, 18, '', 1, 0, 'C', false);
+
+        $pdf->setY(-32);
+        $pdf->setX(10);
+        $pdf->Cell(65, 5, 'Lic. ' . $usuario->nombre . ' ' . $usuario->apellido, 0, 0, 'C', false);
+        $pdf->setX(75);
+        if ($fut->unidad_verifica) {
+            $pdf->Cell(65, 5, 'Lic. ' . $fut->unidad_verifica->nombre . ' ' . $fut->unidad_verifica->apellido, 0, 0, 'C', false);
+        } else {
+            $pdf->Cell(65, 5, '-', 0, 0, 'C', false);
+        }
+        $pdf->setX(140);
+        if ($fut->unidad_aprueba) {
+            $pdf->Cell(65, 5, 'Lic. ' . $fut->unidad_aprueba->nombre . ' ' . $fut->unidad_aprueba->apellido, 0, 0, 'C', false);
+        } else {
+            $pdf->Cell(65, 5, '-', 0, 0, 'C', false);
+        }
+
+        $pdf->setY(-27);
+        $pdf->setX(10);
+        $pdf->Cell(65, 20, '', 1, 0, 'C', false);
+        $pdf->setX(75);
+        $pdf->Cell(65, 20, '', 1, 0, 'C', false);
+        $pdf->setX(140);
+        $pdf->Cell(65, 20, '', 1, 0, 'C', false);
 
         $pdf->setY(-15);
-        $pdf->setX(70);
-        $pdf->MultiCell(45, 5, utf8_decode($fut->created_at), 1, 'C', false);
+        $pdf->setX(10);
+        $pdf->Cell(65, 5, $this->ellipsis($pdf, $fut->unidad_carrera->nombre_completo, 90), 0, 0, 'C', false);
+        $pdf->setX(75);
+        $pdf->Cell(65, 5, utf8_decode('UNIDAD DE DESARROLLO ESTRATÉGICO Y PLANIFICACIÓN'), 0, 0, 'C', false);
+        $pdf->setX(140);
+        $pdf->Cell(65, 5, 'UNIDAD DE PRESUPUESTOS', 0, 0, 'C', false);
 
+        $pdf->setY(-12);
+        $pdf->setX(10);
+        $pdf->Cell(65, 5, $this->ellipsis($pdf, $fut->unidad_carrera->nombre_completo, 90), 0, 0, 'C', false);
+        $pdf->setX(75);
+        $pdf->Cell(65, 5, utf8_decode('UNIDAD DE DESARROLLO ESTRATÉGICO Y PLANIFICACIÓN'), 0, 0, 'C', false);
+        $pdf->setX(140);
+        $pdf->Cell(65, 5, 'UNIDAD DE PRESUPUESTOS', 0, 0, 'C', false);
+
+        // Nota
+        $pdf->setFont('Arial', '', 6);
+        $pdf->setXY(5, -5);
+        $pdf->Cell(200, 3, utf8_decode('NOTA: La Unidad de Presupuestos remitirá una copia del Preventivo realizado en el SIGEP a la Unidad de Planificación..'), 0, 0, 'L', false);
         // $pdf->Output();
 
         // Descargar pdf directamente
@@ -1624,3 +1772,12 @@ class ControladorReportePdf extends Controller
     }
 
 }
+
+// vista base_upea
+/**
+SELECT base_upea.vista_personal_administrativo_2020.*,
+bd_poa.levenshtein(unidad_trabajo, 'UNIDAD DE TECNOLOGIAS DE INFORMACION Y COMUNICACIONES (UTIC)    ') AS dist
+FROM base_upea.vista_personal_administrativo_2020
+ORDER BY dist ASC, base_upea.vista_personal_administrativo_2020.fecha_inicio_asignacion_administrativo DESC
+LIMIT 1;
+ */

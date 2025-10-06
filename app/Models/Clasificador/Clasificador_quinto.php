@@ -15,6 +15,7 @@ class Clasificador_quinto extends Model
         'titulo',
         'descripcion',
         'id_clasificador_cuarto',
+        'modificacion'
     ];
     public $timestamps = false;
 

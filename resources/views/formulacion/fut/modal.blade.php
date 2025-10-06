@@ -162,17 +162,40 @@
                         <textarea class="form-control" name="observacion" id="observacion" placeholder="Observaciones" rows="3" required>{{ $fut->observacion ?? '' }}</textarea>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-danger btn-modal-submit" data-estado="rechazado">
-                        Rechazar formulario
-                    </button>
-                    {{-- <button type="button" class="btn btn-warning btn-modal-submit" data-estado="aprobado">
-                        Aprobar formulario
-                    </button> --}}
-                    <button type="button" class="btn btn-primary btn-modal-submit" data-estado="aprobado">
-                        Aprobar formulario
-                    </button>
+                <div class="modal-footer d-flex justify-content-between">
+                    <div>
+                        @if ($fut->estado == 'verificado')
+                            <a href="{{ route('pdfFut', $fut->id_fut) }}" class="btn btn-outline-danger"
+                                target="_blank" style="display:inline-block">
+                                <i class="ri-file-pdf-line"></i> Formulario
+                            </a>
+                        @endif
+                        @if ($fut->estado != 'pendiente')
+                            <a href="{{ route('fut.pdf', $fut->id_fut) }}" class="btn btn-outline-primary"
+                                target="_blank" style="display:inline-block">
+                                <i class="ri-file-pdf-line"></i> Solicitud
+                            </a>
+                        @endif
+                    </div>
+                    <div>
+                        <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-danger btn-modal-submit-fut" data-estado="rechazado">
+                            Rechazar formulario
+                        </button>
+                        {{-- <button type="button" class="btn btn-warning btn-modal-submit" data-estado="aprobado">
+                            Aprobar formulario
+                        </button> --}}
+                        @if ($fut->estado == 'elaborado' && Auth::user()->rol_verifica() == 'planifica')
+                            <button type="button" class="btn btn-primary btn-modal-submit" data-estado="verificado">
+                                Formulario verificado
+                            </button>
+                        @endif
+                        @if ($fut->estado == 'verificado' && Auth::user()->rol_verifica() == 'presupuesto')
+                            <button type="button" class="btn btn-success btn-modal-submit" data-estado="aprobado">
+                                Aprobar compra
+                            </button>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>

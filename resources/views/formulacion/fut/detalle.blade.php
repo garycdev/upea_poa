@@ -16,7 +16,7 @@
             </h5>
             <div class="page-title my-auto col-md-3 col-12">
                 <div
-                    class="alert alert-{{ $fut->estado == 'ejecutado' ? 'success' : ($fut->estado == 'rechazado' ? 'danger' : ($fut->estado == 'aprobado' ? 'primary' : 'warning')) }}">
+                    class="alert alert-{{ $fut->estado == 'aprobado' ? 'success' : ($fut->estado == 'rechazado' ? 'danger' : ($fut->estado == 'verificado' ? 'primary' : 'warning')) }}">
                     <p>Estado: <strong>{{ $fut->estado }}</strong></p>
                     @if (isset($fut->observacion))
                         <p>Observacion: {{ $fut->observacion }}</p>
@@ -24,22 +24,27 @@
                 </div>
                 <div class="d-flex align-items-center justify-content-evenly">
                     @can('Validar_seguimiento')
-                        @if ($fut->estado == 'elaborado')
+                        @if ($fut->estado == 'elaborado' && Auth::user()->rol_verifica() == 'planifica')
                             <button type="button" class="btn btn-primary d-inline btn-validar-fut" data-id="{{ $fut->id_fut }}">
-                                Validar solicitud
+                                Verifica formulario
+                            </button>
+                        @endif
+                        @if ($fut->estado == 'verificado' && Auth::user()->rol_verifica() == 'presupuesto')
+                            <button type="button" class="btn btn-success d-inline btn-validar-fut" data-id="{{ $fut->id_fut }}">
+                                Aprobar compra
                             </button>
                         @endif
                     @endcan
-                    @if ($fut->estado == 'aprobado' && Auth::user()->id_unidad_carrera == $fut->id_unidad_carrera)
+                    {{-- @if ($fut->estado == 'aprobado' && Auth::user()->id_unidad_carrera == $fut->id_unidad_carrera)
                         <button type="button" class="btn btn-success btn-modal-ejecutar-fut" data-id="{{ $fut->id_fut }}">
                             Ejecutar compra
                         </button>
-                    @endif
+                    @endif --}}
                     <a href="{{ route('fut.pdf', $fut->id_fut) }}" class="btn btn-warning" target="_blank"
                         style="display:inline-block">
                         <i class="ri-file-pdf-line"></i> Solicitud
                     </a>
-                    @if ($fut->estado == 'aprobado' || $fut->estado == 'ejecutado')
+                    @if ($fut->estado == 'verificado' || $fut->estado == 'aprobado')
                         <a href="{{ route('pdfFut', $fut->id_fut) }}" class="btn btn-danger" target="_blank"
                             style="display:inline-block">
                             <i class="ri-file-pdf-line"></i> Formulario

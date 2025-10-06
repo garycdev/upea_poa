@@ -86,7 +86,7 @@
                                                     @endphp --}}
                                                     <td>
                                                         <span
-                                                            class="badge bg-{{ $item->estado == 'ejecutado' ? 'success' : ($item->estado == 'rechazado' ? 'danger' : ($item->estado == 'aprobado' ? 'primary' : 'warning')) }}">
+                                                            class="badge bg-{{ $item->estado == 'aprobado' ? 'success' : ($item->estado == 'rechazado' ? 'danger' : ($item->estado == 'verificado' ? 'primary' : ($item->estado == 'elaborado' ? 'info' : 'warning'))) }} text-{{ $item->estado == 'elaborado' ? 'dark' : 'light' }}">
                                                             {{ $item->estado }}
                                                         </span>
                                                     </td>
@@ -132,6 +132,13 @@
                                                                 <i class="ri-file-pdf-line"></i>
                                                             </a>
                                                         @endif
+                                                        @if ($item->estado == 'elaborado')
+                                                            <button type="button"
+                                                                class="btn btn-outline-danger btn-eliminar-fut"
+                                                                target="_blank" data-id="{{ $item->id_fut }}">
+                                                                <i class="ri-delete-bin-line"></i>
+                                                            </button>
+                                                        @endif
                                                         {{-- <button class="btn btn-success">
                                                             <i class="ri-file-excel-line"></i>&nbsp;EXCEL
                                                         </button> --}}
@@ -173,5 +180,40 @@
         //         $("#modalValidar .modal-body").html(html);
         //     });
         // }
+
+        $(document).ready(function() {
+            $(document).on('click', '.btn-eliminar-fut', function() {
+                let id = $(this).data('id')
+
+                Swal.fire({
+                    title: "¿Esta seguro de eliminar el formulario?",
+                    text: "Se eliminara las atribuciones de los montos previstos",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Si, eliminar"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            type: "POST",
+                            url: "{{ route('fut.eliminar') }}",
+                            data: {
+                                _token: '{{ csrf_token() }}',
+                                _method: 'DELETE',
+                                id_fut: id
+                            },
+                            dataType: "JSON",
+                            success: function(response) {
+                                location.reload()
+                            },
+                            error: function(error) {
+                                console.log(error);
+                            }
+                        });
+                    }
+                });
+            })
+        })
     </script>
 @endsection

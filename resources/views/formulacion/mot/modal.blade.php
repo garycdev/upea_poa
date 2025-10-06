@@ -143,8 +143,8 @@
                         </tbody>
                     </table>
 
-                    <input type="text" name="id_mot" value="{{ $mot->id_mot }}">
-                    <input type="text" name="estado" id="estado">
+                    <input type="hidden" name="id_mot" value="{{ $mot->id_mot }}">
+                    <input type="hidden" name="estado" id="estado">
                     <div class="form-group mt-3">
                         <label for="respaldo_tramite" class="form-label">
                             Respaldo de tramite :
@@ -216,7 +216,7 @@
                         @endif
                         @if (Auth::user()->rol_verifica() == 'presupuesto')
                             <button type="button" class="btn btn-success btn-modal-submit-mot"
-                                data-estado="verificado">
+                                data-estado="aprobado">
                                 Aprobar formulario
                             </button>
                         @endif
