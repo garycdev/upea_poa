@@ -17,8 +17,8 @@ class Controlador_formulado extends Controller
         $data['menu'] = 12;
         // $data['gestion']    = Gestion::where('estado', 'activo')->get();
         $data['gestiones'] = Gestiones::where('estado', 'activo')
-        // ->whereYear('gestion', '>=', date('Y'))
-            ->orderBy('gestion', 'desc')
+            ->whereYear('gestion', '>=', date('Y'))
+            ->orderBy('gestion', 'ASC')
             ->get();
         return view('administrador.configuracion_poa.habilitar_formulado', $data);
     }

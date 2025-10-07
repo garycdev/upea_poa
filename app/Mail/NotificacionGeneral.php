@@ -3,6 +3,7 @@ namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
@@ -32,7 +33,10 @@ class NotificacionGeneral extends Mailable
     public function build()
     {
         return $this->subject($this->titulo)
-            ->markdown('emails.notificacion');
+            ->view('emails.notificacion')
+            ->with([
+                'banner' => public_path('logos/banner-upea.png'),
+            ]);
     }
     /**
      * Get the message envelope.
@@ -42,7 +46,7 @@ class NotificacionGeneral extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: 'Notificacion General',
+            subject: config('APP_NAME'),
         );
     }
 
@@ -63,7 +67,7 @@ class NotificacionGeneral extends Mailable
      *
      * @return array
      */
-    public function attachments()
+    public function attachments(): array
     {
         return [];
     }

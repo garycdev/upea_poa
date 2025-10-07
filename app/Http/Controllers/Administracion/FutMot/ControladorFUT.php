@@ -23,12 +23,18 @@ class ControladorFUT extends Controller
         if (Auth::user()->id_unidad_carrera != null) {
             $data['carrera_unidad'] = UnidadCarreraArea::where('id', Auth::user()->id_unidad_carrera)->get();
             $data['unidades']       = UnidadCarreraArea::get();
-            $data['gestiones']      = Gestiones::get();
+            $data['gestiones']      = Gestiones::where('estado', 'activo')
+                ->where('gestion', '>=', date('Y'))
+                ->orderBy('gestion', 'ASC')
+                ->get();
 
             return view('administrador.fut.inicio', $data);
         } else {
             $data['unidades']  = UnidadCarreraArea::get();
-            $data['gestiones'] = Gestiones::get();
+            $data['gestiones'] = Gestiones::where('estado', 'activo')
+                ->where('gestion', '>=', date('Y'))
+                ->orderBy('gestion', 'ASC')
+                ->get();
 
             return view('administrador.fut.inicio', $data);
         }

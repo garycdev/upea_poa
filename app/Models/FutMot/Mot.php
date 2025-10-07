@@ -99,6 +99,10 @@ class Mot extends Model
             ->first();
     }
 
+    public function usuario()
+    {
+        return $this->hasOne(User::class, 'id', 'id_usuario');
+    }
     public function unidad_carrera()
     {
         return $this->hasOne(UnidadCarreraArea::class, 'id', 'id_unidad_carrera');

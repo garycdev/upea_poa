@@ -94,7 +94,7 @@
                             `);
 
                             $item.find('a').attr('href', function() {
-                                return this.href.replace('ELEMENT_ID', element.id);
+                                return this.href.replace('ELEMENT_ID', element.id_encriptado);
                             });
 
                             $box.append($item);

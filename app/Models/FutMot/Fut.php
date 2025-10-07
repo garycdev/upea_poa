@@ -61,6 +61,10 @@ class Fut extends Model
     {
         return $this->hasMany(FutPP::class, 'id_fut', 'id_fut');
     }
+    public function usuario()
+    {
+        return $this->hasOne(User::class, 'id', 'id_usuario');
+    }
     public function unidad_carrera()
     {
         return $this->hasOne(UnidadCarreraArea::class, 'id', 'id_unidad_carrera');

@@ -270,10 +270,6 @@
             });
         });
 
-
-
-
-
         function vaciar_campos_u() {
             document.getElementById('_ci').innerHTML = '';
             document.getElementById('_nombres').innerHTML = '';

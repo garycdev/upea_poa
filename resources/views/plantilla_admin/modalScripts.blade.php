@@ -149,6 +149,8 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $('#formValidar').submit()
+
+                        $('body').removeClass('loaded')
                     }
                 });
             }
@@ -264,6 +266,8 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $('#formValidarMot').submit()
+
+                        $('body').removeClass('loaded')
                     }
                 });
             }

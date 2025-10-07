@@ -303,7 +303,7 @@
         </div>
     </div>
 
-    <!-- Modal nuevo-->email
+    <!-- Modal nuevo-->
     <div class="modal zoom" id="editar_usuario" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog">

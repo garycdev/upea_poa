@@ -34,8 +34,8 @@ class Controlador_formulacion extends Controller
             $data['carrera_unidad'] = UnidadCarreraArea::where('id', Auth::user()->id_unidad_carrera)->get();
             // $data['gestion']        = Gestion::get();
             $data['gestiones'] = Gestiones::where('estado', 'activo')
-            // ->whereYear('gestion', '>=', date('Y'))
-                ->orderBy('gestion', 'desc')
+                ->whereYear('gestion', '>=', date('Y'))
+                ->orderBy('gestion', 'ASC')
                 ->get();
             return view('formulacion.formulacion_poa', $data);
         } else {

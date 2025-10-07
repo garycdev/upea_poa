@@ -164,14 +164,14 @@
                 </div>
                 <div class="modal-footer d-flex justify-content-between">
                     <div>
-                        @if ($fut->estado == 'verificado')
+                        {{-- @if ($fut->estado == 'verificado')
                             <a href="{{ route('pdfFut', $fut->id_fut) }}" class="btn btn-outline-danger"
                                 target="_blank" style="display:inline-block">
                                 <i class="ri-file-pdf-line"></i> Formulario
                             </a>
-                        @endif
+                        @endif --}}
                         @if ($fut->estado != 'pendiente')
-                            <a href="{{ route('fut.pdf', $fut->id_fut) }}" class="btn btn-outline-primary"
+                            <a href="{{ route('fut.pdf', encriptar($fut->id_fut)) }}" class="btn btn-outline-primary"
                                 target="_blank" style="display:inline-block">
                                 <i class="ri-file-pdf-line"></i> Solicitud
                             </a>

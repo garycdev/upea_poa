@@ -13,7 +13,6 @@ use App\Models\Poa\Medida_bienservicio;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
@@ -24,7 +23,10 @@ class ControladorFormulacionMOT extends Controller
         $data['menu'] = 22;
         if (Auth::user()->id_unidad_carrera != null) {
             $data['carrera_unidad'] = UnidadCarreraArea::where('id', Auth::user()->id_unidad_carrera)->get();
-            $data['gestiones']      = Gestiones::get();
+            $data['gestiones']      = Gestiones::where('estado', 'activo')
+                ->where('gestion', '>=', date('Y'))
+                ->orderBy('gestion', 'ASC')
+                ->get();
 
             return view('formulacion.mot.inicio', $data);
         } else {
@@ -36,7 +38,8 @@ class ControladorFormulacionMOT extends Controller
 
     public function listarFormularios($id_conformulado, $id_carrera = 0)
     {
-        // $id_formulado = $req->input('id_formulado');
+        $id_conformulado = desencriptar($id_conformulado);
+
         $configuracion = DB::table('rl_configuracion_formulado as rcf')
             ->join('rl_formulado_tipo as rft', 'rcf.formulado_id', '=', 'rft.id')
             ->join('rl_gestiones as rg', 'rcf.gestiones_id', '=', 'rg.id')
@@ -60,6 +63,8 @@ class ControladorFormulacionMOT extends Controller
                 ->get();
             $carrera = UnidadCarreraArea::where('id', '=', Auth::user()->id_unidad_carrera)->first();
         } else {
+            $id_carrera = desencriptar($id_carrera);
+
             $formulado = DB::table('rl_formulario1')
                 ->where('configFormulado_id', '=', $configuracion->id)
                 ->where('unidadCarrera_id', '=', $id_carrera)
@@ -92,9 +97,9 @@ class ControladorFormulacionMOT extends Controller
 
     public function formulario($id_formulado, $gestiones_id, $id_conformulado)
     {
-        $id_formulado    = Crypt::decryptString($id_formulado);
-        $gestiones_id    = Crypt::decryptString($gestiones_id);
-        $id_conformulado = Crypt::decryptString($id_conformulado);
+        $id_formulado    = desencriptar($id_formulado);
+        $gestiones_id    = desencriptar($gestiones_id);
+        $id_conformulado = desencriptar($id_conformulado);
 
         $nro_mot = DB::table('mot')
         // ->where('id_unidad_carrera', '=', Auth::user()->id_unidad_carrera)
@@ -261,7 +266,7 @@ class ControladorFormulacionMOT extends Controller
 
         session()->flash('message', 'Formulario realizado con éxito.');
         // return redirect()->route('mot.listar', [$req->input('id_conformulado'), Auth::user()->id_unidad_carrera]);
-        return redirect()->route('mot.detalle', $nuevoMot->id_mot);
+        return redirect()->route('mot.detalle', encriptar($nuevoMot->id_mot));
     }
 
     /**
@@ -269,6 +274,8 @@ class ControladorFormulacionMOT extends Controller
      */
     public function formular($id_mot)
     {
+        $id_mot = desencriptar($id_mot);
+
         $mot           = Mot::where('id_mot', '=', $id_mot)->first();
         $configuracion = DB::table('rl_configuracion_formulado as rcf')
             ->join('rl_formulado_tipo as rft', 'rcf.formulado_id', '=', 'rft.id')
@@ -606,26 +613,44 @@ class ControladorFormulacionMOT extends Controller
                 $mov->save();
             }
 
-            Mail::to('geco.yak77@gmail.com')->send(new NotificacionGeneral(
+            Mail::to($mot->usuario->email)->send(new NotificacionGeneral(
                 "Formulario MOT N°" . formatear_con_ceros($mot->nro) . " rechazado.",
-                "Su formulario de modificacion MOT N°" . formatear_con_ceros($mot->nro) . " ha sido rechazado, puede revisarlo dando click al siguiente enlace.",
+                "Su formulario de modificación MOT N°" . formatear_con_ceros($mot->nro) . " ha sido rechazado, puede revisarlo dando click al siguiente enlace.",
                 route('mot.detalle', $mot->id_mot),
                 'text-danger'
             ));
 
         } elseif ($req->estado == 'verificado') {
-            Mail::to('geco.yak77@gmail.com')->send(new NotificacionGeneral(
+            Mail::to($mot->usuario->email)->send(new NotificacionGeneral(
                 "Formulario MOT N°" . formatear_con_ceros($mot->nro) . " verificado.",
-                "Su formulario de modificacion MOT N°" . formatear_con_ceros($mot->nro) . " ya ha sido verificado por planificación, puede revisarlo dando click al siguiente enlace.",
+                "Su formulario de modificación MOT N°" . formatear_con_ceros($mot->nro) . " ya ha sido verificado por planificación, puede revisarlo dando click al siguiente enlace.",
+                route('mot.detalle', $mot->id_mot),
+                'text-primary'
+            ));
+
+            $mot->id_unidad_verifica = Auth::user()->id;
+
+            Mail::to(Auth::user()->email)->send(new NotificacionGeneral(
+                "Formulario MOT N°" . formatear_con_ceros($mot->nro) . " verificado.",
+                "A verificado la modificación MOT N°" . formatear_con_ceros($mot->nro) . ", puede revisarlo dando click al siguiente enlace.",
                 route('mot.detalle', $mot->id_mot),
                 'text-primary'
             ));
         } elseif ($req->estado == 'aprobado') {
-            Mail::to('geco.yak77@gmail.com')->send(new NotificacionGeneral(
+            Mail::to($mot->usuario->email)->send(new NotificacionGeneral(
                 "Formulario MOT N°" . formatear_con_ceros($mot->nro) . " aprobado.",
-                "Su formulario de modificacion MOT N°" . formatear_con_ceros($mot->nro) . " ya ha sido aprobado para ser modificado, puede revisarlo dando click al siguiente enlace.",
+                "Su formulario de modificación MOT N°" . formatear_con_ceros($mot->nro) . " ya ha sido aprobado, puede revisarlo dando click al siguiente enlace.",
                 route('mot.detalle', $mot->id_mot),
                 'text-success'
+            ));
+
+            $mot->id_unidad_aprueba = Auth::user()->id;
+
+            Mail::to(Auth::user()->email)->send(new NotificacionGeneral(
+                "Formulario MOT N°" . formatear_con_ceros($mot->nro) . " verificado.",
+                "A aprobado la modificación MOT N°" . formatear_con_ceros($mot->nro) . ", puede revisarlo dando click al siguiente enlace.",
+                route('mot.detalle', $mot->id_mot),
+                'text-primary'
             ));
         }
 
@@ -678,6 +703,13 @@ class ControladorFormulacionMOT extends Controller
         } else {
             $mot = [];
         }
+
+        $mot->transform(function ($item) {
+            $item->id_encriptado        = encriptar($item->id_mot);
+            $item->id_config_encriptado = encriptar($item->id_configuracion_formulado);
+            $item->id_cua_encriptado    = encriptar($item->id_unidad_carrera);
+            return $item;
+        });
 
         if (isset(Auth::user()->unidad_carrera)) {
             if (stripos(Auth::user()->unidad_carrera->nombre_completo, 'PLANIFICA') !== false) {

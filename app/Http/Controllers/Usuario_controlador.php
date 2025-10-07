@@ -98,10 +98,20 @@ class Usuario_controlador extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
+        return redirect()->route('inicio');
+    }
+    public function cerrar_session_old(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
         $data = [
             'tipo'    => 'success',
             'mensaje' => 'Finalizo la sesión con éxito!',
         ];
+
         return response()->json($data, 200);
     }
 

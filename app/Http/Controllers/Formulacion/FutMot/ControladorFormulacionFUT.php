@@ -12,7 +12,6 @@ use App\Models\Poa\Medida_bienservicio;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
@@ -23,7 +22,10 @@ class ControladorFormulacionFUT extends Controller
         $data['menu'] = 21;
         if (Auth::user()->id_unidad_carrera != null) {
             $data['carrera_unidad'] = UnidadCarreraArea::where('id', Auth::user()->id_unidad_carrera)->get();
-            $data['gestiones']      = Gestiones::get();
+            $data['gestiones']      = Gestiones::where('estado', 'activo')
+                ->where('gestion', '>=', date('Y'))
+                ->orderBy('gestion', 'ASC')
+                ->get();
 
             return view('formulacion.fut.inicio', $data);
         } else {
@@ -35,6 +37,8 @@ class ControladorFormulacionFUT extends Controller
 
     public function listarFormularios($id_conformulado, $id_carrera = 0)
     {
+        $id_conformulado = desencriptar($id_conformulado);
+
         // $id_formulado = $req->input('id_formulado');
         $configuracion = DB::table('rl_configuracion_formulado as rcf')
             ->join('rl_formulado_tipo as rft', 'rcf.formulado_id', '=', 'rft.id')
@@ -59,6 +63,8 @@ class ControladorFormulacionFUT extends Controller
                 ->get();
             $carrera = UnidadCarreraArea::where('id', '=', Auth::user()->id_unidad_carrera)->first();
         } else {
+            $id_carrera = desencriptar($id_carrera);
+
             $formulado = DB::table('rl_formulario1')
                 ->where('configFormulado_id', '=', $configuracion->id)
                 ->where('unidadCarrera_id', '=', $id_carrera)
@@ -91,9 +97,9 @@ class ControladorFormulacionFUT extends Controller
 
     public function formulario($id_formulado, $gestiones_id, $id_conformulado)
     {
-        $id_formulado    = Crypt::decryptString($id_formulado);
-        $gestiones_id    = Crypt::decryptString($gestiones_id);
-        $id_conformulado = Crypt::decryptString($id_conformulado);
+        $id_formulado    = desencriptar($id_formulado);
+        $gestiones_id    = desencriptar($gestiones_id);
+        $id_conformulado = desencriptar($id_conformulado);
 
         $nro_fut = DB::table('fut')
         // ->where('id_unidad_carrera', '=', Auth::user()->id_unidad_carrera)
@@ -231,11 +237,14 @@ class ControladorFormulacionFUT extends Controller
         }
 
         session()->flash('message', 'Formulario realizado con éxito.');
-        return redirect()->route('fut.listar', [$req->input('id_conformulado'), Auth::user()->id_unidad_carrera]);
+        // return redirect()->route('fut.listar', [encriptar($req->id_conformulado), encriptar(Auth::user()->id_unidad_carrera)]);
+        return redirect()->route('fut.detalle', encriptar($nuevoFut->id_fut));
     }
 
     public function formular($id_fut)
     {
+        $id_fut = desencriptar($id_fut);
+
         $fut           = Fut::where('id_fut', '=', $id_fut)->first();
         $configuracion = DB::table('rl_configuracion_formulado as rcf')
             ->join('rl_formulado_tipo as rft', 'rcf.formulado_id', '=', 'rft.id')
@@ -410,26 +419,45 @@ class ControladorFormulacionFUT extends Controller
                 $mov->descripcion = 'revertido';
                 $mov->save();
             }
-            Mail::to('geco.yak77@gmail.com')->send(new NotificacionGeneral(
+
+            Mail::to($fut->usuario->email)->send(new NotificacionGeneral(
                 "Formulario FUT N°" . formatear_con_ceros($fut->nro) . " rechazado.",
                 "Su formulario de compra FUT N°" . formatear_con_ceros($fut->nro) . " ha sido rechazado, puede revisarlo dando click al siguiente enlace.",
-                route('fut.detalle', $fut->id_fut),
+                route('fut.detalle', encriptar($fut->id_fut)),
                 'text-danger'
             ));
 
         } elseif ($req->estado == 'verificado') {
-            Mail::to('geco.yak77@gmail.com')->send(new NotificacionGeneral(
+            Mail::to($fut->usuario->email)->send(new NotificacionGeneral(
                 "Formulario FUT N°" . formatear_con_ceros($fut->nro) . " verificado.",
                 "Su formulario de compra FUT N°" . formatear_con_ceros($fut->nro) . " ya ha sido verificado por planificación, puede revisarlo dando click al siguiente enlace.",
-                route('fut.detalle', $fut->id_fut),
+                route('fut.detalle', encriptar($fut->id_fut)),
+                'text-primary'
+            ));
+
+            $fut->id_unidad_verifica = Auth::user()->id;
+
+            Mail::to(Auth::user()->email)->send(new NotificacionGeneral(
+                "Formulario FUT N°" . formatear_con_ceros($fut->nro) . " verificado.",
+                "A verificado la compra FUT N°" . formatear_con_ceros($fut->nro) . ", puede revisarlo dando click al siguiente enlace.",
+                route('fut.detalle', encriptar($fut->id_fut)),
                 'text-primary'
             ));
         } elseif ($req->estado == 'aprobado') {
-            Mail::to('geco.yak77@gmail.com')->send(new NotificacionGeneral(
+            Mail::to($fut->usuario->email)->send(new NotificacionGeneral(
                 "Formulario FUT N°" . formatear_con_ceros($fut->nro) . " aprobado.",
                 "Su formulario de compra FUT N°" . formatear_con_ceros($fut->nro) . " ya ha sido aprobado para compra, puede revisarlo dando click al siguiente enlace.",
-                route('fut.detalle', $fut->id_fut),
+                route('fut.detalle', encriptar($fut->id_fut)),
                 'text-success'
+            ));
+
+            $fut->id_unidad_aprueba = Auth::user()->id;
+
+            Mail::to(Auth::user()->email)->send(new NotificacionGeneral(
+                "Formulario FUT N°" . formatear_con_ceros($fut->nro) . " verificado.",
+                "A aprobado la compra FUT N°" . formatear_con_ceros($fut->nro) . ", puede revisarlo dando click al siguiente enlace.",
+                route('fut.detalle', encriptar($fut->id_fut)),
+                'text-primary'
             ));
         }
 
@@ -486,10 +514,21 @@ class ControladorFormulacionFUT extends Controller
             $fut = [];
         }
 
-        if (stripos(Auth::user()->unidad_carrera->nombre_completo, 'PLANIFICA') !== false) {
-            $user = 'planifica';
-        } elseif (stripos(Auth::user()->unidad_carrera->nombre_completo, 'PRESUPUESTO') !== false) {
-            $user = 'presupuesto';
+        $fut->transform(function ($item) {
+            $item->id_encriptado        = encriptar($item->id_fut);
+            $item->id_config_encriptado = encriptar($item->id_configuracion_formulado);
+            $item->id_cua_encriptado    = encriptar($item->id_unidad_carrera);
+            return $item;
+        });
+
+        if (Auth::user()->unidad_carrera) {
+            if (stripos(Auth::user()->unidad_carrera->nombre_completo, 'PLANIFICA') !== false) {
+                $user = 'planifica';
+            } elseif (stripos(Auth::user()->unidad_carrera->nombre_completo, 'PRESUPUESTO') !== false) {
+                $user = 'presupuesto';
+            } else {
+                $user = 'user';
+            }
         } else {
             $user = '';
         }

@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\DB;
 
 class ControladorReportePdf extends Controller
 {
+    // Modelo anterior MOT (ya no se usa)
     public function generarPdfMot(Request $req, $id_mot)
     {
         $mot       = Mot::where('id_mot', '=', $id_mot)->first();
@@ -470,9 +471,11 @@ class ControladorReportePdf extends Controller
         //     ->header('Content-Disposition', 'inline; filename=nombre_del_pdf.pdf'); // Mostrar en línea en el navegador
     }
 
-    // PDF Formulario unico de tramite (FUT)
+    // PDF Formulario de modificaciones (MOT)
     public function formulacionPdfMot(Request $req, $id_mot)
     {
+        $id_mot = desencriptar($id_mot);
+
         $mot       = Mot::where('id_mot', '=', $id_mot)->first();
         $objetivos = $this->getObjetivos($mot->id_mot);
         // dd($objetivos);
@@ -507,7 +510,12 @@ class ControladorReportePdf extends Controller
         // Color rojito para Cell
         $pdf->SetFillColor(217, 149, 148);
 
-        $usuario = User::where('id', '=', $mot->id_usuario)->first();
+        $usuario    = User::where('id', '=', $mot->id_usuario)->first();
+        $usuarioSol = DB::table('base_upea.vista_personal_administrativo_2020')
+            ->where('base_upea.vista_personal_administrativo_2020.nombre', 'like', '%' . $usuario->nombre . '%')
+            ->whereRaw("CONCAT(base_upea.vista_personal_administrativo_2020.paterno, ' ', base_upea.vista_personal_administrativo_2020.materno) LIKE '%{$usuario->apellido}%'")
+            ->orderBy("fecha_inicio_asignacion_administrativo", "DESC")
+            ->first();
 
         // F-1
         $altura += 12;
@@ -519,9 +527,13 @@ class ControladorReportePdf extends Controller
         $pdf->setY($altura);
         $altura += 7;
         $pdf->setX(39);
-        $pdf->Cell(125, 5, utf8_decode('Lic. ' . $usuario->nombre . ' ' . $usuario->apellido), 1, 0, 'L', false);
+        if ($usuarioSol) {
+            $pdf->Cell(125, 5, utf8_decode('LIC. ' . $usuarioSol->nombre . ' ' . $usuarioSol->paterno . ' ' . $usuarioSol->materno), 1, 0, 'L', false);
+        } else {
+            $pdf->Cell(125, 5, utf8_decode('LIC. ' . $usuario->nombre . ' ' . $usuario->apellido), 1, 0, 'L', false);
+        }
         $pdf->setXY(39, $altura);
-        $pdf->Cell(125, 5, utf8_decode('Area Carrera: ' . $usuario->unidad_carrera->nombre_completo), 1, 0, 'L', false);
+        $pdf->Cell(125, 5, utf8_decode($usuario->unidad_carrera->nombre_completo), 1, 0, 'L', false);
 
         $altura += 8;
         $pdf->SetLineWidth(0.25);
@@ -846,17 +858,16 @@ class ControladorReportePdf extends Controller
         $pdf->setY(-60);
         $pdf->setX(45);
         $pdf->MultiCell(40, 8, utf8_decode($mot->fecha_tramite ?? '-'), 1, 'C', false);
-        $usuario = User::where('id', '=', $mot->id_usuario)->first();
 
         // Unidad
         $pdf->setFont('Arial', 'B', 5);
         $pdf->setY(-50);
         $pdf->setX(10);
-        $pdf->Cell(65, 5, 'Elaborado por:', 1, 0, 'C', false);
+        $pdf->Cell(65, 5, 'ELABORADO POR', 1, 0, 'C', false);
         $pdf->setX(75);
-        $pdf->Cell(65, 5, 'Verificado por:', 1, 0, 'C', false);
+        $pdf->Cell(65, 5, 'VERIFICADO POR', 1, 0, 'C', false);
         $pdf->setX(140);
-        $pdf->Cell(65, 5, 'Aprobado por:', 1, 0, 'C', false);
+        $pdf->Cell(65, 5, 'APROBADO POR', 1, 0, 'C', false);
         $pdf->setFont('Arial', '', 5);
 
         $pdf->setY(-45);
@@ -867,18 +878,54 @@ class ControladorReportePdf extends Controller
         $pdf->setX(140);
         $pdf->Cell(65, 18, '', 1, 0, 'C', false);
 
-        $pdf->setY(-32);
+        // $pdf->setY(-32);
         $pdf->setX(10);
-        $pdf->Cell(65, 5, 'Lic. ' . $usuario->nombre . ' ' . $usuario->apellido, 0, 0, 'C', false);
+        if ($usuarioSol) {
+            $pdf->setY(-33);
+            $pdf->Cell(65, 5, $this->ellipsis($pdf, $usuarioSol->nombre . ' ' . $usuarioSol->paterno . ' ' . $usuarioSol->paterno, 65), 0, 0, 'C', false);
+            $pdf->setY(-33 + 2);
+            $pdf->Cell(65, 5, $this->ellipsis($pdf, $usuarioSol->nombre_cargo, 65), 0, 0, 'C', false);
+        } else {
+            $pdf->setY(-32);
+            $pdf->Cell(65, 5, $this->ellipsis($pdf, $usuario->nombre . ' ' . $usuario->apellido, 65), 0, 0, 'C', false);
+        }
         $pdf->setX(75);
         if ($mot->unidad_verifica) {
-            $pdf->Cell(65, 5, 'Lic. ' . $mot->unidad_verifica->nombre . ' ' . $mot->unidad_verifica->apellido, 0, 0, 'C', false);
+            $usuarioVer = DB::table('base_upea.vista_personal_administrativo_2020')
+                ->where('base_upea.vista_personal_administrativo_2020.nombre', 'like', '%' . $mot->unidad_verifica->nombre . '%')
+                ->whereRaw("CONCAT(base_upea.vista_personal_administrativo_2020.paterno, ' ', base_upea.vista_personal_administrativo_2020.materno) LIKE '%{$mot->unidad_verifica->apellido}%'")
+                ->orderBy("fecha_inicio_asignacion_administrativo", "DESC")
+                ->first();
+
+            if ($usuarioVer) {
+                $pdf->setY(-33);
+                $pdf->Cell(65, 5, $this->ellipsis($pdf, $usuarioVer->nombre . ' ' . $usuarioVer->paterno . ' ' . $usuarioVer->paterno, 65), 0, 0, 'C', false);
+                $pdf->setY(-33 + 2);
+                $pdf->Cell(65, 5, $this->ellipsis($pdf, $usuarioVer->nombre_cargo, 65), 0, 0, 'C', false);
+            } else {
+                $pdf->setY(-32);
+                $pdf->Cell(65, 5, $this->ellipsis($pdf, $mot->unidad_verifica->nombre . ' ' . $mot->unidad_verifica->apellido, 65), 0, 0, 'C', false);
+            }
         } else {
             $pdf->Cell(65, 5, '-', 0, 0, 'C', false);
         }
         $pdf->setX(140);
         if ($mot->unidad_aprueba) {
-            $pdf->Cell(65, 5, 'Lic. ' . $mot->unidad_aprueba->nombre . ' ' . $mot->unidad_aprueba->apellido, 0, 0, 'C', false);
+            $usuarioAp = DB::table('base_upea.vista_personal_administrativo_2020')
+                ->where('base_upea.vista_personal_administrativo_2020.nombre', 'like', '%' . $mot->unidad_aprueba->nombre . '%')
+                ->whereRaw("CONCAT(base_upea.vista_personal_administrativo_2020.paterno, ' ', base_upea.vista_personal_administrativo_2020.materno) LIKE '%{$mot->unidad_aprueba->apellido}%'")
+                ->orderBy("fecha_inicio_asignacion_administrativo", "DESC")
+                ->first();
+
+            if ($usuarioAp) {
+                $pdf->setY(-33);
+                $pdf->Cell(65, 5, $this->ellipsis($pdf, $usuarioAp->nombre . ' ' . $usuarioAp->paterno . ' ' . $usuarioAp->paterno, 65), 0, 0, 'C', false);
+                $pdf->setY(-33 + 2);
+                $pdf->Cell(65, 5, $this->ellipsis($pdf, $usuarioAp->nombre_cargo, 65), 0, 0, 'C', false);
+            } else {
+                $pdf->setY(-32);
+                $pdf->Cell(65, 5, $this->ellipsis($pdf, $mot->unidad_aprueba->nombre . ' ' . $mot->unidad_aprueba->apellido, 65), 0, 0, 'C', false);
+            }
         } else {
             $pdf->Cell(65, 5, '-', 0, 0, 'C', false);
         }
@@ -891,14 +938,59 @@ class ControladorReportePdf extends Controller
         $pdf->setX(140);
         $pdf->Cell(65, 20, '', 1, 0, 'C', false);
 
+        $tipo = '';
+        switch ($mot->usuario->unidad_carrera->id_tipo_carrera) {
+            case 1:
+                $tipo = 'DIRECTOR%';
+                break;
+            case 2:
+                $tipo = 'JEFE%';
+                break;
+            case 3:
+                $tipo = 'DECANO%';
+                break;
+            default:
+                $tipo = '';
+                break;
+        }
+
+        $solicitante = DB::table('base_upea.vista_personal_administrativo_2020')
+            ->where('base_upea.vista_personal_administrativo_2020.nombre_cargo', 'like', $tipo)
+            ->select(
+                'vista_personal_administrativo_2020.*',
+                DB::raw("bd_poa.buscarUnidad(unidad_trabajo, '{$mot->unidad_carrera->nombre_completo}') AS dist")
+            )
+            ->orderByRaw("dist ASC, fecha_inicio_asignacion_administrativo DESC")
+            ->first();
+
+        $planificacion = DB::table('base_upea.vista_personal_administrativo_2020')
+            ->where('base_upea.vista_personal_administrativo_2020.nombre_cargo', 'like', 'JEFE%')
+            ->select(
+                'vista_personal_administrativo_2020.*',
+                DB::raw("bd_poa.buscarUnidad(unidad_trabajo, 'UNIDAD DE DESARROLLO ESTRATÉGICO Y PLANIFICACIÓN') AS dist")
+            )
+            ->orderByRaw("dist ASC, fecha_inicio_asignacion_administrativo DESC")
+            ->first();
+
+        $presupuestos = DB::table('base_upea.vista_personal_administrativo_2020')
+            ->where('base_upea.vista_personal_administrativo_2020.nombre_cargo', 'like', 'JEFE%')
+            ->select(
+                'vista_personal_administrativo_2020.*',
+                DB::raw("bd_poa.buscarUnidad(unidad_trabajo, 'UNIDAD DE PRESUPUESTOS') AS dist")
+            )
+            ->orderByRaw("dist ASC, fecha_inicio_asignacion_administrativo DESC")
+            ->first();
+
         $pdf->setY(-15);
         $pdf->setX(10);
-        $pdf->Cell(65, 5, $this->ellipsis($pdf, $mot->unidad_carrera->nombre_completo, 90), 0, 0, 'C', false);
+        $pdf->Cell(65, 5, $this->ellipsis($pdf, 'AUTORIZADO POR: ' . $solicitante->nombre . ' ' . $solicitante->paterno . ' ' . $solicitante->materno, 90), 0, 0, 'C', false);
         $pdf->setX(75);
-        $pdf->Cell(65, 5, utf8_decode('UNIDAD DE DESARROLLO ESTRATÉGICO Y PLANIFICACIÓN'), 0, 0, 'C', false);
+        $pdf->Cell(65, 5, $this->ellipsis($pdf, 'AUTORIZADO POR: ' . $planificacion->nombre . ' ' . $planificacion->paterno . ' ' . $planificacion->materno, 90), 0, 0, 'C', false);
         $pdf->setX(140);
-        $pdf->Cell(65, 5, 'UNIDAD DE PRESUPUESTOS', 0, 0, 'C', false);
+        $pdf->Cell(65, 5, $this->ellipsis($pdf, 'AUTORIZADO POR: ' . $presupuestos->nombre . ' ' . $presupuestos->paterno . ' ' . $presupuestos->materno, 90), 0, 0, 'C', false);
 
+        $pdf->setFont('Arial', 'B', 5);
+        
         $pdf->setY(-12);
         $pdf->setX(10);
         $pdf->Cell(65, 5, $this->ellipsis($pdf, $mot->unidad_carrera->nombre_completo, 90), 0, 0, 'C', false);
@@ -923,6 +1015,7 @@ class ControladorReportePdf extends Controller
         //     ->header('Content-Disposition', 'inline; filename=nombre_del_pdf.pdf'); // Mostrar en línea en el navegador
     }
 
+    // Modelo anterior FUT (ya no se usa)
     public function generarPdfFut(Request $req, $id_fut)
     {
         $fut = Fut::where('id_fut', '=', $id_fut)->first();
@@ -969,9 +1062,9 @@ class ControladorReportePdf extends Controller
         $pdf->setY($altura);
         $altura += 7;
         $pdf->setX(39);
-        $pdf->Cell(125, 5, utf8_decode('Lic. ' . $usuario->nombre . ' ' . $usuario->apellido), 1, 0, 'L', false);
+        $pdf->Cell(125, 5, utf8_decode('LIC. ' . $usuario->nombre . ' ' . $usuario->apellido), 1, 0, 'L', false);
         $pdf->setXY(39, $altura);
-        $pdf->Cell(125, 5, utf8_decode('Area Carrera: ' . $usuario->unidad_carrera->nombre_completo), 1, 0, 'L', false);
+        $pdf->Cell(125, 5, utf8_decode('UNIDAD ' . $usuario->unidad_carrera->nombre_completo), 1, 0, 'L', false);
 
         $altura += 8;
         $pdf->SetLineWidth(0.25);
@@ -1297,8 +1390,11 @@ class ControladorReportePdf extends Controller
         exit;
     }
 
+    // PDF Formulario unico de tramite (FUT)
     public function formulacionPdfFut(Request $req, $id_fut)
     {
+        $id_fut = desencriptar($id_fut);
+
         $fut = Fut::where('id_fut', '=', $id_fut)->first();
 
         $pdf = new Fpdf('P', 'mm', 'Letter');
@@ -1331,7 +1427,12 @@ class ControladorReportePdf extends Controller
         // Color rojito para Cell
         $pdf->SetFillColor(217, 149, 148);
 
-        $usuario = User::where('id', '=', $fut->id_usuario)->first();
+        $usuario    = User::where('id', '=', $fut->id_usuario)->first();
+        $usuarioSol = DB::table('base_upea.vista_personal_administrativo_2020')
+            ->where('base_upea.vista_personal_administrativo_2020.nombre', 'like', '%' . $usuario->nombre . '%')
+            ->whereRaw("CONCAT(base_upea.vista_personal_administrativo_2020.paterno, ' ', base_upea.vista_personal_administrativo_2020.materno) LIKE '%{$usuario->apellido}%'")
+            ->orderBy("fecha_inicio_asignacion_administrativo", "DESC")
+            ->first();
 
         // F-1
         $altura += 12;
@@ -1343,9 +1444,13 @@ class ControladorReportePdf extends Controller
         $pdf->setY($altura);
         $altura += 7;
         $pdf->setX(39);
-        $pdf->Cell(125, 5, utf8_decode('Lic. ' . $usuario->nombre . ' ' . $usuario->apellido), 1, 0, 'L', false);
+        if ($usuarioSol) {
+            $pdf->Cell(125, 5, utf8_decode('LIC. ' . $usuarioSol->nombre . ' ' . $usuarioSol->paterno . ' ' . $usuarioSol->materno), 1, 0, 'L', false);
+        } else {
+            $pdf->Cell(125, 5, utf8_decode('LIC. ' . $usuario->nombre . ' ' . $usuario->apellido), 1, 0, 'L', false);
+        }
         $pdf->setXY(39, $altura);
-        $pdf->Cell(125, 5, utf8_decode('Area Carrera: ' . $usuario->unidad_carrera->nombre_completo), 1, 0, 'L', false);
+        $pdf->Cell(125, 5, utf8_decode($usuario->unidad_carrera->nombre_completo), 1, 0, 'L', false);
 
         $altura += 8;
         $pdf->SetLineWidth(0.25);
@@ -1568,17 +1673,16 @@ class ControladorReportePdf extends Controller
         $pdf->setY(-60);
         $pdf->setX(45);
         $pdf->MultiCell(40, 8, utf8_decode($fut->fecha_tramite ?? '-'), 1, 'C', false);
-        $usuario = User::where('id', '=', $fut->id_usuario)->first();
 
         // Unidad
         $pdf->setFont('Arial', 'B', 5);
         $pdf->setY(-50);
         $pdf->setX(10);
-        $pdf->Cell(65, 5, 'Elaborado por:', 1, 0, 'C', false);
+        $pdf->Cell(65, 5, 'ELABORADO POR', 1, 0, 'C', false);
         $pdf->setX(75);
-        $pdf->Cell(65, 5, 'Verificado por:', 1, 0, 'C', false);
+        $pdf->Cell(65, 5, 'VERIFICADO POR', 1, 0, 'C', false);
         $pdf->setX(140);
-        $pdf->Cell(65, 5, 'Aprobado por:', 1, 0, 'C', false);
+        $pdf->Cell(65, 5, 'APROBADO POR', 1, 0, 'C', false);
         $pdf->setFont('Arial', '', 5);
 
         $pdf->setY(-45);
@@ -1589,18 +1693,56 @@ class ControladorReportePdf extends Controller
         $pdf->setX(140);
         $pdf->Cell(65, 18, '', 1, 0, 'C', false);
 
-        $pdf->setY(-32);
+        // $pdf->setY(-32);
         $pdf->setX(10);
-        $pdf->Cell(65, 5, 'Lic. ' . $usuario->nombre . ' ' . $usuario->apellido, 0, 0, 'C', false);
+        if ($usuarioSol) {
+            $pdf->setXY(10, -33);
+            $pdf->Cell(65, 5, $this->ellipsis($pdf, $usuarioSol->nombre . ' ' . $usuarioSol->paterno . ' ' . $usuarioSol->paterno, 65), 0, 0, 'C', false);
+            $pdf->setXY(10, -33 + 2);
+            $pdf->Cell(65, 5, $this->ellipsis($pdf, $usuarioSol->nombre_cargo, 65), 0, 0, 'C', false);
+        } else {
+            $pdf->setXY(10, -32);
+            $pdf->Cell(65, 5, $this->ellipsis($pdf, $usuario->nombre . ' ' . $usuario->apellido, 65), 0, 0, 'C', false);
+        }
+
         $pdf->setX(75);
         if ($fut->unidad_verifica) {
-            $pdf->Cell(65, 5, 'Lic. ' . $fut->unidad_verifica->nombre . ' ' . $fut->unidad_verifica->apellido, 0, 0, 'C', false);
+            $usuarioVer = DB::table('base_upea.vista_personal_administrativo_2020')
+                ->where('base_upea.vista_personal_administrativo_2020.nombre', 'like', '%' . $fut->unidad_verifica->nombre . '%')
+                ->whereRaw("CONCAT(base_upea.vista_personal_administrativo_2020.paterno, ' ', base_upea.vista_personal_administrativo_2020.materno) LIKE '%{$fut->unidad_verifica->apellido}%'")
+                ->orderBy("fecha_inicio_asignacion_administrativo", "DESC")
+                ->first();
+
+            if ($usuarioVer) {
+                $pdf->setXY(75, -33);
+                $pdf->Cell(65, 5, $this->ellipsis($pdf, $usuarioVer->nombre . ' ' . $usuarioVer->paterno . ' ' . $usuarioVer->paterno, 65), 0, 0, 'C', false);
+                $pdf->setXY(75, -33 + 2);
+                $pdf->Cell(65, 5, $this->ellipsis($pdf, $usuarioVer->nombre_cargo, 65), 0, 0, 'C', false);
+            } else {
+                $pdf->setXY(75, -32);
+                $pdf->Cell(65, 5, $this->ellipsis($pdf, $fut->unidad_verifica->nombre . ' ' . $fut->unidad_verifica->apellido, 65), 0, 0, 'C', false);
+            }
         } else {
             $pdf->Cell(65, 5, '-', 0, 0, 'C', false);
         }
+
         $pdf->setX(140);
         if ($fut->unidad_aprueba) {
-            $pdf->Cell(65, 5, 'Lic. ' . $fut->unidad_aprueba->nombre . ' ' . $fut->unidad_aprueba->apellido, 0, 0, 'C', false);
+            $usuarioAp = DB::table('base_upea.vista_personal_administrativo_2020')
+                ->where('base_upea.vista_personal_administrativo_2020.nombre', 'like', '%' . $fut->unidad_aprueba->nombre . '%')
+                ->whereRaw("CONCAT(base_upea.vista_personal_administrativo_2020.paterno, ' ', base_upea.vista_personal_administrativo_2020.materno) LIKE '%{$fut->unidad_aprueba->apellido}%'")
+                ->orderBy("fecha_inicio_asignacion_administrativo", "DESC")
+                ->first();
+
+            if ($usuarioAp) {
+                $pdf->setXY(140, -33);
+                $pdf->Cell(65, 5, $this->ellipsis($pdf, $usuarioAp->nombre . ' ' . $usuarioAp->paterno . ' ' . $usuarioAp->paterno, 65), 0, 0, 'C', false);
+                $pdf->setXY(140, -33 + 2);
+                $pdf->Cell(65, 5, $this->ellipsis($pdf, $usuarioAp->nombre_cargo, 65), 0, 0, 'C', false);
+            } else {
+                $pdf->setXY(140, -32);
+                $pdf->Cell(65, 5, $this->ellipsis($pdf, $fut->unidad_aprueba->nombre . ' ' . $fut->unidad_aprueba->apellido, 65), 0, 0, 'C', false);
+            }
         } else {
             $pdf->Cell(65, 5, '-', 0, 0, 'C', false);
         }
@@ -1613,26 +1755,80 @@ class ControladorReportePdf extends Controller
         $pdf->setX(140);
         $pdf->Cell(65, 20, '', 1, 0, 'C', false);
 
+        $tipo = '';
+        switch ($fut->usuario->unidad_carrera->id_tipo_carrera) {
+            case 1:
+                $tipo = 'DIRECTOR%';
+                break;
+            case 2:
+                $tipo = 'JEFE%';
+                break;
+            case 3:
+                $tipo = 'DECANO%';
+                break;
+            default:
+                $tipo = '';
+                break;
+        }
+
+        $solicitante = DB::table('base_upea.vista_personal_administrativo_2020')
+            ->where('base_upea.vista_personal_administrativo_2020.nombre_cargo', 'like', $tipo)
+            ->select(
+                'vista_personal_administrativo_2020.*',
+                DB::raw("bd_poa.buscarUnidad(unidad_trabajo, '{$fut->unidad_carrera->nombre_completo}') AS dist")
+            )
+            ->orderByRaw("dist ASC, fecha_inicio_asignacion_administrativo DESC")
+            ->first();
+
+        $planificacion = DB::table('base_upea.vista_personal_administrativo_2020')
+            ->where('base_upea.vista_personal_administrativo_2020.nombre_cargo', 'like', 'JEFE%')
+            ->select(
+                'vista_personal_administrativo_2020.*',
+                DB::raw("bd_poa.buscarUnidad(unidad_trabajo, 'UNIDAD DE DESARROLLO ESTRATÉGICO Y PLANIFICACIÓN') AS dist")
+            )
+            ->orderByRaw("dist ASC, fecha_inicio_asignacion_administrativo DESC")
+            ->first();
+
+        $presupuestos = DB::table('base_upea.vista_personal_administrativo_2020')
+            ->where('base_upea.vista_personal_administrativo_2020.nombre_cargo', 'like', 'JEFE%')
+            ->select(
+                'vista_personal_administrativo_2020.*',
+                DB::raw("bd_poa.buscarUnidad(unidad_trabajo, 'UNIDAD DE PRESUPUESTOS') AS dist")
+            )
+            ->orderByRaw("dist ASC, fecha_inicio_asignacion_administrativo DESC")
+            ->first();
+
+        /**
+         * SELECT bd_poa.buscarUnidad(unidad_trabajo, 'AREA DE SALUD') AS dist,
+        base_upea.vista_personal_administrativo_2020.*
+        FROM base_upea.vista_personal_administrativo_2020
+        WHERE base_upea.vista_personal_administrativo_2020.nombre_cargo LIKE 'DECANO%'
+        ORDER BY dist ASC, base_upea.vista_personal_administrativo_2020.fecha_inicio_asignacion_administrativo DESC
+        LIMIT 1;
+         */
+
         $pdf->setY(-15);
         $pdf->setX(10);
-        $pdf->Cell(65, 5, $this->ellipsis($pdf, $fut->unidad_carrera->nombre_completo, 90), 0, 0, 'C', false);
+        $pdf->Cell(65, 5, $this->ellipsis($pdf, 'AUTORIZADO POR: ' . $solicitante->nombre . ' ' . $solicitante->paterno . ' ' . $solicitante->materno, 90), 0, 0, 'C', false);
         $pdf->setX(75);
-        $pdf->Cell(65, 5, utf8_decode('UNIDAD DE DESARROLLO ESTRATÉGICO Y PLANIFICACIÓN'), 0, 0, 'C', false);
+        $pdf->Cell(65, 5, $this->ellipsis($pdf, 'AUTORIZADO POR: ' . $planificacion->nombre . ' ' . $planificacion->paterno . ' ' . $planificacion->materno, 90), 0, 0, 'C', false);
         $pdf->setX(140);
-        $pdf->Cell(65, 5, 'UNIDAD DE PRESUPUESTOS', 0, 0, 'C', false);
+        $pdf->Cell(65, 5, $this->ellipsis($pdf, 'AUTORIZADO POR: ' . $presupuestos->nombre . ' ' . $presupuestos->paterno . ' ' . $presupuestos->materno, 90), 0, 0, 'C', false);
+
+        $pdf->setFont('Arial', 'B', 5);
 
         $pdf->setY(-12);
         $pdf->setX(10);
-        $pdf->Cell(65, 5, $this->ellipsis($pdf, $fut->unidad_carrera->nombre_completo, 90), 0, 0, 'C', false);
+        $pdf->Cell(65, 5, $this->ellipsis($pdf, $solicitante->nombre_cargo, 90), 0, 0, 'C', false);
         $pdf->setX(75);
-        $pdf->Cell(65, 5, utf8_decode('UNIDAD DE DESARROLLO ESTRATÉGICO Y PLANIFICACIÓN'), 0, 0, 'C', false);
+        $pdf->Cell(65, 5, $this->ellipsis($pdf, $planificacion->nombre_cargo, 90), 0, 0, 'C', false);
         $pdf->setX(140);
-        $pdf->Cell(65, 5, 'UNIDAD DE PRESUPUESTOS', 0, 0, 'C', false);
+        $pdf->Cell(65, 5, $this->ellipsis($pdf, $presupuestos->nombre_cargo, 90), 0, 0, 'C', false);
 
         // Nota
         $pdf->setFont('Arial', '', 6);
         $pdf->setXY(5, -5);
-        $pdf->Cell(200, 3, utf8_decode('NOTA: La Unidad de Presupuestos remitirá una copia del Preventivo realizado en el SIGEP a la Unidad de Planificación..'), 0, 0, 'L', false);
+        $pdf->Cell(200, 3, utf8_decode('NOTA: La Unidad de Presupuestos remitirá una copia del Preventivo realizado en el SIGEP a la Unidad de Planificación.'), 0, 0, 'L', false);
         // $pdf->Output();
 
         // Descargar pdf directamente
@@ -1641,6 +1837,7 @@ class ControladorReportePdf extends Controller
         exit;
     }
 
+    // Convierte numero a literal
     public function numeroATexto($numero)
     {
         $unidades   = ['', 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve'];
@@ -1682,6 +1879,7 @@ class ControladorReportePdf extends Controller
         return trim($texto);
     }
 
+    // Coloca '...' si el texto se sobrepasa del tamaño
     public function ellipsis($pdf, $text, $width)
     {
         $width -= 2;
@@ -1696,11 +1894,12 @@ class ControladorReportePdf extends Controller
         return $text . '...';
     }
 
+    // Lista unidades
     public function index()
     {
         $unidades  = Tipo_CarreraUnidad::get();
         $gestiones = Gestiones::where('estado', '=', 'activo')
-            ->orderBy('id', 'DESC')
+            ->orderBy('gestion', 'ASC')
             ->get();
 
         return view('admin.unidades', compact('unidades', 'gestiones'));
@@ -1717,6 +1916,7 @@ class ControladorReportePdf extends Controller
         $data = [$tipo, $carreras];
         return $data;
     }
+
     public function obtenerGestiones(Request $req)
     {
         $id_carrera = $req->input('id_carrera');
@@ -1770,13 +1970,12 @@ class ControladorReportePdf extends Controller
             ])->unique('id')->values(),
         ];
     }
-
 }
 
-// vista base_upea
+// vista base_upea para personal administrativo
 /**
 SELECT base_upea.vista_personal_administrativo_2020.*,
-bd_poa.levenshtein(unidad_trabajo, 'UNIDAD DE TECNOLOGIAS DE INFORMACION Y COMUNICACIONES (UTIC)    ') AS dist
+bd_poa.buscarUnidad(unidad_trabajo, 'UNIDAD DE TECNOLOGIAS DE INFORMACION Y COMUNICACIONES (UTIC)') AS dist
 FROM base_upea.vista_personal_administrativo_2020
 ORDER BY dist ASC, base_upea.vista_personal_administrativo_2020.fecha_inicio_asignacion_administrativo DESC
 LIMIT 1;

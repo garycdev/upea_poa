@@ -30,23 +30,24 @@
                             </button>
                         @endif
                         @if ($mot->estado == 'verificado' && Auth::user()->rol_verifica() == 'presupuesto')
-                            <button type="button" class="btn btn-success d-inline btn-validar-mot" data-id="{{ $mot->id_mot }}">
+                            <button type="button" class="btn btn-success d-inline btn-validar-mot"
+                                data-id="{{ $mot->id_mot }}">
                                 Aprobar modificaciones
                             </button>
                         @endif
                     @endcan
                     @if ($mot->estado != 'pendiente')
-                        <a href="{{ route('mot.pdf', $mot->id_mot) }}" class="btn btn-warning" target="_blank"
+                        <a href="{{ route('mot.pdf', encriptar($mot->id_mot)) }}" class="btn btn-danger" target="_blank"
                             style="display:inline-block">
                             <i class="ri-file-pdf-line"></i> Solicitud
                         </a>
                     @endif
-                    @if ($mot->estado == 'aprobado' || $mot->estado == 'ejecutado')
+                    {{-- @if ($mot->estado == 'aprobado' || $mot->estado == 'ejecutado')
                         <a href="{{ route('pdfMot', $mot->id_mot) }}" class="btn btn-danger" target="_blank"
                             style="display:inline-block">
                             <i class="ri-file-pdf-line"></i> Formulario
                         </a>
-                    @endif
+                    @endif --}}
                 </div>
             </div>
         </div>
@@ -513,7 +514,7 @@
                                         </div>
                                         <div class="form-group mt-3">
                                             <label for="objetivo_gestion" class="form-label">Objetivo gestion</label>
-                                            <select class="form-control" id="objetivo_gestion" name="objetivo_gestion"
+                                            <select class="form-control select2_objetivo_gestion" id="objetivo_gestion" name="objetivo_gestion"
                                                 required>
                                                 <option value="selected" selected disabled>[SELECCION OBJETIVO GESTION]
                                                 </option>
@@ -540,9 +541,10 @@
                     {{-- @dd($mot) --}}
                     @cannot('Validar_seguimiento')
                         @if (isset(Auth::user()->id_unidad_carrera))
-                            <a href="{{ route('mot.listar', $configuracion->id) }}" class="btn btn-dark">Volver</a>
+                            <a href="{{ route('mot.listar', encriptar($configuracion->id)) }}"
+                                class="btn btn-dark">Volver</a>
                         @else
-                            <a href="{{ route('mot.listar', [$configuracion->id, $mot->id_unidad_carrera]) }}"
+                            <a href="{{ route('mot.listar', [encriptar($configuracion->id), encriptar($mot->id_unidad_carrera)]) }}"
                                 class="btn btn-dark">
                                 Volver
                             </a>
@@ -714,5 +716,6 @@
 
         mot_de_select2('#partidas');
         mot_a_select2('#partidas_a');
+        objetivo_gestion_select2('#partidas_a')
     </script>
 @endsection

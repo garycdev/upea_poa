@@ -166,9 +166,9 @@ class Controlador_reportesPDF extends Controller
     {
         $data['menu'] = 16;
         // $data['gestion'] = Gestion::get();
-        $data['gestiones'] = Gestiones::where('estado', 'activo')
-            // ->whereYear('gestion', '>=', date('Y'))
-            ->orderBy('gestion', 'desc')
+        
+        // Todas las gestiones
+        $data['gestiones'] = Gestiones::orderBy('gestion', 'ASC')
             ->get();
         $data['tipo'] = Tipo_CarreraUnidad::orderBy('id', 'asc')->get();
         return view('reportes.formulacion_poa', $data);

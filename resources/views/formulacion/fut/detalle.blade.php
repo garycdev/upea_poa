@@ -30,7 +30,8 @@
                             </button>
                         @endif
                         @if ($fut->estado == 'verificado' && Auth::user()->rol_verifica() == 'presupuesto')
-                            <button type="button" class="btn btn-success d-inline btn-validar-fut" data-id="{{ $fut->id_fut }}">
+                            <button type="button" class="btn btn-success d-inline btn-validar-fut"
+                                data-id="{{ $fut->id_fut }}">
                                 Aprobar compra
                             </button>
                         @endif
@@ -40,16 +41,16 @@
                             Ejecutar compra
                         </button>
                     @endif --}}
-                    <a href="{{ route('fut.pdf', $fut->id_fut) }}" class="btn btn-warning" target="_blank"
+                    <a href="{{ route('fut.pdf', encriptar($fut->id_fut)) }}" class="btn btn-danger" target="_blank"
                         style="display:inline-block">
                         <i class="ri-file-pdf-line"></i> Solicitud
                     </a>
-                    @if ($fut->estado == 'verificado' || $fut->estado == 'aprobado')
+                    {{-- @if ($fut->estado == 'verificado' || $fut->estado == 'aprobado')
                         <a href="{{ route('pdfFut', $fut->id_fut) }}" class="btn btn-danger" target="_blank"
                             style="display:inline-block">
                             <i class="ri-file-pdf-line"></i> Formulario
                         </a>
-                    @endif
+                    @endif --}}
                 </div>
             </div>
         </div>
@@ -348,9 +349,10 @@
                     {{-- @dd($fut) --}}
                     @cannot('Validar_seguimiento')
                         @if (isset(Auth::user()->id_unidad_carrera))
-                            <a href="{{ route('fut.listar', $configuracion->id) }}" class="btn btn-dark">Volver</a>
+                            <a href="{{ route('fut.listar', encriptar($configuracion->id)) }}"
+                                class="btn btn-dark">Volver</a>
                         @else
-                            <a href="{{ route('fut.listar', [$configuracion->id, $fut->id_unidad_carrera]) }}"
+                            <a href="{{ route('fut.listar', [encriptar($configuracion->id), encriptar($fut->id_unidad_carrera)]) }}"
                                 class="btn btn-dark">
                                 Volver
                             </a>

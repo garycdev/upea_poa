@@ -19,23 +19,29 @@ use Illuminate\Support\Facades\DB;
 
 class ControladorMOT extends Controller
 {
+    // Vista inicio (Validar seguimiento solo admins y tecnicos)
     public function inicio()
     {
         $data['menu'] = 20;
         if (Auth::user()->id_unidad_carrera != null) {
             $data['carrera_unidad'] = UnidadCarreraArea::where('id', Auth::user()->id_unidad_carrera)->get();
             $data['unidades']       = UnidadCarreraArea::get();
-            $data['gestiones']      = Gestiones::get();
+            $data['gestiones']      = Gestiones::where('estado', 'activo')
+                ->where('gestion', '>=', date('Y'))
+                ->get();
 
             return view('administrador.mot.inicio', $data);
         } else {
             $data['unidades']  = UnidadCarreraArea::get();
-            $data['gestiones'] = Gestiones::get();
+            $data['gestiones'] = Gestiones::where('estado', 'activo')
+                ->where('gestion', '>=', date('Y'))
+                ->get();
 
             return view('administrador.mot.inicio', $data);
         }
     }
 
+    // Vista para inhabilitar partidas (rl_clasificador_tercero, rl_clasificador_cuarto y rl_clasificador_quinto)
     public function partidasHabilitadas()
     {
         $partidas3            = Clasificador_tercero::where('modificacion', false)->where('codigo', 'not like', '1%')->get();
@@ -64,6 +70,7 @@ class ControladorMOT extends Controller
         return view('administrador.mot.partidas', $data);
     }
 
+    // PUT inhabilitar partida
     public function inhabilitarPartida(Request $req)
     {
         // dd($req);
@@ -89,6 +96,8 @@ class ControladorMOT extends Controller
         session()->flash('mensaje', 'Partida inhabilitada correctamente');
         return redirect()->back();
     }
+
+    // PUT habilitar partida
     public function habilitarPartida(Request $req)
     {
         $grupo = $req->grupo;
@@ -141,6 +150,11 @@ class ControladorMOT extends Controller
             ->where('f1.unidadCarrera_id', '=', $id_unidad_carrera)
             ->orderBy('formulado_id', 'asc')
             ->get();
+
+        $formulados->transform(function ($item) {
+            $item->id_encriptado = encriptar($item->id);
+            return $item;
+        });
 
         return $formulados;
     }

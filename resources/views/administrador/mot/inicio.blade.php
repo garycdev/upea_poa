@@ -101,12 +101,12 @@
                         nro: nro
                     },
                     success: function(response) {
-                        console.log(response);
+                        // console.log(response);
                         tabla.clear().draw();
                         const detalleUrlTemplate =
                             "{{ route('mot.detalle', ['id_mot' => ':ELEMENT_ID']) }}";
-                        const pdfUrlTemplate =
-                            "{{ route('pdfMot', ['id_mot' => ':ELEMENT_ID']) }}"
+                        // const pdfUrlTemplate =
+                        //     "{{ route('pdfMot', ['id_mot' => ':ELEMENT_ID']) }}"
                         const pdfSolicitudTemplate =
                             "{{ route('mot.pdf', ['id_mot' => ':ELEMENT_ID']) }}"
                         const carreraUrlTemplate =
@@ -116,19 +116,19 @@
                         mot.forEach(element => {
                             const urlDetalle = detalleUrlTemplate.replace(
                                 ':ELEMENT_ID',
-                                element.id_mot);
-                            const urlPdf = pdfUrlTemplate.replace(
-                                ':ELEMENT_ID',
-                                element.id_mot);
+                                element.id_encriptado);
+                            // const urlPdf = pdfUrlTemplate.replace(
+                            //     ':ELEMENT_ID',
+                            //     element.id_mot);
                             const urlPdfSolicitud = pdfSolicitudTemplate.replace(
                                 ':ELEMENT_ID',
-                                element.id_mot);
+                                element.id_encriptado);
                             const urlCarrera = carreraUrlTemplate.replace(
                                     ':CONFIG_ID',
-                                    element.id_configuracion_formulado)
+                                    element.id_config_encriptado)
                                 .replace(
                                     ':CARRERA_ID',
-                                    element.id_unidad_carrera)
+                                    element.id_cua_encriptado)
 
                             tabla.row.add([
                                 formatearConCeros(element.nro),
@@ -149,10 +149,7 @@
                                 `<a href="${urlDetalle}" target="_blank" class="btn btn-outline-primary">
                                     <i class="ri-eye-fill"></i>
                                 </a>
-                                <a href="${urlPdfSolicitud}" class="btn btn-outline-warning" target="_blank">
-                                    <i class="ri-file-pdf-line"></i>
-                                </a>
-                                <a href="${urlPdf}" class="btn btn-outline-danger" target="_blank" style="display:${element.estado == 'verificado' || element.estado == 'aprobado' ? 'inline-block' : 'none'}">
+                                <a href="${urlPdfSolicitud}" class="btn btn-outline-danger" target="_blank">
                                     <i class="ri-file-pdf-line"></i>
                                 </a>`
                             ]).draw(false);

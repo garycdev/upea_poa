@@ -205,6 +205,9 @@
 
                 $tabla[$det->id] = $filaPadre;
             }
+
+            // dd($tabla);
+
         @endphp
         <table class="my-table" style="width: 100%; font-size:10px">
             <thead>
@@ -222,21 +225,23 @@
             </thead>
             <tbody>
                 @foreach ($detalles as $det)
-                    <tr class="th-title" style="font-weight: bold;">
-                        <td>
-                            {{ $tabla[$det->id]['codigo'] }}
-                        </td>
-                        <td>
-                            {{ $tabla[$det->id]['titulo'] }}
-                        </td>
-                        @foreach ($financiamientos as $finan)
+                    @if ($tabla[$det->id]['total'] > 0)
+                        <tr class="th-title" style="font-weight: bold;">
                             <td>
-                                {{ $tabla[$det->id]['financiamientos'][$finan->id] ? con_separador_comas($tabla[$det->id]['financiamientos'][$finan->id]) . ' bs' : '-' }}
+                                {{ $tabla[$det->id]['codigo'] }}
                             </td>
-                        @endforeach
-                        <td>{{ $tabla[$det->id]['total'] ? con_separador_comas($tabla[$det->id]['total']) . ' bs' : '-' }}
-                        </td>
-                    </tr>
+                            <td>
+                                {{ $tabla[$det->id]['titulo'] }}
+                            </td>
+                            @foreach ($financiamientos as $finan)
+                                <td>
+                                    {{ $tabla[$det->id]['financiamientos'][$finan->id] ? con_separador_comas($tabla[$det->id]['financiamientos'][$finan->id]) . ' bs' : '-' }}
+                                </td>
+                            @endforeach
+                            <td>{{ $tabla[$det->id]['total'] ? con_separador_comas($tabla[$det->id]['total']) . ' bs' : '-' }}
+                            </td>
+                        </tr>
+                    @endif
 
                     @foreach ($det->relacion_clasificador_segundo as $det2)
                         {{-- <tr>

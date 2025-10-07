@@ -22,7 +22,7 @@
                             </h5>
                             @if (Auth::user()->id_unidad_carrera == $carrera->id)
                                 <div class="col-2 form-group d-flex align-items-center justify-content-center">
-                                    <a href="{{ route('mot.formulario', [Crypt::encryptString($formulado->id), Crypt::encryptString($configuracion->gestiones_id), Crypt::encryptString($configuracion->id)]) }}"
+                                    <a href="{{ route('mot.formulario', [encriptar($formulado->id), encriptar($configuracion->gestiones_id), encriptar($configuracion->id)]) }}"
                                         class="btn btn-outline-primary">
                                         Nuevo formulario de modificaciones
                                     </a>
@@ -101,23 +101,16 @@
                                                                 </button>
                                                             @endif
                                                         @endcan
-                                                        @if ($item->estado == 'aprobado' && Auth::user()->id_unidad_carrera == $item->id_unidad_carrera)
-                                                            <button type="button"
-                                                                class="btn btn-success btn-modal-ejecutar"
-                                                                data-id="{{ $item->id_mot }}">
-                                                                Ejecutar compra
-                                                            </button>
-                                                        @endif
                                                     </td>
                                                     <td>
-                                                        <a href="{{ route('mot.detalle', $item->id_mot) }}"
+                                                        <a href="{{ route('mot.detalle', encriptar($item->id_mot)) }}"
                                                             class="btn btn-outline-primary" style="display:inline-block">
                                                             <i class="ri-eye-fill"></i>
                                                         </a>
                                                         {{-- @if (Auth::user()->id_unidad_carrera == $item->id_unidad_carrera) --}}
                                                         @if ($item->estado != 'pendiente')
-                                                            <a href="{{ route('mot.pdf', $item->id_mot) }}"
-                                                                class="btn btn-outline-warning" target="_blank">
+                                                            <a href="{{ route('mot.pdf', encriptar($item->id_mot)) }}"
+                                                                class="btn btn-outline-danger" target="_blank">
                                                                 <i class="ri-file-pdf-line"></i>
                                                             </a>
                                                         @endif
@@ -127,12 +120,12 @@
                                                             style="display:inline-block">
                                                             <i class="ri-pencil-fill"></i>
                                                         </a> --}}
-                                                        @if ($item->estado == 'ejecutado' || $item->estado == 'aprobado')
+                                                        {{-- @if ($item->estado == 'aprobado' || $item->estado == 'verificado')
                                                             <a href="{{ route('pdfMot', $item->id_mot) }}"
                                                                 class="btn btn-outline-danger" target="_blank">
                                                                 <i class="ri-file-pdf-line"></i>
                                                             </a>
-                                                        @endif
+                                                        @endif --}}
                                                         @if ($item->estado == 'pendiente' || $item->estado == 'elaborado')
                                                             <button type="button"
                                                                 class="btn btn-outline-danger btn-eliminar-mot"

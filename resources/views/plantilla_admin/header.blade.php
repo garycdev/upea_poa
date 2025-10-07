@@ -314,7 +314,8 @@
                                 </div>
 
                                 <div class="info text-center">
-                                    <span class="name">{{ Auth::user()->nombre }} {{ Auth::user()->apellido }}</span>
+                                    <span class="name">{{ Auth::user()->nombre }}
+                                        {{ Auth::user()->apellido }}</span>
                                     <span class="badge bg-success role">
                                         {{ Auth::user()->role[0]->name }}
                                     </span>
@@ -343,7 +344,7 @@
                                             <i class="ri-login-circle-line"></i>
                                             <span>Cerrar Sesión</span>
                                         </a>
-                                        <form id="form_salir" method="post">@csrf</form>
+                                        <form id="form_salir" method="post" action="{{ route('salir') }}">@csrf</form>
                                     </li>
                                 </ul>
                             </div>

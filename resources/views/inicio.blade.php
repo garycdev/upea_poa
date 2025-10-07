@@ -475,7 +475,7 @@
                 });
             }
 
-            if (!localStorage.getItem("init_session")) {
+            if (!sessionStorage.getItem("init_session")) {
                 Swal.fire({
                     title: "¡Bienvenido al sistema del POA!",
                     text: "Recuerde tener un correo electronico valido, se enviara notificaciones como seguimiento de cada tramite.",
@@ -484,7 +484,7 @@
                 });
 
                 // marcar que ya lo mostró
-                localStorage.setItem("init_session", "true");
+                sessionStorage.setItem("init_session", "true");
             }
         });
     </script>

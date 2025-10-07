@@ -670,3 +670,12 @@ Route::prefix('/poa')->middleware(['autenticados'])->group(function () {
 Route::prefix('/plan')->middleware(['autenticados'])->group(function () {
     //
 });
+
+Route::get('/message', function () {
+    $data['titulo']  = 'Titulo';
+    $data['color']   = 'success';
+    $data['mensaje'] = 'hola';
+    $data['url']     = route('fut.detalle', encriptar(1));
+
+    return view('emails.notificacion', $data);
+});

@@ -155,6 +155,16 @@
         });
     }
 
+    function objetivo_gestion_select2(valor) {
+        $('.select2_objetivo_gestion').select2({
+            dropdownParent: $(valor),
+            theme: "bootstrap-5",
+            containerCssClass: "select2--small", // For Select2 v4.0
+            selectionCssClass: "select2--small", // For Select2 v4.1
+            dropdownCssClass: "select2--small",
+        });
+    }
+
     const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     // For Live Projects
     window.addEventListener('load', function() {
@@ -203,27 +213,29 @@
 
     $('#btn_cerrar_session').on('click', (e) => {
         e.preventDefault();
-        let datos = $('#form_salir').serialize();
-        $.ajax({
-            type: "POST",
-            url: "{{ route('salir') }}",
-            data: "data",
-            dataType: "JSON",
-            success: function(data) {
-                if (data.tipo == 'success') {
-                    Swal.fire({
-                        position: 'top-end',
-                        icon: 'success',
-                        title: data.mensaje,
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                    setTimeout(() => {
-                        window.location = '';
-                    }, 1600);
-                }
-            }
-        });
+        $('#form_salir').submit();
+        
+        // let datos = $('#form_salir').serialize();
+        // $.ajax({
+        //     type: "POST",
+        //     url: "{{ route('salir') }}",
+        //     data: "data",
+        //     dataType: "JSON",
+        //     success: function(data) {
+        //         if (data.tipo == 'success') {
+        //             Swal.fire({
+        //                 position: 'top-end',
+        //                 icon: 'success',
+        //                 title: data.mensaje,
+        //                 showConfirmButton: false,
+        //                 timer: 1500
+        //             })
+        //             setTimeout(() => {
+        //                 window.location = '';
+        //             }, 1600);
+        //         }
+        //     }
+        // });
     });
 
     $.ajaxSetup({

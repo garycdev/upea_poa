@@ -23,7 +23,7 @@
                             </h5>
                             @if (Auth::user()->id_unidad_carrera == $carrera->id)
                                 <div class="col-2 form-group d-flex align-items-center justify-content-center">
-                                    <a href="{{ route('fut.formulario', [Crypt::encryptString($formulado->id), Crypt::encryptString($configuracion->gestiones_id), Crypt::encryptString($configuracion->id)]) }}"
+                                    <a href="{{ route('fut.formulario', [encriptar($formulado->id), encriptar($configuracion->gestiones_id), encriptar($configuracion->id)]) }}"
                                         class="btn btn-outline-primary">
                                         Nuevo formulario de inicio/unico
                                     </a>
@@ -95,28 +95,27 @@
                                                     </td>
                                                     <td>
                                                         @can('Validar_seguimiento')
-                                                            @if ($item->estado == 'elaborado')
+                                                            @if ($item->estado == 'elaborado' && Auth::user()->rol_verifica() == 'planifica')
                                                                 <button type="button" class="btn btn-primary btn-validar"
                                                                     data-id="{{ $item->id_fut }}">
                                                                     Validar
                                                                 </button>
                                                             @endif
+                                                            @if ($item->estado == 'verificado' && Auth::user()->rol_verifica() == 'presupuesto')
+                                                                <button type="button" class="btn btn-success btn-validar"
+                                                                    data-id="{{ $item->id_fut }}">
+                                                                    Validar
+                                                                </button>
+                                                            @endif
                                                         @endcan
-                                                        @if ($item->estado == 'aprobado' && Auth::user()->id_unidad_carrera == $item->id_unidad_carrera)
-                                                            <button type="button"
-                                                                class="btn btn-success btn-modal-ejecutar"
-                                                                data-id="{{ $item->id_fut }}">
-                                                                Ejecutar compra
-                                                            </button>
-                                                        @endif
                                                     </td>
                                                     <td>
-                                                        <a href="{{ route('fut.detalle', $item->id_fut) }}"
+                                                        <a href="{{ route('fut.detalle', encriptar($item->id_fut)) }}"
                                                             class="btn btn-outline-primary" style="display:inline-block">
                                                             <i class="ri-eye-fill"></i>
                                                         </a>
                                                         {{-- @if (Auth::user()->id_unidad_carrera == $item->id_unidad_carrera) --}}
-                                                        <a href="{{ route('fut.pdf', $item->id_fut) }}"
+                                                        <a href="{{ route('fut.pdf', encriptar($item->id_fut)) }}"
                                                             class="btn btn-outline-warning" target="_blank">
                                                             <i class="ri-file-pdf-line"></i>
                                                         </a>
@@ -126,12 +125,12 @@
                                                             style="display:inline-block">
                                                             <i class="ri-pencil-fill"></i>
                                                         </a> --}}
-                                                        @if ($item->estado == 'ejecutado' || $item->estado == 'aprobado')
+                                                        {{-- @if ($item->estado == 'aprobado' || $item->estado == 'verificado')
                                                             <a href="{{ route('pdfFut', $item->id_fut) }}"
                                                                 class="btn btn-outline-danger" target="_blank">
                                                                 <i class="ri-file-pdf-line"></i>
                                                             </a>
-                                                        @endif
+                                                        @endif --}}
                                                         @if ($item->estado == 'elaborado')
                                                             <button type="button"
                                                                 class="btn btn-outline-danger btn-eliminar-fut"

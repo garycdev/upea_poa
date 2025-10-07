@@ -84,7 +84,7 @@
                                 <fieldset>
                                     <legend>Maxima Autoridad</legend>
                                     <div class="alert alert-primary" role="alert">
-                                        <h6 class="alert-heading">{{ 'Retor. ' . $formulario1->maxima_autoridad }}</h6>
+                                        <h6 class="alert-heading">{{ 'Rector. ' . $formulario1->maxima_autoridad }}</h6>
                                     </div>
                                 </fieldset>
                             </div>
@@ -93,7 +93,8 @@
                                     <legend>Realizado por : </legend>
                                     <div class="alert alert-primary" role="alert">
                                         <h6 class="alert-heading">
-                                            {{ $tipo_carreraUnidad . ' ' . $realizado_por->nombre . ' ' . $realizado_por->apellido }}
+                                            {{-- {{ $tipo_carreraUnidad . ' ' . $realizado_por->nombre . ' ' . $realizado_por->apellido }} --}}
+                                            {{ $realizado_por->nombre . ' ' . $realizado_por->apellido }}
                                         </h6>
                                     </div>
                                 </fieldset>

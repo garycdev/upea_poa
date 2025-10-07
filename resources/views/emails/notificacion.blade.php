@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ $titulo }}</title>
+    <link rel="stylesheet" href="{{ asset('plantilla_admin/css/bootstrap.min.css') }}" type="text/css">
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -30,16 +31,6 @@
             line-height: 1.6;
         }
 
-        .button {
-            display: inline-block;
-            background-color: #2563eb;
-            color: white;
-            padding: 10px 18px;
-            border-radius: 5px;
-            text-decoration: none;
-            margin-top: 15px;
-        }
-
         footer {
             margin-top: 30px;
             text-align: center;
@@ -58,18 +49,39 @@
         .text-success {
             color: #198754;
         }
+
+        .text-secondary {
+            color: #777;
+            margin-top: 24px;
+            margin-bottom: 24px;
+            margin-left: 12px;
+            margin-right: 12px;
+            font-size: .9em;
+        }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <h1 class="{{ $color }}">{{ $titulo }}</h1>
+        <center>
+            <img src="{{ config('app.url') }}/logos/banner-upea.png" alt=" upea" width="200">
+        </center>
+        <h1 class="{{ $color }}" style="margin-top;7px;">{{ $titulo }}</h1>
+
+        <hr>
 
         <p>{{ $mensaje }}</p>
 
-        <a href="{{ $url }}" class="button">Ir al detalle del formulario</a>
+        <a href="{{ $url }}" class="btn btn-outline-primary">Ir al detalle del formulario</a>
 
+
+        <p class="text-secondary">Si el enlace no funciona intentar copiar el siguiente enlace en un navegador <a
+                href="{{ $url }}">{{ $url }}</a></p>
+
+        <hr>
         <footer>
+            | No responder a este correo electronico |
+            <br>
             © {{ date('Y') }} {{ config('app.name') }}. Todos los derechos reservados.
         </footer>
     </div>
