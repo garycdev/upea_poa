@@ -48,6 +48,7 @@ class Administracion_usuario extends Controller
                 $usuario->apellido = $request->apellido;
                 $usuario->email    = $request->email;
                 $usuario->celular  = $request->celular;
+                $usuario->usuario  = $request->usuario;
                 if ($usuario->save()) {
                     $data = [
                         'tipo'    => 'success',

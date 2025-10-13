@@ -478,15 +478,14 @@ class ControladorReportePdf extends Controller
 
         $mot       = Mot::where('id_mot', '=', $id_mot)->first();
         $objetivos = $this->getObjetivos($mot->id_mot);
-        // dd($objetivos);
 
         $pdf = new Fpdf('P', 'mm', 'Letter');
-        // $pdf = new Fpdf();
         $pdf->SetMargins(10, 10, 10);
         $pdf->SetAutoPageBreak(false);
 
         $pdf->AddPage();
 
+        // Cabecera
         $altura = 2;
         $pdf->SetXY(3, $altura);
         $pdf->SetFont('Arial', 'B', 9);
@@ -879,17 +878,17 @@ class ControladorReportePdf extends Controller
         $pdf->Cell(65, 18, '', 1, 0, 'C', false);
 
         // $pdf->setY(-32);
-        $pdf->setX(10);
+        // $pdf->setX(10);
         if ($usuarioSol) {
-            $pdf->setY(-33);
+            $pdf->setXY(10, -33);
             $pdf->Cell(65, 5, $this->ellipsis($pdf, $usuarioSol->nombre . ' ' . $usuarioSol->paterno . ' ' . $usuarioSol->paterno, 65), 0, 0, 'C', false);
-            $pdf->setY(-33 + 2);
+            $pdf->setXY(10, -33 + 2);
             $pdf->Cell(65, 5, $this->ellipsis($pdf, $usuarioSol->nombre_cargo, 65), 0, 0, 'C', false);
         } else {
-            $pdf->setY(-32);
+            $pdf->setXY(10, -32);
             $pdf->Cell(65, 5, $this->ellipsis($pdf, $usuario->nombre . ' ' . $usuario->apellido, 65), 0, 0, 'C', false);
         }
-        $pdf->setX(75);
+        // $pdf->setX(75);
         if ($mot->unidad_verifica) {
             $usuarioVer = DB::table('base_upea.vista_personal_administrativo_2020')
                 ->where('base_upea.vista_personal_administrativo_2020.nombre', 'like', '%' . $mot->unidad_verifica->nombre . '%')
@@ -898,18 +897,18 @@ class ControladorReportePdf extends Controller
                 ->first();
 
             if ($usuarioVer) {
-                $pdf->setY(-33);
+                $pdf->setXY(75, -33);
                 $pdf->Cell(65, 5, $this->ellipsis($pdf, $usuarioVer->nombre . ' ' . $usuarioVer->paterno . ' ' . $usuarioVer->paterno, 65), 0, 0, 'C', false);
-                $pdf->setY(-33 + 2);
+                $pdf->setXY(75, -33 + 2);
                 $pdf->Cell(65, 5, $this->ellipsis($pdf, $usuarioVer->nombre_cargo, 65), 0, 0, 'C', false);
             } else {
-                $pdf->setY(-32);
+                $pdf->setXY(75, -32);
                 $pdf->Cell(65, 5, $this->ellipsis($pdf, $mot->unidad_verifica->nombre . ' ' . $mot->unidad_verifica->apellido, 65), 0, 0, 'C', false);
             }
         } else {
             $pdf->Cell(65, 5, '-', 0, 0, 'C', false);
         }
-        $pdf->setX(140);
+        // $pdf->setX(140);
         if ($mot->unidad_aprueba) {
             $usuarioAp = DB::table('base_upea.vista_personal_administrativo_2020')
                 ->where('base_upea.vista_personal_administrativo_2020.nombre', 'like', '%' . $mot->unidad_aprueba->nombre . '%')
@@ -918,12 +917,12 @@ class ControladorReportePdf extends Controller
                 ->first();
 
             if ($usuarioAp) {
-                $pdf->setY(-33);
+                $pdf->setXY(140, -33);
                 $pdf->Cell(65, 5, $this->ellipsis($pdf, $usuarioAp->nombre . ' ' . $usuarioAp->paterno . ' ' . $usuarioAp->paterno, 65), 0, 0, 'C', false);
-                $pdf->setY(-33 + 2);
+                $pdf->setXY(140, -33 + 2);
                 $pdf->Cell(65, 5, $this->ellipsis($pdf, $usuarioAp->nombre_cargo, 65), 0, 0, 'C', false);
             } else {
-                $pdf->setY(-32);
+                $pdf->setXY(140, -32);
                 $pdf->Cell(65, 5, $this->ellipsis($pdf, $mot->unidad_aprueba->nombre . ' ' . $mot->unidad_aprueba->apellido, 65), 0, 0, 'C', false);
             }
         } else {
@@ -990,7 +989,7 @@ class ControladorReportePdf extends Controller
         $pdf->Cell(65, 5, $this->ellipsis($pdf, 'AUTORIZADO POR: ' . $presupuestos->nombre . ' ' . $presupuestos->paterno . ' ' . $presupuestos->materno, 90), 0, 0, 'C', false);
 
         $pdf->setFont('Arial', 'B', 5);
-        
+
         $pdf->setY(-12);
         $pdf->setX(10);
         $pdf->Cell(65, 5, $this->ellipsis($pdf, $mot->unidad_carrera->nombre_completo, 90), 0, 0, 'C', false);
@@ -1694,7 +1693,7 @@ class ControladorReportePdf extends Controller
         $pdf->Cell(65, 18, '', 1, 0, 'C', false);
 
         // $pdf->setY(-32);
-        $pdf->setX(10);
+        // $pdf->setX(10);
         if ($usuarioSol) {
             $pdf->setXY(10, -33);
             $pdf->Cell(65, 5, $this->ellipsis($pdf, $usuarioSol->nombre . ' ' . $usuarioSol->paterno . ' ' . $usuarioSol->paterno, 65), 0, 0, 'C', false);
@@ -1705,7 +1704,7 @@ class ControladorReportePdf extends Controller
             $pdf->Cell(65, 5, $this->ellipsis($pdf, $usuario->nombre . ' ' . $usuario->apellido, 65), 0, 0, 'C', false);
         }
 
-        $pdf->setX(75);
+        // $pdf->setX(75);
         if ($fut->unidad_verifica) {
             $usuarioVer = DB::table('base_upea.vista_personal_administrativo_2020')
                 ->where('base_upea.vista_personal_administrativo_2020.nombre', 'like', '%' . $fut->unidad_verifica->nombre . '%')
@@ -1726,7 +1725,7 @@ class ControladorReportePdf extends Controller
             $pdf->Cell(65, 5, '-', 0, 0, 'C', false);
         }
 
-        $pdf->setX(140);
+        // $pdf->setX(140);
         if ($fut->unidad_aprueba) {
             $usuarioAp = DB::table('base_upea.vista_personal_administrativo_2020')
                 ->where('base_upea.vista_personal_administrativo_2020.nombre', 'like', '%' . $fut->unidad_aprueba->nombre . '%')
@@ -1797,15 +1796,6 @@ class ControladorReportePdf extends Controller
             )
             ->orderByRaw("dist ASC, fecha_inicio_asignacion_administrativo DESC")
             ->first();
-
-        /**
-         * SELECT bd_poa.buscarUnidad(unidad_trabajo, 'AREA DE SALUD') AS dist,
-        base_upea.vista_personal_administrativo_2020.*
-        FROM base_upea.vista_personal_administrativo_2020
-        WHERE base_upea.vista_personal_administrativo_2020.nombre_cargo LIKE 'DECANO%'
-        ORDER BY dist ASC, base_upea.vista_personal_administrativo_2020.fecha_inicio_asignacion_administrativo DESC
-        LIMIT 1;
-         */
 
         $pdf->setY(-15);
         $pdf->setX(10);

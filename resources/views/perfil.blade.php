@@ -113,6 +113,14 @@
                                         <div id="_celular"></div>
                                     </div>
                                 </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>Nombre de usuario </label>
+                                        <input type="text" class="form-control" placeholder="Nombre de usuario"
+                                            name="usuario" value="{{ Auth::user()->usuario }}">
+                                        <div id="_usuario"></div>
+                                    </div>
+                                </div>
 
                                 <div class="save-update text-center">
                                     <button class="btn btn-outline-primary me-2" id="btn_guardar_perfil">Guardar

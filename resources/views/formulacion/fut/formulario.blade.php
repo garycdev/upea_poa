@@ -5,7 +5,6 @@
         <div class="main-content app-content">
             <div class="container-fluid">
 
-                {{-- <form class="row" id="formularioFut"> --}}
                 <form class="row" method="POST" action="{{ route('fut.compra') }}" id="formularioFut">
                     @csrf
                     <div class="card">
@@ -46,6 +45,7 @@
                                             data-form5="{{ $item->formulario5_id }}"
                                             data-id_detalle="{{ $item->id_detalle }}">
                                             {{ $item->partida }} - {{ $item->titulo_detalle }}
+                                            ({{ con_separador_comas($item->total_presupuesto) }})
                                         </option>
                                     @endforeach
                                     @foreach ($partidas_formulado4 as $item)
@@ -57,6 +57,7 @@
                                             data-form5="{{ $item->formulario5_id }}"
                                             data-id_detalle="{{ $item->id_detalle }}">
                                             {{ $item->partida }} - {{ $item->titulo_detalle }}
+                                            ({{ con_separador_comas($item->total_presupuesto) }})
                                         </option>
                                     @endforeach
                                     @foreach ($partidas_formulado5 as $item)
@@ -68,6 +69,7 @@
                                             data-form5="{{ $item->formulario5_id }}"
                                             data-id_detalle="{{ $item->id_detalle }}">
                                             {{ $item->partida }} - {{ $item->titulo_detalle }}
+                                            ({{ con_separador_comas($item->total_presupuesto) }})
                                         </option>
                                     @endforeach
                                 </select>

@@ -576,7 +576,7 @@ class ControladorFormulacionMOT extends Controller
         $motPP->save();
 
         session()->flash('mensaje', 'Movimiento agregado correctamente');
-        return redirect()->route('mot.detalle', $motPP->id_mot);
+        return redirect()->route('mot.detalle', encriptar($motPP->id_mot));
     }
 
     public function validarFormulario(Request $req)
@@ -616,7 +616,7 @@ class ControladorFormulacionMOT extends Controller
             Mail::to($mot->usuario->email)->send(new NotificacionGeneral(
                 "Formulario MOT N°" . formatear_con_ceros($mot->nro) . " rechazado.",
                 "Su formulario de modificación MOT N°" . formatear_con_ceros($mot->nro) . " ha sido rechazado, puede revisarlo dando click al siguiente enlace.",
-                route('mot.detalle', $mot->id_mot),
+                route('mot.detalle', encriptar($mot->id_mot)),
                 'text-danger'
             ));
 
@@ -624,7 +624,7 @@ class ControladorFormulacionMOT extends Controller
             Mail::to($mot->usuario->email)->send(new NotificacionGeneral(
                 "Formulario MOT N°" . formatear_con_ceros($mot->nro) . " verificado.",
                 "Su formulario de modificación MOT N°" . formatear_con_ceros($mot->nro) . " ya ha sido verificado por planificación, puede revisarlo dando click al siguiente enlace.",
-                route('mot.detalle', $mot->id_mot),
+                route('mot.detalle', encriptar($mot->id_mot)),
                 'text-primary'
             ));
 
@@ -633,14 +633,14 @@ class ControladorFormulacionMOT extends Controller
             Mail::to(Auth::user()->email)->send(new NotificacionGeneral(
                 "Formulario MOT N°" . formatear_con_ceros($mot->nro) . " verificado.",
                 "A verificado la modificación MOT N°" . formatear_con_ceros($mot->nro) . ", puede revisarlo dando click al siguiente enlace.",
-                route('mot.detalle', $mot->id_mot),
+                route('mot.detalle', encriptar($mot->id_mot)),
                 'text-primary'
             ));
         } elseif ($req->estado == 'aprobado') {
             Mail::to($mot->usuario->email)->send(new NotificacionGeneral(
                 "Formulario MOT N°" . formatear_con_ceros($mot->nro) . " aprobado.",
                 "Su formulario de modificación MOT N°" . formatear_con_ceros($mot->nro) . " ya ha sido aprobado, puede revisarlo dando click al siguiente enlace.",
-                route('mot.detalle', $mot->id_mot),
+                route('mot.detalle', encriptar($mot->id_mot)),
                 'text-success'
             ));
 
@@ -649,7 +649,7 @@ class ControladorFormulacionMOT extends Controller
             Mail::to(Auth::user()->email)->send(new NotificacionGeneral(
                 "Formulario MOT N°" . formatear_con_ceros($mot->nro) . " verificado.",
                 "A aprobado la modificación MOT N°" . formatear_con_ceros($mot->nro) . ", puede revisarlo dando click al siguiente enlace.",
-                route('mot.detalle', $mot->id_mot),
+                route('mot.detalle', encriptar($mot->id_mot)),
                 'text-primary'
             ));
         }
