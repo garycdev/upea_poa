@@ -2,14 +2,20 @@
 namespace App\Http\Controllers\Administracion\FutMot;
 
 use App\Http\Controllers\Controller;
+use App\Mail\NotificacionGeneral;
 use App\Models\Clasificador\Clasificador_cuarto;
 use App\Models\Clasificador\Clasificador_quinto;
 use App\Models\Clasificador\Clasificador_tercero;
 use App\Models\Configuracion\UnidadCarreraArea;
 use App\Models\Configuracion_poa\Configuracion_formulado;
+use App\Models\FutMot\Mot;
+use App\Models\FutMot\MotMov;
 use App\Models\Gestiones;
+use App\Models\Poa\Medida_bienservicio;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class ControladorMOT extends Controller
 {
@@ -139,5 +145,164 @@ class ControladorMOT extends Controller
         });
 
         return $formulados;
+    }
+
+    // Aprobar/rechazar/verificar fomulario MOT (tecnicos de planificacion y presupuestos)
+    public function validarFormulario(Request $req)
+    {
+        $mot                   = Mot::find($req->id_mot);
+        $mot->respaldo_tramite = $req->respaldo_tramite;
+        $mot->fecha_tramite    = $req->fecha_actual . ' ' . $req->hora_actual;
+        $mot->observacion      = $req->observacion;
+        $mot->estado           = $req->estado;
+
+        // Devuelve todos los montos a medida bien servicio
+        if ($req->estado == 'rechazado') {
+            $mot->importe = 0;
+
+            $movs = MotMov::join('mot_partidas_presupuestarias as pp', 'pp.id_mot_pp', '=', 'mot_movimiento.id_mot_pp')
+                ->where('pp.id_mot', $mot->id_mot)
+                ->select('mot_movimiento.*')
+                ->get();
+
+            foreach ($movs as $mov) {
+                if ($mov->motpp->accion == 'DE') {
+                    $mbs                    = Medida_bienservicio::find($mov->id_mbs);
+                    $mbs->total_presupuesto = $mbs->total_presupuesto + $mov->partida_monto;
+                    $mbs->save();
+
+                    $mov->descripcion = 'revertido';
+                } else {
+                    $mbs = Medida_bienservicio::find($mov->id_mbs);
+                    $mbs->delete();
+
+                    $mov->descripcion = 'eliminado';
+                }
+
+                $mov->save();
+            }
+
+            Mail::to($mot->usuario->email)->send(new NotificacionGeneral(
+                "Formulario MOT N°" . formatear_con_ceros($mot->nro) . " rechazado.",
+                "Su formulario de modificación MOT N°" . formatear_con_ceros($mot->nro) . " ha sido rechazado, puede revisarlo dando click al siguiente enlace.",
+                route('mot.detalle', encriptar($mot->id_mot)),
+                'text-danger'
+            ));
+
+        } elseif ($req->estado == 'verificado') {
+            Mail::to($mot->usuario->email)->send(new NotificacionGeneral(
+                "Formulario MOT N°" . formatear_con_ceros($mot->nro) . " verificado.",
+                "Su formulario de modificación MOT N°" . formatear_con_ceros($mot->nro) . " ya ha sido verificado por planificación, puede revisarlo dando click al siguiente enlace.",
+                route('mot.detalle', encriptar($mot->id_mot)),
+                'text-primary'
+            ));
+
+            $mot->id_unidad_verifica = Auth::user()->id;
+
+            Mail::to(Auth::user()->email)->send(new NotificacionGeneral(
+                "Formulario MOT N°" . formatear_con_ceros($mot->nro) . " verificado.",
+                "A verificado la modificación MOT N°" . formatear_con_ceros($mot->nro) . ", puede revisarlo dando click al siguiente enlace.",
+                route('mot.detalle', encriptar($mot->id_mot)),
+                'text-primary'
+            ));
+        } elseif ($req->estado == 'aprobado') {
+            Mail::to($mot->usuario->email)->send(new NotificacionGeneral(
+                "Formulario MOT N°" . formatear_con_ceros($mot->nro) . " aprobado.",
+                "Su formulario de modificación MOT N°" . formatear_con_ceros($mot->nro) . " ya ha sido aprobado, puede revisarlo dando click al siguiente enlace.",
+                route('mot.detalle', encriptar($mot->id_mot)),
+                'text-success'
+            ));
+
+            $mot->id_unidad_aprueba = Auth::user()->id;
+
+            Mail::to(Auth::user()->email)->send(new NotificacionGeneral(
+                "Formulario MOT N°" . formatear_con_ceros($mot->nro) . " verificado.",
+                "A aprobado la modificación MOT N°" . formatear_con_ceros($mot->nro) . ", puede revisarlo dando click al siguiente enlace.",
+                route('mot.detalle', encriptar($mot->id_mot)),
+                'text-primary'
+            ));
+        }
+
+        $mot->save();
+
+        session()->flash('message', 'Formulario validado exitosamente.');
+        return redirect()->back();
+    }
+
+    // Buscar por gestion y/o nro (tecnicos y admins)
+    public function buscarCorrelativo(Request $req)
+    {
+        $nro          = intval($req->nro) ?? 0;
+        $gestiones_id = $req->id_gestion ?? 0;
+
+        if ($gestiones_id != 0 && $nro != 0) {
+            $mot = Mot::join('rl_configuracion_formulado as rcf', 'rcf.id', '=', 'mot.id_configuracion_formulado')
+                ->join('rl_unidad_carrera as uc', 'uc.id', '=', 'mot.id_unidad_carrera')
+                ->join('rl_formulado_tipo as rft', 'rft.id', '=', 'rcf.formulado_id')
+                ->join('rl_gestiones as rg', 'rg.id', '=', 'rcf.gestiones_id')
+                ->where('mot.nro', 'like', '%' . $nro . '%')
+                ->where('rcf.gestiones_id', $gestiones_id)
+                ->whereNotIn('mot.estado', ["eliminado", "pendiente"])
+                ->select('mot.*', 'uc.nombre_completo as carrera', 'rft.descripcion as formulado', 'rg.gestion')
+                ->get();
+        } else if ($nro != 0 && $gestiones_id == 0) {
+            $mot = Mot::join('rl_configuracion_formulado as rcf', 'rcf.id', '=', 'mot.id_configuracion_formulado')
+                ->where('nro', 'like', '%' . $nro . '%')
+                ->join('rl_unidad_carrera as uc', 'uc.id', '=', 'mot.id_unidad_carrera')
+                ->join('rl_formulado_tipo as rft', 'rft.id', '=', 'rcf.formulado_id')
+                ->join('rl_gestiones as rg', 'rg.id', '=', 'rcf.gestiones_id')
+                ->whereNotIn('mot.estado', ["eliminado", "pendiente"])
+                ->select('mot.*', 'uc.nombre_completo as carrera', 'rft.descripcion as formulado', 'rg.gestion')
+                ->get();
+        } else if ($nro == 0 && $gestiones_id != 0) {
+            $mot = Mot::join('rl_configuracion_formulado as rcf', 'rcf.id', '=', 'mot.id_configuracion_formulado')
+                ->join('rl_unidad_carrera as uc', 'uc.id', '=', 'mot.id_unidad_carrera')
+                ->join('rl_formulado_tipo as rft', 'rft.id', '=', 'rcf.formulado_id')
+                ->join('rl_gestiones as rg', 'rg.id', '=', 'rcf.gestiones_id')
+                ->where('rcf.gestiones_id', $gestiones_id)
+                ->whereNotIn('mot.estado', ["eliminado", "pendiente"])
+                ->select('mot.*', 'uc.nombre_completo as carrera', 'rft.descripcion as formulado', 'rg.gestion')
+                ->get();
+        } else {
+            $mot = [];
+        }
+
+        $mot->transform(function ($item) {
+            $item->id_encriptado        = encriptar($item->id_mot);
+            $item->id_config_encriptado = encriptar($item->id_configuracion_formulado);
+            $item->id_cua_encriptado    = encriptar($item->id_unidad_carrera);
+            return $item;
+        });
+
+        if (isset(Auth::user()->unidad_carrera)) {
+            if (stripos(Auth::user()->unidad_carrera->nombre_completo, 'PLANIFICA') !== false) {
+                $user = 'planifica';
+            } elseif (stripos(Auth::user()->unidad_carrera->nombre_completo, 'PRESUPUESTO') !== false) {
+                $user = 'presupuesto';
+            } else {
+                $user = 'user';
+            }
+        } else {
+            $user = '';
+        }
+
+        return response()->json([
+            'nro'          => $nro,
+            'gestiones_id' => $gestiones_id,
+            'data'         => $mot,
+            'rol'          => $user,
+        ], 200);
+    }
+
+    // Modal unico para validacion de MOTs
+    public function abrirModal($id_mot)
+    {
+        $data['mot']          = Mot::find($id_mot);
+        $fecha_actual         = Carbon::now()->format('Y-m-d');
+        $data['fecha_actual'] = $fecha_actual;
+        $hora_actual          = Carbon::now()->format('H:i');
+        $data['hora_actual']  = $hora_actual;
+
+        return view('formulacion.mot.modal', $data)->render();
     }
 }

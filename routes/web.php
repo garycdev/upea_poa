@@ -570,6 +570,9 @@ Route::prefix('/poa')->middleware(['autenticados'])->group(function () {
     Route::prefix('fut')->controller(ControladorFUT::class)->group(function () {
         // Rutas FUT admin
         Route::get('/', 'inicio')->name('fut_inicio');
+        Route::post('/validar', 'validarFormulario')->name('fut.validar');
+        Route::post('/buscar', 'buscarCorrelativo')->name('fut.buscar');
+        Route::get('/modal/{id_fut}', 'abrirModal')->name('fut.modal');
 
         // Rutas formulacion de FUT
         Route::prefix('formulacion')->controller(ControladorFormulacionFUT::class)->group(function () {
@@ -582,9 +585,6 @@ Route::prefix('/poa')->middleware(['autenticados'])->group(function () {
             Route::delete('/detalle', 'eliminarFormulario')->name('fut.eliminar');
             Route::get('/detalle/{id_fut}', 'formular')->name('fut.detalle');
 
-            Route::post('/buscar', 'buscarCorrelativo')->name('fut.buscar');
-            Route::get('/modal/{id_fut}', 'abrirModal')->name('fut.modal');
-            Route::post('/validar', 'validarFormulario')->name('fut.validar');
             Route::post('/ejecutar', 'ejecutarFormulario')->name('fut.ejecutar');
 
             Route::get('/get', 'getOperacionObjetivo')->name('fut.operacion_objetivo');
@@ -598,6 +598,9 @@ Route::prefix('/poa')->middleware(['autenticados'])->group(function () {
         Route::get('/partidas', 'partidasHabilitadas')->name('mot.partidas');
         Route::post('/partidas', 'inhabilitarPartida')->name('mot.partidas.inhabilitar');
         Route::put('/partidas', 'habilitarPartida')->name('mot.partidas.habilitar');
+        Route::post('/validar', 'validarFormulario')->name('mot.validar');
+        Route::post('/buscar', 'buscarCorrelativo')->name('mot.buscar');
+        Route::get('/modal/{id_mot}', 'abrirModal')->name('mot.modal');
 
         // Rutas MOT formulacion
         Route::prefix('formulacion')->controller(ControladorFormulacionMOT::class)->group(function () {
@@ -612,9 +615,6 @@ Route::prefix('/poa')->middleware(['autenticados'])->group(function () {
             Route::post('/objetivos', 'objetivos')->name('mot.objetivos');
             Route::post('/agregar', 'agregar')->name('mot.agregar');
 
-            Route::post('/buscar', 'buscarCorrelativo')->name('mot.buscar');
-            Route::get('/modal/{id_mot}', 'abrirModal')->name('mot.modal');
-            Route::post('/validar', 'validarFormulario')->name('mot.validar');
             Route::post('/ejecutar', 'ejecutarFormulario')->name('mot.ejecutar');
 
             Route::get('/get', 'getOperacionObjetivo')->name('mot.operacion_objetivo');
