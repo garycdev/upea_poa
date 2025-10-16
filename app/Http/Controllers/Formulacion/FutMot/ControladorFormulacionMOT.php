@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Mail;
 
 class ControladorFormulacionMOT extends Controller
 {
+    // Inicio de formulario, escoge gestion para listar MOTs
     public function inicio()
     {
         $data['menu'] = 22;
@@ -36,6 +37,7 @@ class ControladorFormulacionMOT extends Controller
         }
     }
 
+    // Lista formulados desde gestion para MOTs existentes
     public function listarFormularios($id_conformulado, $id_carrera = 0)
     {
         $id_conformulado = desencriptar($id_conformulado);
@@ -95,6 +97,7 @@ class ControladorFormulacionMOT extends Controller
         return view('formulacion.mot.lista', $data);
     }
 
+    // Vista al formulario inicial de MOT
     public function formulario($id_formulado, $gestiones_id, $id_conformulado)
     {
         $id_formulado    = desencriptar($id_formulado);
@@ -176,6 +179,7 @@ class ControladorFormulacionMOT extends Controller
         return view('formulacion.mot.formulario', $data);
     }
 
+    // Obtiene operacion/objetivo/area estrategica de un monto de form5
     public function getOperacionObjetivo(Request $req)
     {
         $id_mbs = $req->id_mbs;
@@ -193,11 +197,9 @@ class ControladorFormulacionMOT extends Controller
         return $mbs;
     }
 
+    // Guarda MOT nuevo
     public function realizarModificacion(Request $req)
     {
-        // dd($req);
-        // die();
-
         $areas_estrategicas     = array_values(array_unique($req->areas_estrategicas));
         $objetivo_institucional = array_values(array_unique($req->objetivo_institucional));
         $operacion              = array_values(array_unique($req->operacion));
@@ -224,8 +226,6 @@ class ControladorFormulacionMOT extends Controller
         $form5           = $req->form5;
         $partidas        = $req->partidas;
         $detalles        = $req->detalles;
-
-        // dd($financiamientos);
 
         $fin        = 0;
         $nuevoMotPP = [];
@@ -380,6 +380,7 @@ class ControladorFormulacionMOT extends Controller
         return view('formulacion.mot.detalle', $data);
     }
 
+    // Obtiene todas la operaciones/objetivos/areas estrategicas desde lista de forms5
     public function objetivos(Request $req)
     {
         $objetivos = Formulario5::join('rl_formulario4 as f4', 'f4.id', '=', 'rl_formulario5.formulario4_id')
@@ -394,6 +395,7 @@ class ControladorFormulacionMOT extends Controller
         return response()->json($objetivos);
     }
 
+    // Edita monto en detalle de MOT
     public function editarMonto(Request $req)
     {
         if ($req->accion == 'DE') {
@@ -442,6 +444,8 @@ class ControladorFormulacionMOT extends Controller
             return redirect()->back();
         }
     }
+
+    // Elimina registro MBS y movimiento MOT
     public function eliminarMonto(Request $req)
     {
         if ($req->accion == 'DE') {
@@ -506,6 +510,8 @@ class ControladorFormulacionMOT extends Controller
             ], 200);
         }
     }
+
+    // Eliminar formulario y restaurar montos de form5 elegidos
     public function eliminarFormulario(Request $req)
     {
         $mot  = Mot::find($req->id_mot);
@@ -540,9 +546,34 @@ class ControladorFormulacionMOT extends Controller
         ], 200);
     }
 
+    // Nuevo MBS para MOT (el total_presupuesto se descuenta de form5)
     public function agregar(Request $req)
     {
-        // return response()->json($req);
+        $req->validate([
+            'partida_a'         => 'required',
+            'medida'            => 'required',
+            'cantidad'          => 'required|numeric|min:1',
+            'precio_unitario'   => 'required|numeric|min:0.01',
+            'total_presupuesto' => 'required|numeric|min:0.01',
+            'fecha_requerida'   => 'required|date|after_or_equal:today',
+            'objetivo_gestion'  => 'required',
+        ], [
+            'partida_a.required'             => 'La partida es requerida',
+            'medida.required'                => 'La medida es requerida',
+            'cantidad.required'              => 'La cantidad es requerida',
+            'cantidad.numeric'               => 'La cantidad debe ser un numero',
+            'cantidad.min'                   => 'La cantidad no puede ser 0',
+            'precio_unitario.required'       => 'El precio unitario es requerido',
+            'precio_unitario.numeric'        => 'El precio unitario debe ser un valor numerica',
+            'precio_unitario.min'            => 'El precio unitario no puede ser 0',
+            'total_presupuesto.required'     => 'El presupuesto total es requerido',
+            'total_presupuesto.numeric'      => 'El presupuesto total debe ser un valor numerico',
+            'total_presupuesto.min'          => 'El presupuesto total no puede ser 0',
+            'fecha_requerida.required'       => 'La fecha es requerida',
+            'fecha_requerida.date'           => 'La fecha debe ser de tipo fecha',
+            'fecha_requerida.after_or_equal' => 'La fecha no puede ser anterior a hoy',
+            'objetivo_gestion.required'      => 'El objetivo/gestion es requerido',
+        ]);
 
         $mbs                         = new Medida_bienservicio();
         $mbs->formulario5_id         = $req->objetivo_gestion;
@@ -576,9 +607,14 @@ class ControladorFormulacionMOT extends Controller
         $motPP->save();
 
         session()->flash('mensaje', 'Movimiento agregado correctamente');
-        return redirect()->route('mot.detalle', encriptar($motPP->id_mot));
+        // return redirect()->route('mot.detalle', encriptar($motPP->id_mot));
+        return response()->json([
+            'success' => true,
+            'message' => 'Movimiento agregado correctamente',
+        ]);
     }
 
+    // Aprobar/rechazar/verificar fomulario MOT (tecnicos de planificacion y presupuestos)
     public function validarFormulario(Request $req)
     {
         $mot                   = Mot::find($req->id_mot);
@@ -660,6 +696,7 @@ class ControladorFormulacionMOT extends Controller
         return redirect()->back();
     }
 
+    // Ejecutar formulario (ya no se usa)
     public function ejecutarFormulario(Request $req)
     {
         $mot         = Mot::find($req->id_mot);
@@ -670,6 +707,7 @@ class ControladorFormulacionMOT extends Controller
         return redirect()->back();
     }
 
+    // Buscar por gestion y/o nro (tecnicos y admins)
     public function buscarCorrelativo(Request $req)
     {
         $nro          = intval($req->nro) ?? 0;
@@ -682,6 +720,7 @@ class ControladorFormulacionMOT extends Controller
                 ->join('rl_gestiones as rg', 'rg.id', '=', 'rcf.gestiones_id')
                 ->where('mot.nro', 'like', '%' . $nro . '%')
                 ->where('rcf.gestiones_id', $gestiones_id)
+                ->whereNotIn('mot.estado', ["eliminado", "pendiente"])
                 ->select('mot.*', 'uc.nombre_completo as carrera', 'rft.descripcion as formulado', 'rg.gestion')
                 ->get();
         } else if ($nro != 0 && $gestiones_id == 0) {
@@ -690,6 +729,7 @@ class ControladorFormulacionMOT extends Controller
                 ->join('rl_unidad_carrera as uc', 'uc.id', '=', 'mot.id_unidad_carrera')
                 ->join('rl_formulado_tipo as rft', 'rft.id', '=', 'rcf.formulado_id')
                 ->join('rl_gestiones as rg', 'rg.id', '=', 'rcf.gestiones_id')
+                ->whereNotIn('mot.estado', ["eliminado", "pendiente"])
                 ->select('mot.*', 'uc.nombre_completo as carrera', 'rft.descripcion as formulado', 'rg.gestion')
                 ->get();
         } else if ($nro == 0 && $gestiones_id != 0) {
@@ -698,6 +738,7 @@ class ControladorFormulacionMOT extends Controller
                 ->join('rl_formulado_tipo as rft', 'rft.id', '=', 'rcf.formulado_id')
                 ->join('rl_gestiones as rg', 'rg.id', '=', 'rcf.gestiones_id')
                 ->where('rcf.gestiones_id', $gestiones_id)
+                ->whereNotIn('mot.estado', ["eliminado", "pendiente"])
                 ->select('mot.*', 'uc.nombre_completo as carrera', 'rft.descripcion as formulado', 'rg.gestion')
                 ->get();
         } else {
@@ -731,6 +772,7 @@ class ControladorFormulacionMOT extends Controller
         ], 200);
     }
 
+    // Modal unico para validacion de MOTs
     public function abrirModal($id_mot)
     {
         $data['mot']          = Mot::find($id_mot);

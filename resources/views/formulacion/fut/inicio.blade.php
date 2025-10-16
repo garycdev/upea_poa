@@ -21,20 +21,6 @@
         <div class="container-fluid">
             <div class="card-box-style ">
                 <div class="row text-center">
-                    {{-- <div class="mb-3 col-sm-12 col-md-6 col-lg-6 col-xl-6 mx-auto">
-                        <fieldset>
-                            <legend>Seleccione una gestión</legend>
-                            <select name="id_gestion" id="id_gestion" class="form-select" onchange="selectGestiones(this)">
-                                <option value="selected" selected disabled>[SELECCIONE UNA GESTION]</option>
-                                @foreach ($gestion as $ges)
-                                    <option value="{{ $ges->id }}">
-                                        {{ $ges->inicio_gestion . ' - ' . $ges->fin_gestion }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <div id="_gestion"></div>
-                        </fieldset>
-                    </div> --}}
                     <div class="mb-3 col-sm-12 col-md-6 col-lg-6 col-xl-6 mx-auto">
                         <fieldset>
                             <legend>Seleccione una gestión especifica</legend>
@@ -62,33 +48,6 @@
 
 @section('scripts')
     <script>
-        // $(document).ready(function() {
-        function selectGestiones(id_gestion) {
-            let gestion = id_gestion.value;
-            $.ajax({
-                url: "{{ route('obtenerGestionesFut') }}",
-                type: "POST",
-                dataType: "json",
-                data: {
-                    _token: '{{ csrf_token() }}',
-                    id_gestion: gestion
-                },
-                success: function(response) {
-                    $('#gestion').empty();
-                    $('#gestion').append('<option value="">[SELECCIONE UNA GESTION ESPECIFICA]</option>');
-
-                    response.forEach(element => {
-                        $('#gestion').append('<option value="' + element.id + '">' + element.gestion +
-                            '</option>');
-                    });
-                },
-                error: function(error) {
-                    toastr[data.tipo](data.mensaje);
-                    console.log(error)
-                }
-            });
-        }
-
         function selectGestion(gestion) {
             let id_gestion = gestion.value;
             $.ajax({
@@ -142,6 +101,5 @@
             });
 
         }
-        // })
     </script>
 @endsection

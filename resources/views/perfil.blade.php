@@ -352,13 +352,13 @@
                         setTimeout(() => {
                             $.ajax({
                                 type: "POST",
-                                url: "{{ route('salir') }}",
+                                url: "{{ route('salir_api') }}",
                                 dataType: "JSON",
                                 success: function(data) {
                                     window.location = '';
                                 }
                             });
-                        }, 3100);
+                        }, 1500);
                     }
                     if (data.tipo === 'error') {
                         alerta_top(data.tipo, data.mensaje);

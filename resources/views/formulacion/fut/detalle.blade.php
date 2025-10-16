@@ -164,11 +164,13 @@
                                                                             onclick="editarMonto({{ $mov->id_fut_mov }},{{ $mov->id_mbs }}, {{ $mov->partida_monto }}, {{ $mov->mbs->total_presupuesto }})">
                                                                             <i class="ri-pencil-line"></i>
                                                                         </button>
-                                                                        <button type="button"
-                                                                            class="btn btn-outline-danger"
-                                                                            onclick="eliminarMonto({{ $mov->id_fut_mov }})">
-                                                                            <i class="ri-delete-bin-line"></i>
-                                                                        </button>
+                                                                        @if (count($item->mov) > 1)
+                                                                            <button type="button"
+                                                                                class="btn btn-outline-danger"
+                                                                                onclick="eliminarMonto({{ $mov->id_fut_mov }})">
+                                                                                <i class="ri-delete-bin-line"></i>
+                                                                            </button>
+                                                                        @endif
                                                                     @endif
                                                                 </td>
                                                             </tr>
@@ -263,90 +265,8 @@
                         </div>
                     </div>
 
-                    <div class="modal fade" id="partidas" tabindex="-1" aria-labelledby="partidasLabel"
-                        aria-hidden="true">
-                        <div class="modal-dialog">
-                            <form action="{{ route('postPartida') }}" method="post" id="agregar_de">
-                                @csrf
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h6 class="modal-title" id="partidasLabel1">Agregar movimiento</h6>
-                                        <button type="reset" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <input type="text" name="id_fut" id="id_fut">
-                                        <div class="alert alert-info">
-                                            Monto disponible: <span id="monto_partida">0.00</span> bs.
-                                        </div>
-                                        <h6>DE</h6>
-                                        <div class="form-group">
-                                            <label for="partida_de" class="form-label">Partida
-                                                presupuestaria</label>
-                                            <br>
-                                            <select name="select" id="select-partida" class="select2_fut">
-                                                <option value="selected" selected disabled>[SELECCIONE PARTIDA
-                                                    PRESUPUESTARIA]
-                                                </option>
-                                                @foreach ($partidas_formulado3 as $item)
-                                                    <option value="{{ $item->id }}" class="d-flex"
-                                                        data-partida="{{ $item->partida }}"
-                                                        data-titulo="{{ $item->titulo_detalle }}"
-                                                        data-presupuesto="{{ $item->total_presupuesto }}"
-                                                        data-id_financiamiento="{{ $item->tipo_financiamiento_id }}"
-                                                        data-financiamiento="{{ $item->sigla }}"
-                                                        data-form5="{{ $item->formulario5_id }}"
-                                                        data-id_detalle="{{ $item->id_detalle }}">
-                                                        {{ $item->partida }} - {{ $item->titulo_detalle }}
-                                                    </option>
-                                                @endforeach
-                                                @foreach ($partidas_formulado4 as $item)
-                                                    <option value="{{ $item->id }}" class="d-flex"
-                                                        data-partida="{{ $item->partida }}"
-                                                        data-titulo="{{ $item->titulo_detalle }}"
-                                                        data-presupuesto="{{ $item->total_presupuesto }}"
-                                                        data-id_financiamiento="{{ $item->tipo_financiamiento_id }}"
-                                                        data-financiamiento="{{ $item->sigla }}"
-                                                        data-form5="{{ $item->formulario5_id }}"
-                                                        data-id_detalle="{{ $item->id_detalle }}">
-                                                        {{ $item->partida }} - {{ $item->titulo_detalle }}
-                                                    </option>
-                                                @endforeach
-                                                @foreach ($partidas_formulado5 as $item)
-                                                    <option value="{{ $item->id }}" class="d-flex"
-                                                        data-partida="{{ $item->partida }}"
-                                                        data-titulo="{{ $item->titulo_detalle }}"
-                                                        data-presupuesto="{{ $item->total_presupuesto }}"
-                                                        data-id_financiamiento="{{ $item->tipo_financiamiento_id }}"
-                                                        data-financiamiento="{{ $item->sigla }}"
-                                                        data-form5="{{ $item->formulario5_id }}"
-                                                        data-id_detalle="{{ $item->id_detalle }}">
-                                                        {{ $item->partida }} - {{ $item->titulo_detalle }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="monto_fut" class="form-label">Monto</label>
-                                            <input type="number" class="monto_number form-control" id="monto_fut"
-                                                name="monto_fut" onkeyup="montoNumber(this)" step="0.01"
-                                                min="0.00" required>
-                                            <span class="text-warning" id="monto_max"></span>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="reset" class="btn btn-dark"
-                                            data-bs-dismiss="modal">Cancelar</button>
-                                        <button type="submit" class="btn btn-primary" id="btn-de"
-                                            disabled>Agregar</button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
                 </div>
                 <div class="mt-3 d-flex justify-content-center">
-                    {{-- @dd($fut) --}}
                     @cannot('Validar_seguimiento')
                         @if (isset(Auth::user()->id_unidad_carrera))
                             <a href="{{ route('fut.listar', encriptar($configuracion->id)) }}"
@@ -450,6 +370,6 @@
             }
         }
 
-        fut_select2('#partidas');
+        // fut_select2('#partidas');
     </script>
 @endsection

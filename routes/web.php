@@ -54,6 +54,7 @@ Route::prefix('/poa')->middleware(['autenticados'])->group(function () {
         Route::get('/', 'inicio')->name('inicio');
         Route::get('inicio', 'inicio')->name('inicio');
         Route::post('cerrar_session', 'cerrar_session')->name('salir');
+        Route::post('cerrar_session_api', 'cerrar_session_api')->name('salir_api');
 
         Route::post('ver_carrerasunidades', 'ver_carrerasunidades')->name('ver_carreras_unidades');
         Route::post('ver_formularios_can', 'ver_formularios_can')->name('ver_formularios_can');
@@ -567,25 +568,10 @@ Route::prefix('/poa')->middleware(['autenticados'])->group(function () {
      */
 
     Route::prefix('fut')->controller(ControladorFUT::class)->group(function () {
+        // Rutas FUT admin
         Route::get('/', 'inicio')->name('fut_inicio');
 
-        Route::get('/lista/{id_conformulado}/{id_carrera?}', 'listarFormularios')->name('listarFormulariosFut');
-        Route::get('/formulario/{id_formulado}/{gestiones_id}/{id_conformulado}', 'formulario')->name('formularioFut');
-        Route::post('/financiamiento', 'getSaldoPartidas')->name('getSaldoPartidasFut');
-        Route::post('/objetivo', 'getObjetivoInstitucional')->name('getObjetivoInstitucionalFut');
-        Route::post('/tarea', 'getTareaProyecto')->name('getTareaProyectoFut');
-        Route::post('/politicas', 'getPoliticaDesarrollo')->name('getPoliticaDesarrolloFut');
-        Route::post('/gestiones', 'selectGestiones')->name('obtenerGestionesFut');
-        Route::post('/saldo', 'getSaldo')->name('getSaldoFut');
-        Route::get('/formular/{id_fut}', 'formular')->name('formularFut');
-        Route::post('/obtener', 'getPartidas')->name('getPartidas');
-        Route::post('/partida', 'postPartida')->name('postPartida');
-
-        Route::post('/modificacion', 'postFormulario')->name('postFormulario');
-
-        Route::get('/carrera', 'selectIdCarrera')->name('obtener_carrera');
-        // Route::post('/formulariomot', 'formulario')->name('formulario');
-
+        // Rutas formulacion de FUT
         Route::prefix('formulacion')->controller(ControladorFormulacionFUT::class)->group(function () {
             Route::get('/', 'inicio')->name('fut.inicio');
             Route::get('/lista/{id_conformulado}/{id_carrera?}', 'listarFormularios')->name('fut.listar');
@@ -605,32 +591,15 @@ Route::prefix('/poa')->middleware(['autenticados'])->group(function () {
         });
     });
 
+    // rutas MOT admin
     Route::prefix('mot')->controller(ControladorMOT::class)->group(function () {
         Route::get('/', 'inicio')->name('mot_inicio');
-
-        Route::get('/lista/{id_conformulado}/{id_carrera?}', 'listarFormularios')->name('listarFormularios');
-        Route::post('/gestiones', 'selectGestiones')->name('obtenerGestionesMot');
-        Route::post('/gestion', 'selectGestion')->name('obtenerGestion');
         Route::post('/formulado', 'getFormulados')->name('getFormulados');
-        Route::get('/modificacion/{id_formulado}/{gestiones_id}/{id_conformulado}', 'formulario')->name('formulario');
-
-        Route::post('/financiamiento', 'getSaldoPartidas')->name('getSaldoPartidas');
-        Route::post('/objetivo', 'getObjetivoInstitucional')->name('getObjetivoInstitucional');
-        Route::post('/tarea', 'getTareaProyecto')->name('getTareaProyecto');
-        Route::post('/saldo', 'getSaldo')->name('getSaldo');
-        Route::get('/modificar/{id_mot}', 'modificacionP')->name('modificacionP');
-        Route::post('/obtener', 'getPartidasDe')->name('getPartidasDe');
-        Route::post('/partida', 'postPartidaDe')->name('postPartidaDe');
-        Route::post('/obtenera', 'getPartidasA')->name('getPartidasA');
-        Route::post('/partida', 'postPartidaA')->name('postPartidaA');
-        // Route::get('/motnro', 'getNro')->name('getNro');
-
-        Route::post('/modificacion', 'postModificacion')->name('postModificacion');
-
         Route::get('/partidas', 'partidasHabilitadas')->name('mot.partidas');
         Route::post('/partidas', 'inhabilitarPartida')->name('mot.partidas.inhabilitar');
         Route::put('/partidas', 'habilitarPartida')->name('mot.partidas.habilitar');
 
+        // Rutas MOT formulacion
         Route::prefix('formulacion')->controller(ControladorFormulacionMOT::class)->group(function () {
             Route::get('/', 'inicio')->name('mot.inicio');
             Route::get('/lista/{id_conformulado}/{id_carrera?}', 'listarFormularios')->name('mot.listar');
@@ -671,11 +640,12 @@ Route::prefix('/plan')->middleware(['autenticados'])->group(function () {
     //
 });
 
-Route::get('/message', function () {
-    $data['titulo']  = 'Titulo';
-    $data['color']   = 'success';
-    $data['mensaje'] = 'hola';
-    $data['url']     = route('fut.detalle', encriptar(1));
+// Prueba de correos
+// Route::get('/message', function () {
+//     $data['titulo']  = 'Titulo';
+//     $data['color']   = 'success';
+//     $data['mensaje'] = 'hola';
+//     $data['url']     = route('fut.detalle', encriptar(1));
 
-    return view('emails.notificacion', $data);
-});
+//     return view('emails.notificacion', $data);
+// });

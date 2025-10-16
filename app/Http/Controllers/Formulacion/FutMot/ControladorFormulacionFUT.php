@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Mail;
 
 class ControladorFormulacionFUT extends Controller
 {
+    // Inicio de formulario, escoge gestion para listar FUTs
     public function inicio()
     {
         $data['menu'] = 21;
@@ -35,6 +36,7 @@ class ControladorFormulacionFUT extends Controller
         }
     }
 
+    // Lista formulados desde gestion para FUTs existentes
     public function listarFormularios($id_conformulado, $id_carrera = 0)
     {
         $id_conformulado = desencriptar($id_conformulado);
@@ -95,6 +97,7 @@ class ControladorFormulacionFUT extends Controller
         return view('formulacion.fut.lista', $data);
     }
 
+    // Vista al formulario inicial de FUT
     public function formulario($id_formulado, $gestiones_id, $id_conformulado)
     {
         $id_formulado    = desencriptar($id_formulado);
@@ -163,6 +166,7 @@ class ControladorFormulacionFUT extends Controller
         return view('formulacion.fut.formulario', $data);
     }
 
+    // Obtiene operacion/objetivo/area estrategica de un monto de form5
     public function getOperacionObjetivo(Request $req)
     {
         $id_mbs = $req->id_mbs;
@@ -180,11 +184,9 @@ class ControladorFormulacionFUT extends Controller
         return $mbs;
     }
 
+    // Guarda FUT nuevo
     public function realizarCompra(Request $req)
     {
-        // dd($req);
-        // die();
-
         $areas_estrategicas     = array_values(array_unique($req->areas_estrategicas));
         $objetivo_institucional = array_values(array_unique($req->objetivo_institucional));
         $operacion              = array_values(array_unique($req->operacion));
@@ -241,6 +243,9 @@ class ControladorFormulacionFUT extends Controller
         return redirect()->route('fut.detalle', encriptar($nuevoFut->id_fut));
     }
 
+    /**
+     * FORMULAR FUT USUARIO
+     */
     public function formular($id_fut)
     {
         $id_fut = desencriptar($id_fut);
@@ -318,6 +323,7 @@ class ControladorFormulacionFUT extends Controller
         return view('formulacion.fut.detalle', $data);
     }
 
+    // Edita monto en detalle de FUT
     public function editarMonto(Request $req)
     {
         $mbs                    = Medida_bienservicio::find($req->id_mbs);
@@ -337,6 +343,8 @@ class ControladorFormulacionFUT extends Controller
         session()->flash('message', 'Monto modificado exitosamente.');
         return redirect()->back();
     }
+
+    // Elimina registro MBS y movimiento FUT
     public function eliminarMonto(Request $req)
     {
         try {
@@ -366,6 +374,8 @@ class ControladorFormulacionFUT extends Controller
             ], 403);
         }
     }
+
+    // Eliminar formulario y restaurar montos de form5 elegidos
     public function eliminarFormulario(Request $req)
     {
         $fut  = Fut::find($req->id_fut);
@@ -393,6 +403,7 @@ class ControladorFormulacionFUT extends Controller
         ], 200);
     }
 
+    // Aprobar/rechazar/verificar fomulario FUT (tecnicos de planificacion y presupuestos)
     public function validarFormulario(Request $req)
     {
         $fut                   = Fut::find($req->id_fut);
@@ -467,6 +478,7 @@ class ControladorFormulacionFUT extends Controller
         return redirect()->back();
     }
 
+    // Ejecutar formulario (ya no se usa)
     public function ejecutarFormulario(Request $req)
     {
         $fut         = Fut::find($req->id_fut);
@@ -477,6 +489,7 @@ class ControladorFormulacionFUT extends Controller
         return redirect()->back();
     }
 
+    // Buscar por gestion y/o nro (tecnicos y admins)
     public function buscarCorrelativo(Request $req)
     {
         $nro          = intval($req->nro) ?? 0;
@@ -541,6 +554,7 @@ class ControladorFormulacionFUT extends Controller
         ], 200);
     }
 
+    // Modal unico para validacion de FUTs
     public function abrirModal($id_fut)
     {
         $data['fut']          = Fut::find($id_fut);

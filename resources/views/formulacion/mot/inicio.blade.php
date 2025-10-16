@@ -21,20 +21,6 @@
         <div class="container-fluid">
             <div class="card-box-style ">
                 <div class="row text-center">
-                    {{-- <div class="mb-3 col-sm-12 col-md-6 col-lg-6 col-xl-6 mx-auto">
-                        <fieldset>
-                            <legend>Seleccione una gestión</legend>
-                            <select name="id_gestion" id="id_gestion" class="form-select" onchange="selectGestiones(this)">
-                                <option value="selected" selected disabled>[SELECCIONE UNA GESTION]</option>
-                                @foreach ($gestion as $ges)
-                                    <option value="{{ $ges->id }}">
-                                        {{ $ges->inicio_gestion . ' - ' . $ges->fin_gestion }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <div id="_gestion"></div>
-                        </fieldset>
-                    </div> --}}
                     <div class="mb-3 col-sm-12 col-md-6 col-lg-6 col-xl-6 mx-auto">
                         <fieldset>
                             <legend>Seleccione una gestión especifica</legend>

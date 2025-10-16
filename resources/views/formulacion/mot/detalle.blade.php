@@ -218,7 +218,7 @@
                                                                             </button>
                                                                             <button type="button"
                                                                                 class="btn btn-outline-danger"
-                                                                                onclick="eliminarMonto({{ $mov->id_mot_mov }})">
+                                                                                onclick="eliminarMonto({{ $mov->id_mot_mov }}, '{{ $item->accion }}')">
                                                                                 <i class="ri-delete-bin-line"></i>
                                                                             </button>
                                                                         @endif
@@ -341,91 +341,48 @@
                         </div>
                     </div>
 
-                    <div class="modal fade" id="partidas" tabindex="-1" aria-labelledby="partidasLabel"
-                        aria-hidden="true">
-                        <div class="modal-dialog">
-                            <form action="{{ route('postPartida') }}" method="post" id="agregar_de">
-                                @csrf
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h6 class="modal-title" id="partidasLabel1">Agregar movimiento</h6>
-                                        <button type="reset" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <input type="text" name="id_mot" id="id_mot">
-                                        <div class="alert alert-info">
-                                            Monto disponible: <span id="monto_partida">0.00</span> bs.
-                                        </div>
-                                        <h6>DE</h6>
-                                        <div class="form-group">
-                                            <label for="partida_de" class="form-label">Partida
-                                                presupuestaria</label>
-                                            <br>
-                                            <select name="select" id="select-partida" class="select2_mot">
-                                                <option value="selected" selected disabled>[SELECCIONE PARTIDA
-                                                    PRESUPUESTARIA]
-                                                </option>
-                                                @foreach ($partidas_formulado3 as $item)
-                                                    <option value="{{ $item->id }}" class="d-flex"
-                                                        data-partida="{{ $item->partida }}"
-                                                        data-titulo="{{ $item->titulo_detalle }}"
-                                                        data-presupuesto="{{ $item->total_presupuesto }}"
-                                                        data-id_financiamiento="{{ $item->tipo_financiamiento_id }}"
-                                                        data-financiamiento="{{ $item->sigla }}"
-                                                        data-form5="{{ $item->formulario5_id }}"
-                                                        data-id_detalle="{{ $item->id_detalle }}">
-                                                        {{ $item->partida }} - {{ $item->titulo_detalle }}
-                                                    </option>
-                                                @endforeach
-                                                @foreach ($partidas_formulado4 as $item)
-                                                    <option value="{{ $item->id }}" class="d-flex"
-                                                        data-partida="{{ $item->partida }}"
-                                                        data-titulo="{{ $item->titulo_detalle }}"
-                                                        data-presupuesto="{{ $item->total_presupuesto }}"
-                                                        data-id_financiamiento="{{ $item->tipo_financiamiento_id }}"
-                                                        data-financiamiento="{{ $item->sigla }}"
-                                                        data-form5="{{ $item->formulario5_id }}"
-                                                        data-id_detalle="{{ $item->id_detalle }}">
-                                                        {{ $item->partida }} - {{ $item->titulo_detalle }}
-                                                    </option>
-                                                @endforeach
-                                                @foreach ($partidas_formulado5 as $item)
-                                                    <option value="{{ $item->id }}" class="d-flex"
-                                                        data-partida="{{ $item->partida }}"
-                                                        data-titulo="{{ $item->titulo_detalle }}"
-                                                        data-presupuesto="{{ $item->total_presupuesto }}"
-                                                        data-id_financiamiento="{{ $item->tipo_financiamiento_id }}"
-                                                        data-financiamiento="{{ $item->sigla }}"
-                                                        data-form5="{{ $item->formulario5_id }}"
-                                                        data-id_detalle="{{ $item->id_detalle }}">
-                                                        {{ $item->partida }} - {{ $item->titulo_detalle }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="monto_mot" class="form-label">Monto</label>
-                                            <input type="number" class="monto_number form-control" id="monto_mot"
-                                                name="monto_mot" onkeyup="montoNumber(this)" step="0.01"
-                                                min="0.00" required>
-                                            <span class="text-warning" id="monto_max"></span>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="reset" class="btn btn-dark"
-                                            data-bs-dismiss="modal">Cancelar</button>
-                                        <button type="submit" class="btn btn-primary" id="btn-de"
-                                            disabled>Agregar</button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
+
+                    {{-- lista oculta de partidas existentes, no borrar --}}
+                    <select name="select" id="select-partida" class="select2_mot" style="visibility:hidden">
+                        <option value="selected" selected disabled>[SELECCIONE PARTIDA
+                            PRESUPUESTARIA]
+                        </option>
+                        @foreach ($partidas_formulado3 as $item)
+                            <option value="{{ $item->id }}" class="d-flex" data-partida="{{ $item->partida }}"
+                                data-titulo="{{ $item->titulo_detalle }}"
+                                data-presupuesto="{{ $item->total_presupuesto }}"
+                                data-id_financiamiento="{{ $item->tipo_financiamiento_id }}"
+                                data-financiamiento="{{ $item->sigla }}" data-form5="{{ $item->formulario5_id }}"
+                                data-id_detalle="{{ $item->id_detalle }}">
+                                {{ $item->partida }} - {{ $item->titulo_detalle }}
+                            </option>
+                        @endforeach
+                        @foreach ($partidas_formulado4 as $item)
+                            <option value="{{ $item->id }}" class="d-flex" data-partida="{{ $item->partida }}"
+                                data-titulo="{{ $item->titulo_detalle }}"
+                                data-presupuesto="{{ $item->total_presupuesto }}"
+                                data-id_financiamiento="{{ $item->tipo_financiamiento_id }}"
+                                data-financiamiento="{{ $item->sigla }}" data-form5="{{ $item->formulario5_id }}"
+                                data-id_detalle="{{ $item->id_detalle }}">
+                                {{ $item->partida }} - {{ $item->titulo_detalle }}
+                            </option>
+                        @endforeach
+                        @foreach ($partidas_formulado5 as $item)
+                            <option value="{{ $item->id }}" class="d-flex" data-partida="{{ $item->partida }}"
+                                data-titulo="{{ $item->titulo_detalle }}"
+                                data-presupuesto="{{ $item->total_presupuesto }}"
+                                data-id_financiamiento="{{ $item->tipo_financiamiento_id }}"
+                                data-financiamiento="{{ $item->sigla }}" data-form5="{{ $item->formulario5_id }}"
+                                data-id_detalle="{{ $item->id_detalle }}">
+                                {{ $item->partida }} - {{ $item->titulo_detalle }}
+                            </option>
+                        @endforeach
+                    </select>
+
                     <div class="modal fade" id="partidas_a" tabindex="-1" aria-labelledby="partidasALabel"
                         aria-hidden="true">
                         <div class="modal-dialog modal-lg">
-                            <form action="{{ route('mot.agregar') }}" method="post" id="agregar_a">
+                            <form id="agregar_a">
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <h6 class="modal-title" id="partidasALabel1">Agregar movimiento</h6>
@@ -451,7 +408,7 @@
                                                 presupuestaria</label>
                                             <br>
                                             <select name="partida_a" id="select-partida-a" class="select2_mot_a">
-                                                <option value="selected" selected disabled>[SELECCIONE PARTIDA
+                                                <option value="" selected disabled>[SELECCIONE PARTIDA
                                                     PRESUPUESTARIA]
                                                 </option>
                                                 @foreach ($partidas3 as $item)
@@ -476,50 +433,54 @@
                                                     </option>
                                                 @endforeach
                                             </select>
+                                            <span class="text-danger error-text _partida_a"></span>
                                         </div>
                                         <div class="row mt-3">
                                             <div class="col-6 form-group">
                                                 <label for="medida" class="form-label">Medida</label>
-                                                <select name="medida" id="medida" class="form-control" required>
-                                                    <option value="0">[SELECCIONE MEDIDA]</option>
+                                                <select name="medida" id="medida" class="form-control">
+                                                    <option value="">[SELECCIONE MEDIDA]</option>
                                                     @foreach ($medidas as $med)
                                                         <option value="{{ $med->id }}">
                                                             {{ $med->nombre }}</option>
                                                     @endforeach
                                                 </select>
+                                                <span class="text-danger error-text _medida"></span>
                                             </div>
                                             <div class="col-6 form-group">
                                                 <label for="cantidad" class="form-label">Cantidad</label>
                                                 <input type="number" class="form-control sumar_total" id="cantidad"
-                                                    name="cantidad" min="1" value="1" required>
+                                                    name="cantidad" value="1">
+                                                <span class="text-danger error-text _cantidad"></span>
                                             </div>
                                             <div class="col-6 form-group mt-3">
                                                 <label for="precio" class="form-label">Precio</label>
                                                 <input type="text" class="form-control monto_number sumar_total"
-                                                    id="precio" name="precio_unitario" required>
+                                                    id="precio" name="precio_unitario">
+                                                <span class="text-danger error-text _precio_unitario"></span>
                                             </div>
                                             <div class="col-6 form-group mt-3">
                                                 <label for="total" class="form-label">Total</label>
                                                 <input type="text" class="form-control monto_number" id="total"
-                                                    name="total_presupuesto" value="0.00" readonly required>
-                                                <span class="text-danger" id="total_error"></span>
+                                                    name="total_presupuesto" value="0.00" readonly>
+                                                <span class="text-danger error-text _total_presupuesto"></span>
                                             </div>
                                         </div>
                                         <div class="form-group mt-3">
                                             <label for="fecha_requerida" class="form-label">Fecha
                                                 requerida</label>
                                             <input type="date" class="form-control" id="fecha_requerida"
-                                                name="fecha_requerida" required>
-                                            <span class="text-danger" id="_fecha_requerida"></span>
+                                                name="fecha_requerida">
+                                            <span class="text-danger error-text _fecha_requerida"></span>
                                         </div>
                                         <div class="form-group mt-3">
                                             <label for="objetivo_gestion" class="form-label">Objetivo gestion</label>
-                                            <select class="form-control select2_objetivo_gestion" id="objetivo_gestion" name="objetivo_gestion"
-                                                required>
+                                            <select class="form-control select2_objetivo_gestion" id="objetivo_gestion"
+                                                name="objetivo_gestion">
                                                 <option value="selected" selected disabled>[SELECCION OBJETIVO GESTION]
                                                 </option>
                                             </select>
-                                            <span class="text-danger" id="_objetivo_gestion"></span>
+                                            <span class="text-danger error-text _objetivo_gestion"></span>
                                         </div>
                                         <div class="row mt-3 mx-3">
                                             <div class="alert alert-info col-6" id="ae_descripcion">-</div>
@@ -529,7 +490,7 @@
                                     <div class="modal-footer">
                                         <button type="reset" class="btn btn-dark"
                                             data-bs-dismiss="modal">Cancelar</button>
-                                        <button type="button" class="btn btn-primary" id="btn-a"
+                                        <button type="submit" class="btn btn-primary" id="btn-a"
                                             disabled>Agregar</button>
                                     </div>
                                 </div>
@@ -588,23 +549,34 @@
                 $('#partida').val($selected.data('partida'))
             })
 
-            $(document).on('click', '#btn-a', function(e) {
+            $(document).on('submit', '#agregar_a', function(e) {
                 e.preventDefault()
 
-                $('#_fecha_requerida').html('')
-                $('#_objetivo_gestion').html('')
+                let form = this;
 
-                if ($('#fecha_requerida').val() == '' && $('#objetivo_gestion').val() == null) {
-                    if ($('#fecha_requerida').val() == '') {
-                        $('#_fecha_requerida').html('La fecha es requerida')
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('mot.agregar') }}",
+                    data: new FormData(form),
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        location.reload()
+                    },
+                    beforeSend: function() {
+                        $(form).find('span.error-text').text('');
+                    },
+                    error: function(xhr) {
+                        if (xhr.status === 422) {
+                            let errors = xhr.responseJSON.errors;
+                            $.each(errors, function(key, value) {
+                                $(form).find('span._' + key).text(value[0]);
+                            });
+                        }
                     }
-                    if ($('#objetivo_gestion').val() == null) {
-                        $('#_objetivo_gestion').html('El formulario 5 es requerido')
-                    }
-                } else {
-                    $('#agregar_a').submit()
-                }
+                });
             })
+
             $(document).on('change', '.sumar_total', function() {
                 const monto = $('#precio').val().replace(/,/g, "")
                 const cantidad = $('#cantidad').val()
@@ -635,6 +607,8 @@
         }
 
         function eliminarMonto(id, accion) {
+            console.log(id, accion);
+
             Swal.fire({
                 title: "¿Esta seguro de eliminar el monto?",
                 text: "Se eliminara la atribucion del monto previsto",
@@ -714,7 +688,7 @@
             });
         }
 
-        mot_de_select2('#partidas');
+        // mot_de_select2('#partidas');
         mot_a_select2('#partidas_a');
         objetivo_gestion_select2('#partidas_a')
     </script>

@@ -27,17 +27,6 @@
                 <div class="row text-center">
                     <div class="mb-3 col-sm-12 col-md-6 col-lg-6 col-xl-6 mx-auto">
                         <fieldset>
-                            {{-- <legend>Seleccione una Unidad / Carrera</legend>
-                            <select name="id_unidad_carrera" id="id_unidad_carrera" class="select2_partida"
-                                onchange="selectGestion()">
-                                <option value="selected" selected disabled>[SELECCIONE UNA UNIDAD / CARRERA]</option>
-                                @foreach ($unidades as $uni)
-                                    <option value="{{ $uni->id }}">
-                                        {{ $uni->nombre_completo }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <div id="id_unidad_carrera"></div> --}}
                             <legend>Ingrese el Nro MOT</legend>
                             <input type="text" id="nro" class="form-control" maxlength="4"
                                 placeholder="Nro MOT, ej: 0001" inputmode="numeric" pattern="\d{4}">
@@ -88,7 +77,6 @@
 
             $(document).on('keyup change', '#nro, #gestion', function() {
                 let id_gestion = $('#gestion').val();
-                // let id_unidad_carrera = $('#id_unidad_carrera').val();
                 let nro = $('#nro').val();
 
                 $.ajax({
@@ -101,7 +89,8 @@
                         nro: nro
                     },
                     success: function(response) {
-                        // console.log(response);
+                        console.log(response);
+                        
                         tabla.clear().draw();
                         const detalleUrlTemplate =
                             "{{ route('mot.detalle', ['id_mot' => ':ELEMENT_ID']) }}";

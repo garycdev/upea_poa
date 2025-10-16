@@ -43,7 +43,9 @@ class Usuario_controlador extends Controller
             return redirect()->back();
         }
     }
-    public function validar_usuario_old(Request $request)
+
+    // validar usuario por api (ya no se usa)
+    public function validar_usuario_api(Request $request)
     {
         $mensaje = 'Usuario, contraseña o captcha invalidos';
         $valores = Validator::make($request->all(), [
@@ -101,7 +103,9 @@ class Usuario_controlador extends Controller
 
         return redirect()->route('inicio');
     }
-    public function cerrar_session_old(Request $request)
+
+    // cerrar sesion como api
+    public function cerrar_session_api(Request $request)
     {
         Auth::logout();
         $request->session()->invalidate();
@@ -119,6 +123,8 @@ class Usuario_controlador extends Controller
     public function inicio()
     {
         $data['menu']               = 1;
+
+        // Para graficas
         $data['usuarios_activos']   = User::where('estado', 'activo')->count();
         $data['usuarios_inactivos'] = User::where('estado', 'inactivo')->count();
         $data['carreras_u']         = UnidadCarreraArea::count();
@@ -167,12 +173,10 @@ class Usuario_controlador extends Controller
         $data['gestiones']      = $gestiones;
         $data['usuarios']       = $usuarios;
 
-        // return view('home', compact('unidad_carrera', 'forms', 'formulados', 'mots', 'futs', 'gestiones', 'usuarios'));
-
         return view('inicio', $data);
     }
 
-    //para ver
+    // para ver 
     public function ver_carrerasunidades(Request $request)
     {
         $tipo_carrera = Tipo_CarreraUnidad::withCount('carrera_unidad_area')->get();
@@ -181,7 +185,7 @@ class Usuario_controlador extends Controller
         ];
         return response()->json($data);
     }
-    //opara
+    // para
     public function ver_formularios_can(Request $request)
     {
         $formulario1 = Formulario1::distinct('configFormulado_id')->count('configFormulado_id');
@@ -198,7 +202,7 @@ class Usuario_controlador extends Controller
         return response()->json($data, 200);
     }
 
-    //para la parte de captcha
+    //para la parte de captcha (ya no se usa)
     public function generateCaptchaImage()
     {
         $length      = 6; // Longitud del CAPTCHA
