@@ -110,7 +110,7 @@
                                                         {{-- @if (Auth::user()->id_unidad_carrera == $item->id_unidad_carrera) --}}
                                                         @if ($item->estado != 'pendiente')
                                                             <a href="{{ route('mot.pdf', encriptar($item->id_mot)) }}"
-                                                                class="btn btn-outline-danger" target="_blank">
+                                                                class="btn btn-outline-warning" target="_blank">
                                                                 <i class="ri-file-pdf-line"></i>
                                                             </a>
                                                         @endif

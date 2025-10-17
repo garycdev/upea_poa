@@ -214,7 +214,7 @@
     $('#btn_cerrar_session').on('click', (e) => {
         e.preventDefault();
         $('#form_salir').submit();
-        
+
         // let datos = $('#form_salir').serialize();
         // $.ajax({
         //     type: "POST",
@@ -415,4 +415,22 @@
         "showMethod": "fadeIn",
         "hideMethod": "fadeOut"
     }
+
+    const noDataPlugin = {
+        id: 'noDataPlugin',
+        beforeDraw: (chart) => {
+            if (chart.data.datasets.length === 0 || chart.data.labels.length === 0) {
+                const ctx = chart.ctx;
+                const width = chart.width;
+                const height = chart.height;
+                ctx.save();
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.font = '16px sans-serif';
+                ctx.fillStyle = '#666';
+                ctx.fillText('No hay datos para mostrar', width / 2, height / 2);
+                ctx.restore();
+            }
+        }
+    };
 </script>

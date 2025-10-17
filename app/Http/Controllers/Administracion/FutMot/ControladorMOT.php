@@ -15,11 +15,12 @@ use App\Models\Poa\Medida_bienservicio;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
 class ControladorMOT extends Controller
 {
-    // Vista inicio (Validar seguimiento solo admins y tecnicos)
+    // Vista inicio (Lleva a validar seguimiento solo admins y tecnicos)
     public function inicio()
     {
         $data['menu'] = 20;
@@ -169,11 +170,23 @@ class ControladorMOT extends Controller
                 if ($mov->motpp->accion == 'DE') {
                     $mbs                    = Medida_bienservicio::find($mov->id_mbs);
                     $mbs->total_presupuesto = $mbs->total_presupuesto + $mov->partida_monto;
+                    $mbs->total_monto       = $mbs->total_monto + $mov->partida_monto;
+                    $mbs->descripcion       = null; // null para valido
                     $mbs->save();
 
                     $mov->descripcion = 'revertido';
-                } else {
+                } else { // A
                     $mbs = Medida_bienservicio::find($mov->id_mbs);
+
+                    $ceros = strlen($mov->partida_codigo) - strlen(rtrim($mov->partida_codigo, '0'));
+                    if ($ceros === 2) {
+                        DB::table('detalleTercerClasi_medida_bn')->where('medidabn_id', $mbs->id)->delete();
+                    } elseif ($ceros === 1) {
+                        DB::table('detalleCuartoClasi_medida_bn')->where('medidabn_id', $mbs->id)->delete();
+                    } else {
+                        DB::table('detalleQuintoClasi_medida_bn')->where('medidabn_id', $mbs->id)->delete();
+                    }
+
                     $mbs->delete();
 
                     $mov->descripcion = 'eliminado';
@@ -190,6 +203,20 @@ class ControladorMOT extends Controller
             ));
 
         } elseif ($req->estado == 'verificado') {
+            $movs = MotMov::join('mot_partidas_presupuestarias as pp', 'pp.id_mot_pp', '=', 'mot_movimiento.id_mot_pp')
+                ->where('pp.id_mot', $mot->id_mot)
+                ->select('mot_movimiento.*')
+                ->get();
+
+            foreach ($movs as $mov) {
+                $mbs              = Medida_bienservicio::find($mov->id_mbs);
+                $mbs->descripcion = 'verificado';
+                $mbs->save();
+
+                $mov->descripcion = 'verificado';
+                $mov->save();
+            }
+
             Mail::to($mot->usuario->email)->send(new NotificacionGeneral(
                 "Formulario MOT N°" . formatear_con_ceros($mot->nro) . " verificado.",
                 "Su formulario de modificación MOT N°" . formatear_con_ceros($mot->nro) . " ya ha sido verificado por planificación, puede revisarlo dando click al siguiente enlace.",
@@ -206,6 +233,20 @@ class ControladorMOT extends Controller
                 'text-primary'
             ));
         } elseif ($req->estado == 'aprobado') {
+            $movs = MotMov::join('mot_partidas_presupuestarias as pp', 'pp.id_mot_pp', '=', 'mot_movimiento.id_mot_pp')
+                ->where('pp.id_mot', $mot->id_mot)
+                ->select('mot_movimiento.*')
+                ->get();
+
+            foreach ($movs as $mov) {
+                $mbs              = Medida_bienservicio::find($mov->id_mbs);
+                $mbs->descripcion = null; // null para valido
+                $mbs->save();
+
+                $mov->descripcion = 'aprobado';
+                $mov->save();
+            }
+
             Mail::to($mot->usuario->email)->send(new NotificacionGeneral(
                 "Formulario MOT N°" . formatear_con_ceros($mot->nro) . " aprobado.",
                 "Su formulario de modificación MOT N°" . formatear_con_ceros($mot->nro) . " ya ha sido aprobado, puede revisarlo dando click al siguiente enlace.",
@@ -244,6 +285,7 @@ class ControladorMOT extends Controller
                 ->where('rcf.gestiones_id', $gestiones_id)
                 ->whereNotIn('mot.estado', ["eliminado", "pendiente"])
                 ->select('mot.*', 'uc.nombre_completo as carrera', 'rft.descripcion as formulado', 'rg.gestion')
+                ->orderBy('mot.id_mot', 'DESC')
                 ->get();
         } else if ($nro != 0 && $gestiones_id == 0) {
             $mot = Mot::join('rl_configuracion_formulado as rcf', 'rcf.id', '=', 'mot.id_configuracion_formulado')
@@ -253,6 +295,7 @@ class ControladorMOT extends Controller
                 ->join('rl_gestiones as rg', 'rg.id', '=', 'rcf.gestiones_id')
                 ->whereNotIn('mot.estado', ["eliminado", "pendiente"])
                 ->select('mot.*', 'uc.nombre_completo as carrera', 'rft.descripcion as formulado', 'rg.gestion')
+                ->orderBy('mot.id_mot', 'DESC')
                 ->get();
         } else if ($nro == 0 && $gestiones_id != 0) {
             $mot = Mot::join('rl_configuracion_formulado as rcf', 'rcf.id', '=', 'mot.id_configuracion_formulado')
@@ -262,6 +305,7 @@ class ControladorMOT extends Controller
                 ->where('rcf.gestiones_id', $gestiones_id)
                 ->whereNotIn('mot.estado', ["eliminado", "pendiente"])
                 ->select('mot.*', 'uc.nombre_completo as carrera', 'rft.descripcion as formulado', 'rg.gestion')
+                ->orderBy('mot.id_mot', 'DESC')
                 ->get();
         } else {
             $mot = [];

@@ -56,8 +56,12 @@ Route::prefix('/poa')->middleware(['autenticados'])->group(function () {
         Route::post('cerrar_session', 'cerrar_session')->name('salir');
         Route::post('cerrar_session_api', 'cerrar_session_api')->name('salir_api');
 
-        Route::post('ver_carrerasunidades', 'ver_carrerasunidades')->name('ver_carreras_unidades');
-        Route::post('ver_formularios_can', 'ver_formularios_can')->name('ver_formularios_can');
+
+        // Graficos
+        Route::post('ver_gestion_gastos', 'ver_gestion_gastos')->name('ver_gestion_gastos');
+        Route::post('ver_partidas_gastos', 'ver_partidas_gastos')->name('ver_partidas_gastos');
+        Route::post('ver_carreras_gastos', 'ver_carreras_gastos')->name('ver_carreras_gastos');
+        Route::post('ver_financiamiento_gastos', 'ver_financiamiento_gastos')->name('ver_financiamiento_gastos');
     });
 
     /**

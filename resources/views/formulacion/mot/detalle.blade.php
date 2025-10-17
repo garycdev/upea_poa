@@ -108,7 +108,7 @@
                         @php
                             $total_total = 0;
                             foreach ($mot->total as $value) {
-                                if ($value->descripcion == 'incrementa') {
+                                if ($value->descripcion == 'aprobado') {
                                     $total_total += $value->partida_monto;
                                 }
                             }
@@ -209,13 +209,13 @@
                                                                                 @endif
                                                                             @endif
                                                                         @else
-                                                                            <button type="submit"
+                                                                            {{-- <button type="submit"
                                                                                 class="btn btn-outline-warning"
                                                                                 data-bs-toggle="modal"
                                                                                 data-bs-target="#movimiento"
                                                                                 onclick="editarMonto({{ $mov->id_mot_mov }},{{ $mov->id_mbs }}, {{ $mov->partida_monto }}, {{ $saldoDisponible }}, '{{ $item->accion }}')">
                                                                                 <i class="ri-pencil-line"></i>
-                                                                            </button>
+                                                                            </button> --}}
                                                                             <button type="button"
                                                                                 class="btn btn-outline-danger"
                                                                                 onclick="eliminarMonto({{ $mov->id_mot_mov }}, '{{ $item->accion }}')">

@@ -2,7 +2,6 @@
 namespace App\Http\Controllers\Formulacion\FutMot;
 
 use App\Http\Controllers\Controller;
-use App\Mail\NotificacionGeneral;
 use App\Models\Configuracion\UnidadCarreraArea;
 use App\Models\FutMot\Mot;
 use App\Models\FutMot\MotMov;
@@ -14,7 +13,6 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
 
 class ControladorFormulacionMOT extends Controller
 {
@@ -123,6 +121,7 @@ class ControladorFormulacionMOT extends Controller
             ->where('rl_medida_bienservicio.total_presupuesto', '>', 0.00)
             ->where('f5.gestion_id', $gestiones_id)
             ->where('f5.unidadCarrera_id', Auth::user()->id_unidad_carrera)
+            // ->whereNull('rl_medida_bienservicio.descripcion')
             ->select('ft.*')
             ->distinct('')
             ->get();
@@ -139,7 +138,8 @@ class ControladorFormulacionMOT extends Controller
         // ->where('mbs.tipo_financiamiento_id', '=', $financiamiento)
             ->where('f5.gestion_id', $gestiones_id)
             ->where('f5.unidadCarrera_id', Auth::user()->id_unidad_carrera)
-            ->select('mbs.*', 'dc3.id as id_detalle', 'dc3.titulo as titulo_detalle', 'c3.codigo as partida', 'c3.titulo', 'c3.descripcion', 'ft.sigla', 'ft.descripcion as financiamiento')
+            // ->whereNull('mbs.descripcion')
+            ->select('mbs.*', 'dc3.id as id_detalle', 'dc3.titulo as titulo_detalle', 'c3.codigo as partida', 'c3.titulo', 'c3.descripcion', 'ft.sigla', 'ft.descripcion as financiamiento', 'mbs.descripcion as descr')
             ->get();
         $partidas_formulado4 = DB::table('rl_medida_bienservicio AS mbs')
             ->join('detalleCuartoClasi_medida_bn as dc4_mb', 'dc4_mb.medidabn_id', '=', 'mbs.id')
@@ -153,7 +153,8 @@ class ControladorFormulacionMOT extends Controller
         // ->where('mbs.tipo_financiamiento_id', '=', $financiamiento)
             ->where('f5.gestion_id', $gestiones_id)
             ->where('f5.unidadCarrera_id', Auth::user()->id_unidad_carrera)
-            ->select('mbs.*', 'dc4.id as id_detalle', 'dc4.titulo as titulo_detalle', 'c4.codigo as partida', 'c4.titulo', 'c4.descripcion', 'ft.sigla', 'ft.descripcion as financiamiento')
+            // ->whereNull('mbs.descripcion')
+            ->select('mbs.*', 'dc4.id as id_detalle', 'dc4.titulo as titulo_detalle', 'c4.codigo as partida', 'c4.titulo', 'c4.descripcion', 'ft.sigla', 'ft.descripcion as financiamiento', 'mbs.descripcion as descr')
             ->get();
         $partidas_formulado5 = DB::table('rl_medida_bienservicio AS mbs')
             ->join('detalleQuintoClasi_medida_bn as dc5_mb', 'dc5_mb.medidabn_id', '=', 'mbs.id')
@@ -167,7 +168,8 @@ class ControladorFormulacionMOT extends Controller
         // ->where('mbs.tipo_financiamiento_id', '=', $financiamiento)
             ->where('f5.gestion_id', $gestiones_id)
             ->where('f5.unidadCarrera_id', Auth::user()->id_unidad_carrera)
-            ->select('mbs.*', 'dc5.id as id_detalle', 'dc5.titulo as titulo_detalle', 'c5.codigo as partida', 'c5.titulo', 'c5.descripcion', 'ft.sigla', 'ft.descripcion as financiamiento')
+            // ->whereNull('mbs.descripcion')
+            ->select('mbs.*', 'dc5.id as id_detalle', 'dc5.titulo as titulo_detalle', 'c5.codigo as partida', 'c5.titulo', 'c5.descripcion', 'ft.sigla', 'ft.descripcion as financiamiento', 'mbs.descripcion as descr')
             ->get();
 
         $data['financiamientos']     = $financiamientos;
@@ -261,6 +263,8 @@ class ControladorFormulacionMOT extends Controller
 
             $mbs                    = Medida_bienservicio::find($ids[$key]);
             $mbs->total_presupuesto = $mbs->total_presupuesto - sin_separador_comas($montos[$key]);
+            $mbs->total_monto       = $mbs->total_monto - sin_separador_comas($montos[$key]);
+            $mbs->descripcion       = 'modifica';
             $mbs->save();
         }
 
@@ -272,7 +276,7 @@ class ControladorFormulacionMOT extends Controller
     /**
      * FORMULAR MOT USUARIO
      */
-    public function formular($id_mot)
+    public function formular($id_mot) // detalle
     {
         $id_mot = desencriptar($id_mot);
 
@@ -453,6 +457,8 @@ class ControladorFormulacionMOT extends Controller
 
             $mbs                    = Medida_bienservicio::find($mov->id_mbs);
             $mbs->total_presupuesto = $mbs->total_presupuesto + $mov->partida_monto;
+            $mbs->total_monto       = $mbs->total_monto + $mov->partida_monto;
+            $mbs->descripcion       = null; // null para valido
             $mbs->save();
 
             $motpp        = MotPP::find($mov->id_mot_pp);
@@ -494,6 +500,15 @@ class ControladorFormulacionMOT extends Controller
 
             $motPP->save();
 
+            $ceros = strlen($mov->partida_codigo) - strlen(rtrim($mov->partida_codigo, '0'));
+            if ($ceros === 2) {
+                DB::table('detalleTercerClasi_medida_bn')->where('medidabn_id', $mbs->id)->delete();
+            } elseif ($ceros === 1) {
+                DB::table('detalleCuartoClasi_medida_bn')->where('medidabn_id', $mbs->id)->delete();
+            } else {
+                DB::table('detalleQuintoClasi_medida_bn')->where('medidabn_id', $mbs->id)->delete();
+            }
+
             $mbs->delete();
             $mov->delete();
 
@@ -524,11 +539,23 @@ class ControladorFormulacionMOT extends Controller
             if ($mov->motpp->accion == 'DE') {
                 $mbs                    = Medida_bienservicio::find($mov->id_mbs);
                 $mbs->total_presupuesto = $mbs->total_presupuesto + $mov->partida_monto;
+                $mbs->total_monto       = $mbs->total_monto + $mov->partida_monto;
+                $mbs->descripcion       = null; // null para valido
                 $mbs->save();
 
                 $mov->descripcion = 'revertido';
-            } else {
+            } else { // A
                 $mbs = Medida_bienservicio::find($mov->id_mbs);
+
+                $ceros = strlen($mov->partida_codigo) - strlen(rtrim($mov->partida_codigo, '0'));
+                if ($ceros === 2) {
+                    DB::table('detalleTercerClasi_medida_bn')->where('medidabn_id', $mbs->id)->delete();
+                } elseif ($ceros === 1) {
+                    DB::table('detalleCuartoClasi_medida_bn')->where('medidabn_id', $mbs->id)->delete();
+                } else {
+                    DB::table('detalleQuintoClasi_medida_bn')->where('medidabn_id', $mbs->id)->delete();
+                }
+
                 $mbs->delete();
 
                 $mov->descripcion = 'eliminado';
@@ -598,6 +625,24 @@ class ControladorFormulacionMOT extends Controller
 
         $motPP        = MotPP::find($req->id_mot_pp);
         $motPP->saldo = $motPP->saldo - sin_separador_comas($req->total_presupuesto);
+
+        $ceros = strlen($req->partida) - strlen(rtrim($req->partida, '0'));
+        if ($ceros === 2) {
+            DB::table('detalleTercerClasi_medida_bn')->insert([
+                'detalle_tercerclasif_id' => $req->partida_a,
+                'medidabn_id'             => $mbs->id,
+            ]);
+        } elseif ($ceros === 1) {
+            DB::table('detalleCuartoClasi_medida_bn')->insert([
+                'detalle_cuartoclasif_id' => $req->partida_a,
+                'medidabn_id'             => $mbs->id,
+            ]);
+        } else {
+            DB::table('detalleQuintoClasi_medida_bn')->insert([
+                'detalle_quintoclasif_id' => $req->partida_a,
+                'medidabn_id'             => $mbs->id,
+            ]);
+        }
 
         if ($motPP->saldo == 0) {
             $mot         = Mot::find($motPP->id_mot);

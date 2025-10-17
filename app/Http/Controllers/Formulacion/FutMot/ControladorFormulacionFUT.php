@@ -2,7 +2,6 @@
 namespace App\Http\Controllers\Formulacion\FutMot;
 
 use App\Http\Controllers\Controller;
-use App\Mail\NotificacionGeneral;
 use App\Models\Configuracion\UnidadCarreraArea;
 use App\Models\FutMot\Fut;
 use App\Models\FutMot\FutMov;
@@ -13,7 +12,6 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
 
 class ControladorFormulacionFUT extends Controller
 {
@@ -129,8 +127,10 @@ class ControladorFormulacionFUT extends Controller
         // ->where('mbs.tipo_financiamiento_id', '=', $financiamiento)
             ->where('f5.gestion_id', $gestiones_id)
             ->where('f5.unidadCarrera_id', Auth::user()->id_unidad_carrera)
-            ->select('mbs.*', 'dc3.id as id_detalle', 'dc3.titulo as titulo_detalle', 'c3.codigo as partida', 'c3.titulo', 'c3.descripcion', 'ft.sigla', 'ft.descripcion as financiamiento')
+        // ->whereNull('mbs.descripcion')
+            ->select('mbs.*', 'dc3.id as id_detalle', 'dc3.titulo as titulo_detalle', 'c3.codigo as partida', 'c3.titulo', 'c3.descripcion', 'ft.sigla', 'ft.descripcion as financiamiento', 'mbs.descripcion as descr')
             ->get();
+
         $partidas_formulado4 = DB::table('rl_medida_bienservicio AS mbs')
             ->join('detalleCuartoClasi_medida_bn as dc4_mb', 'dc4_mb.medidabn_id', '=', 'mbs.id')
             ->join('rl_detalleClasiCuarto as dc4', 'dc4.id', '=', 'dc4_mb.detalle_cuartoclasif_id')
@@ -142,8 +142,10 @@ class ControladorFormulacionFUT extends Controller
         // ->where('mbs.tipo_financiamiento_id', '=', $financiamiento)
             ->where('f5.gestion_id', $gestiones_id)
             ->where('f5.unidadCarrera_id', Auth::user()->id_unidad_carrera)
-            ->select('mbs.*', 'dc4.id as id_detalle', 'dc4.titulo as titulo_detalle', 'c4.codigo as partida', 'c4.titulo', 'c4.descripcion', 'ft.sigla', 'ft.descripcion as financiamiento')
+        // ->whereNull('mbs.descripcion')
+            ->select('mbs.*', 'dc4.id as id_detalle', 'dc4.titulo as titulo_detalle', 'c4.codigo as partida', 'c4.titulo', 'c4.descripcion', 'ft.sigla', 'ft.descripcion as financiamiento', 'mbs.descripcion as descr')
             ->get();
+
         $partidas_formulado5 = DB::table('rl_medida_bienservicio AS mbs')
             ->join('detalleQuintoClasi_medida_bn as dc5_mb', 'dc5_mb.medidabn_id', '=', 'mbs.id')
             ->join('rl_detalleClasiQuinto as dc5', 'dc5.id', '=', 'dc5_mb.detalle_quintoclasif_id')
@@ -155,7 +157,8 @@ class ControladorFormulacionFUT extends Controller
         // ->where('mbs.tipo_financiamiento_id', '=', $financiamiento)
             ->where('f5.gestion_id', $gestiones_id)
             ->where('f5.unidadCarrera_id', Auth::user()->id_unidad_carrera)
-            ->select('mbs.*', 'dc5.id as id_detalle', 'dc5.titulo as titulo_detalle', 'c5.codigo as partida', 'c5.titulo', 'c5.descripcion', 'ft.sigla', 'ft.descripcion as financiamiento')
+        // ->whereNull('mbs.descripcion')
+            ->select('mbs.*', 'dc5.id as id_detalle', 'dc5.titulo as titulo_detalle', 'c5.codigo as partida', 'c5.titulo', 'c5.descripcion', 'ft.sigla', 'ft.descripcion as financiamiento', 'mbs.descripcion as descr')
             ->get();
 
         $data['partidas_formulado3'] = $partidas_formulado3;
@@ -235,6 +238,7 @@ class ControladorFormulacionFUT extends Controller
 
             $mbs                    = Medida_bienservicio::find($ids[$key]);
             $mbs->total_presupuesto = $mbs->total_presupuesto - sin_separador_comas($montos[$key]);
+            $mbs->descripcion       = 'compra';
             $mbs->save();
         }
 
@@ -353,6 +357,7 @@ class ControladorFormulacionFUT extends Controller
 
             $mbs                    = Medida_bienservicio::find($mov->id_mbs);
             $mbs->total_presupuesto = $mbs->total_presupuesto + $mov->partida_monto;
+            $mbs->descripcion       = null; // null para valido
             $mbs->save();
 
             $fut          = Fut::find($mov->futpp->id_fut);
@@ -387,6 +392,7 @@ class ControladorFormulacionFUT extends Controller
         foreach ($movs as $mov) {
             $mbs                    = Medida_bienservicio::find($mov->id_mbs);
             $mbs->total_presupuesto = $mbs->total_presupuesto + $mov->partida_monto;
+            $mbs->descripcion       = null; // null para valido
             $mbs->save();
 
             $mov->descripcion = 'revertido';

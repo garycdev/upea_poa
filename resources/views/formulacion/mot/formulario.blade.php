@@ -53,9 +53,11 @@
                                             data-id_financiamiento="{{ $item->tipo_financiamiento_id }}"
                                             data-financiamiento="{{ $item->sigla }}"
                                             data-form5="{{ $item->formulario5_id }}"
-                                            data-id_detalle="{{ $item->id_detalle }}">
+                                            data-id_detalle="{{ $item->id_detalle }}"
+                                            {{ $item->descr != null ? 'disabled' : '' }}>
                                             {{ $item->partida }} - {{ $item->titulo_detalle }}
                                             ({{ con_separador_comas($item->total_presupuesto) }})
+                                            {{ $item->descr != null ? ' - ' . $item->descr : '' }}
                                         </option>
                                     @endforeach
                                     @foreach ($partidas_formulado4 as $item)
@@ -65,9 +67,11 @@
                                             data-id_financiamiento="{{ $item->tipo_financiamiento_id }}"
                                             data-financiamiento="{{ $item->sigla }}"
                                             data-form5="{{ $item->formulario5_id }}"
-                                            data-id_detalle="{{ $item->id_detalle }}">
+                                            data-id_detalle="{{ $item->id_detalle }}"
+                                            {{ $item->descr != null ? 'disabled' : '' }}>
                                             {{ $item->partida }} - {{ $item->titulo_detalle }}
                                             ({{ con_separador_comas($item->total_presupuesto) }})
+                                            {{ $item->descr != null ? ' - ' . $item->descr : '' }}
                                         </option>
                                     @endforeach
                                     @foreach ($partidas_formulado5 as $item)
@@ -77,9 +81,11 @@
                                             data-id_financiamiento="{{ $item->tipo_financiamiento_id }}"
                                             data-financiamiento="{{ $item->sigla }}"
                                             data-form5="{{ $item->formulario5_id }}"
-                                            data-id_detalle="{{ $item->id_detalle }}">
+                                            data-id_detalle="{{ $item->id_detalle }}"
+                                            {{ $item->descr != null ? 'disabled' : '' }}>
                                             {{ $item->partida }} - {{ $item->titulo_detalle }}
                                             ({{ con_separador_comas($item->total_presupuesto) }})
+                                            {{ $item->descr != null ? ' - ' . $item->descr : '' }}
                                         </option>
                                     @endforeach
                                 </select>

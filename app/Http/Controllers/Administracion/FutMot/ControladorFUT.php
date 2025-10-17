@@ -75,6 +75,20 @@ class ControladorFUT extends Controller
             ));
 
         } elseif ($req->estado == 'verificado') {
+            $movs = FutMov::join('fut_partidas_presupuestarias as pp', 'pp.id_fut_pp', '=', 'fut_movimiento.id_fut_pp')
+                ->where('pp.id_fut', $fut->id_fut)
+                ->select('fut_movimiento.*')
+                ->get();
+
+            foreach ($movs as $mov) {
+                $mbs              = Medida_bienservicio::find($mov->id_mbs);
+                $mbs->descripcion = 'compra verificado';
+                $mbs->save();
+
+                $mov->descripcion = 'compra verificado';
+                $mov->save();
+            }
+
             Mail::to($fut->usuario->email)->send(new NotificacionGeneral(
                 "Formulario FUT N°" . formatear_con_ceros($fut->nro) . " verificado.",
                 "Su formulario de compra FUT N°" . formatear_con_ceros($fut->nro) . " ya ha sido verificado por planificación, puede revisarlo dando click al siguiente enlace.",
@@ -91,6 +105,20 @@ class ControladorFUT extends Controller
                 'text-primary'
             ));
         } elseif ($req->estado == 'aprobado') {
+            $movs = FutMov::join('fut_partidas_presupuestarias as pp', 'pp.id_fut_pp', '=', 'fut_movimiento.id_fut_pp')
+                ->where('pp.id_fut', $fut->id_fut)
+                ->select('fut_movimiento.*')
+                ->get();
+
+            foreach ($movs as $mov) {
+                $mbs              = Medida_bienservicio::find($mov->id_mbs);
+                $mbs->descripcion = null; // null para valido
+                $mbs->save();
+
+                $mov->descripcion = 'compra aprobado';
+                $mov->save();
+            }
+
             Mail::to($fut->usuario->email)->send(new NotificacionGeneral(
                 "Formulario FUT N°" . formatear_con_ceros($fut->nro) . " aprobado.",
                 "Su formulario de compra FUT N°" . formatear_con_ceros($fut->nro) . " ya ha sido aprobado para compra, puede revisarlo dando click al siguiente enlace.",
@@ -129,6 +157,7 @@ class ControladorFUT extends Controller
                 ->where('fut.nro', 'like', '%' . $nro . '%')
                 ->where('rcf.gestiones_id', $gestiones_id)
                 ->select('fut.*', 'uc.nombre_completo as carrera', 'rft.descripcion as formulado', 'rg.gestion')
+                ->orderBy('fut.id_fut', 'DESC')
                 ->get();
         } else if ($nro != 0 && $gestiones_id == 0) {
             $fut = Fut::join('rl_configuracion_formulado as rcf', 'rcf.id', '=', 'fut.id_configuracion_formulado')
@@ -138,6 +167,7 @@ class ControladorFUT extends Controller
                 ->where('fut.estado', '<>', 'eliminado')
                 ->join('rl_gestiones as rg', 'rg.id', '=', 'rcf.gestiones_id')
                 ->select('fut.*', 'uc.nombre_completo as carrera', 'rft.descripcion as formulado', 'rg.gestion')
+                ->orderBy('fut.id_fut', 'DESC')
                 ->get();
         } else if ($nro == 0 && $gestiones_id != 0) {
             $fut = Fut::join('rl_configuracion_formulado as rcf', 'rcf.id', '=', 'fut.id_configuracion_formulado')
@@ -147,6 +177,7 @@ class ControladorFUT extends Controller
                 ->join('rl_gestiones as rg', 'rg.id', '=', 'rcf.gestiones_id')
                 ->where('rcf.gestiones_id', $gestiones_id)
                 ->select('fut.*', 'uc.nombre_completo as carrera', 'rft.descripcion as formulado', 'rg.gestion')
+                ->orderBy('fut.id_fut', 'DESC')
                 ->get();
         } else {
             $fut = [];

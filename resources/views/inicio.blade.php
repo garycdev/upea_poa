@@ -77,11 +77,6 @@
 
     <div class="overview-content-area">
         <div class="container-fluid">
-            {{-- <div class="alert alert-primary alert-dismissible fade show" role="alert">
-                <strong>Recuerde tener un correo electronico valido</strong>
-                , se enviara notificaciones como seguimiento de cada tramite
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div> --}}
             <div class="row">
                 <div class="col-lg-6 col-md-6 col-sm-12 col-xxl-3">
                     <div class="single-audience d-flex justify-content-between align-items-center">
@@ -139,33 +134,98 @@
         </div>
     </div>
 
-    @if (Auth::user()->role[0]->name != 'usuario')
-        <div class="chartsjs-area">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
-                        <div class="card-box-style">
-                            <div class="others-title">
-                                <h3>Carreras, Unidades Administrativas y Areas</h3>
+    <div class="chartsjs-area">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <div class="card-box-style">
+                        <div class="others-title d-flex justify-content-between">
+                            <h3>MONTOS POR GESTION</h3>
+
+                            <div class="form-group d-flex align-items-center">
+                                <label for="gestions" class="form-label">Gestión:&nbsp;</label>
+                                <select name="gestions" id="gestions" class="form-control select2_partida"
+                                    onchange="chart_gestiones()">
+                                    @foreach ($gestions as $item)
+                                        <option value="{{ $item->id }}">
+                                            {{ $item->inicio_gestion }} - {{ $item->fin_gestion }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
-                            <canvas id="basic_bar_chart"></canvas>
                         </div>
+
+                        <canvas id="chart_gestiones"></canvas>
                     </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="card-box-style">
+                        <div class="others-title d-flex justify-content-between">
+                            <h3>MONTOS POR FUENTE DE FINANCIAMIENTO</h3>
 
-                    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
-                        <div class="card-box-style">
-                            <div class="others-title">
-                                <h3>FORMULARIOS</h3>
+                            <div class="form-group d-flex align-items-center">
+                                <label for="gestion_fin" class="form-label">Gestión:&nbsp;</label>
+                                <select name="gestion_fin" id="gestion_fin" class="form-control select2_partida"
+                                    onchange="chart_financiamientos()">
+                                    @foreach ($gestiones->reverse() as $item)
+                                        <option value="{{ $item->id }}"
+                                            {{ $item->gestion == date('Y') ? 'selected' : '' }}>{{ $item->gestion }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
-
-                            <canvas id="basic_bar_chart1"></canvas>
                         </div>
+
+                        <canvas id="chart_financiamientos"></canvas>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="card-box-style">
+                        <div class="others-title d-flex justify-content-between">
+                            {{-- <h3>Carreras, Unidades Administrativas y Areas</h3> --}}
+                            <h3>MONTOS POR PARTIDA</h3>
+
+                            <div class="form-group d-flex align-items-center">
+                                <label for="gestion_partidas" class="form-label">Gestión:&nbsp;</label>
+                                <select name="gestion_partidas" id="gestion_partidas" class="form-control select2_partida"
+                                    onchange="chart_partidas()">
+                                    @foreach ($gestiones->reverse() as $item)
+                                        <option value="{{ $item->id }}"
+                                            {{ $item->gestion == date('Y') ? 'selected' : '' }}>{{ $item->gestion }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <canvas id="chart_partidas"></canvas>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="card-box-style">
+                        <div class="others-title d-flex justify-content-between">
+                            {{-- <h3>Carreras, Unidades Administrativas y Areas</h3> --}}
+                            <h3>MONTOS POR CARRERA</h3>
+
+                            <div class="form-group d-flex align-items-center">
+                                <label for="gestion_carreras" class="form-label">Gestión:&nbsp;</label>
+                                <select name="gestion_carreras" id="gestion_carreras" class="form-control select2_partida"
+                                    onchange="chart_carreras()">
+                                    @foreach ($gestiones->reverse() as $item)
+                                        <option value="{{ $item->id }}"
+                                            {{ $item->gestion == date('Y') ? 'selected' : '' }}>{{ $item->gestion }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <canvas id="chart_carreras"></canvas>
                     </div>
                 </div>
 
             </div>
+
         </div>
-    @endif
+    </div>
 
     <div class="container-fluid">
         <div class="row">
@@ -207,10 +267,10 @@
                                         </p>
                                     </div>
                                     {{-- <div class="ms-auto d-md-flex">
-                                                <span aria-label="anchor" class="text-muted">
-                                                    <h5 class="d-inline-block">5</h5> formulados
-                                                </span>
-                                            </div> --}}
+                                        <span aria-label="anchor" class="text-muted">
+                                            <h5 class="d-inline-block">5</h5> formulados
+                                        </span>
+                                    </div> --}}
                                     @php
                                         $cont++;
                                     @endphp
@@ -346,148 +406,6 @@
             </div>
         </div>
     </div>
-@endsection
-
-@section('scripts')
-    <script src="{{ asset('plantilla_admin/js/chart-js/chartjs.min.js') }}"></script>
-    {{-- <script src="{{ asset('plantilla_admin/js/chart-js/chartjs-custom.js') }}"></script> --}}
-
-    <script>
-        'use strict';
-        $(document).ready(function() {
-            var colors = {
-                primary: $('.chartjs-colors .bg-primary').css('background-color'),
-                secondary: $('.chartjs-colors .bg-secondary').css('background-color'),
-                info: $('.chartjs-colors .bg-info').css('background-color'),
-                success: $('.chartjs-colors .bg-success').css('background-color'),
-                danger: $('.chartjs-colors .bg-danger').css('background-color'),
-                warning: $('.chartjs-colors .bg-warning').css('background-color'),
-                purple: $('.chartjs-colors .bg-purple').css('background-color'),
-                pink: $('.chartjs-colors .bg-pink').css('background-color'),
-                primaryLight: $('.chartjs-colors .bg-primary-light').css('background-color'),
-                successLight: $('.chartjs-colors .bg-success-light').css('background-color'),
-            };
-
-            basic_bar_chart();
-
-            function basic_bar_chart() {
-                var element = document.getElementById("basic_bar_chart");
-                element.height = 100;
-
-                $.ajax({
-                    type: "POST",
-                    url: "{{ route('ver_carreras_unidades') }}",
-                    dataType: "JSON",
-                    success: function(res) {
-                        // console.log(res);
-                        // console.log(res.tipo_carrera);
-
-                        var array_nombre = [];
-                        var array_cantidad = [];
-                        res.tipo_carrera.forEach(val => {
-                            array_nombre.push(val.nombre);
-                            array_cantidad.push(val.carrera_unidad_area_count);
-                        });
-                        new Chart(element, {
-                            type: 'bar',
-                            data: {
-                                labels: array_nombre,
-                                datasets: [{
-                                    label: "Cantidad",
-                                    backgroundColor: [
-                                        colors.primary,
-                                        colors.secondary,
-                                        colors.success,
-                                        colors.warning,
-                                        colors.info,
-                                        colors.purple,
-                                    ],
-                                    data: array_cantidad
-                                }]
-                            },
-                            options: {
-                                legend: {
-                                    display: false
-                                },
-                                title: {
-                                    display: true,
-                                    text: 'Predicted world population (millions) in 2050'
-                                }
-                            }
-                        });
-                    }
-                });
-            }
-
-            basic_bar_chart1();
-
-            function basic_bar_chart1() {
-                var element = document.getElementById("basic_bar_chart1");
-                element.height = 100;
-
-                $.ajax({
-                    type: "POST",
-                    url: "{{ route('ver_formularios_can') }}",
-                    dataType: "JSON",
-                    success: function(res) {
-                        // console.log(res);
-
-                        new Chart(element, {
-                            type: 'bar',
-                            data: {
-                                labels: [
-                                    'FORMULARIO Nº 1',
-                                    'FORMULARIO Nº 2',
-                                    'FORMULARIO Nº 4',
-                                    'FORMULARIO Nº 5'
-                                ],
-                                datasets: [{
-                                    label: "FORMULARIOS",
-                                    backgroundColor: [
-                                        colors.warning,
-                                        colors.primary,
-                                        colors.danger,
-                                        colors.success,
-                                        colors.info,
-                                        colors.pink,
-                                        colors.purple,
-                                        colors.secondary,
-                                    ],
-                                    data: [
-                                        res.formulario1,
-                                        res.formulario2,
-                                        res.formulario4,
-                                        res.formulario5
-                                    ]
-                                }]
-                            },
-                            options: {
-                                legend: {
-                                    display: false
-                                },
-                                title: {
-                                    display: true,
-                                    text: 'Predicted world population (millions) in 2050'
-                                }
-                            }
-                        });
-                    }
-                });
-            }
-
-            if (!sessionStorage.getItem("init_session")) {
-                Swal.fire({
-                    title: "¡Bienvenido al sistema del POA!",
-                    text: "Recuerde tener un correo electronico valido, se enviara notificaciones como seguimiento de cada tramite.",
-                    icon: "success",
-                    confirmButtonText: "Aceptar"
-                });
-
-                // marcar que ya lo mostró
-                sessionStorage.setItem("init_session", "true");
-            }
-        });
-    </script>
 
     <div class="chartjs-colors">
         <div class="bg-primary"></div>
@@ -501,4 +419,352 @@
         <div class="bg-purple"></div>
         <div class="bg-pink"></div>
     </div>
+@endsection
+
+@section('scripts')
+    <script src="{{ asset('plantilla_admin/js/chart-js/chartjs.min.js') }}"></script>
+    {{-- <script src="{{ asset('plantilla_admin/js/chart-js/chartjs-custom.js') }}"></script> --}}
+
+    <script>
+        var colors = {
+            primary: $('.chartjs-colors .bg-primary').css('background-color'),
+            secondary: $('.chartjs-colors .bg-secondary').css('background-color'),
+            info: $('.chartjs-colors .bg-info').css('background-color'),
+            success: $('.chartjs-colors .bg-success').css('background-color'),
+            danger: $('.chartjs-colors .bg-danger').css('background-color'),
+            warning: $('.chartjs-colors .bg-warning').css('background-color'),
+            dark: $('.chartjs-colors .bg-dark').css('background-color'),
+            light: $('.chartjs-colors .bg-light').css('background-color'),
+            dark: $('.chartjs-colors .bg-dark').css('background-color'),
+            purple: $('.chartjs-colors .bg-purple').css('background-color'),
+            pink: $('.chartjs-colors .bg-pink').css('background-color'),
+            primaryLight: $('.chartjs-colors .bg-primary-light').css('background-color'),
+            successLight: $('.chartjs-colors .bg-success-light').css('background-color'),
+        };
+
+        let chartGestionesInstance = null;
+
+        function chart_gestiones() {
+            var chartPartidas = document.getElementById("chart_gestiones");
+            chartPartidas.height = 100;
+            const gestions = $('#gestions').val()
+
+            if (chartGestionesInstance) {
+                chartGestionesInstance.destroy();
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "{{ route('ver_gestion_gastos') }}",
+                dataType: "JSON",
+                data: {
+                    gestions: gestions
+                },
+                success: function(res) {
+                    var array_gestion = [];
+                    var array_monto = [];
+                    var array_presupuesto = [];
+                    var array_usado = [];
+
+                    res.forEach(val => {
+                        array_gestion.push(val.gestion);
+                        array_monto.push(val.total_monto_sum);
+                        array_presupuesto.push(val.total_presupuesto_sum);
+                        array_usado.push(val.total_usado_sum);
+                    });
+                    chartGestionesInstance = new Chart(chartPartidas, {
+                        type: 'line',
+                        data: {
+                            labels: array_gestion,
+                            datasets: [{
+                                label: "Total monto asignado",
+                                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                borderColor: colors.primary,
+                                data: array_monto,
+                                fill: true,
+                                tension: 0.25,
+                                pointHoverRadius: 6,
+                                pointHoverBackgroundColor: colors.primary
+                            }, {
+                                label: "Monto ejecutado",
+                                backgroundColor: 'rgba(40, 167, 69, 0.2)',
+                                borderColor: colors.success,
+                                data: array_presupuesto,
+                                fill: true,
+                                tension: 0.25,
+                                pointHoverRadius: 6,
+                                pointHoverBackgroundColor: colors.success
+                            }, {
+                                label: "Monto pendiente",
+                                backgroundColor: 'rgba(220, 53, 69, 0.2)',
+                                borderColor: colors.danger,
+                                data: array_usado,
+                                fill: true,
+                                tension: 0.25,
+                                pointHoverRadius: 6,
+                                pointHoverBackgroundColor: colors.danger
+                            }]
+
+
+                        },
+                        options: {
+                            plugins: {
+                                tooltip: {
+                                    enabled: true,
+                                    mode: 'index',
+                                    intersect: false,
+                                },
+                                legend: {
+                                    display: false
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Montos usados por gestion'
+                                }
+                            },
+                            interaction: {
+                                mode: 'index',
+                                intersect: false
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        },
+                        plugins: [noDataPlugin]
+                    });
+                }
+            });
+        }
+
+        let chartFinanciamientoInstance = null;
+
+        function chart_financiamientos() {
+            var chartfinanciamientos = document.getElementById("chart_financiamientos");
+            chartfinanciamientos.height = 100;
+            const gestion = $('#gestion_fin').val()
+
+            if (chartFinanciamientoInstance) {
+                chartFinanciamientoInstance.destroy();
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "{{ route('ver_financiamiento_gastos') }}",
+                dataType: "JSON",
+                data: {
+                    gestion: gestion
+                },
+                success: function(res) {
+                    var array_finan = [];
+                    var array_monto = [];
+                    var array_presupuesto = [];
+                    var array_usado = [];
+
+                    res.forEach(val => {
+                        array_finan.push(val.descripcion);
+                        array_monto.push(val.total_monto_sum);
+                        array_presupuesto.push(val.total_presupuesto_sum);
+                        array_usado.push(val.total_usado_sum);
+                    });
+                    chartFinanciamientoInstance = new Chart(chartfinanciamientos, {
+                        type: 'bar',
+                        data: {
+                            labels: array_finan,
+                            datasets: [{
+                                label: "Total monto asignado",
+                                backgroundColor: [
+                                    colors.primary,
+                                ],
+                                data: array_monto
+                            }, {
+                                label: "Monto ejecutado",
+                                backgroundColor: [
+                                    colors.success,
+                                ],
+                                data: array_usado
+                            }, {
+                                label: "Monto pendiente",
+                                backgroundColor: [
+                                    colors.danger,
+                                ],
+                                data: array_presupuesto
+                            }]
+
+
+                        },
+                        options: {
+                            legend: {
+                                display: false
+                            },
+                            title: {
+                                display: true,
+                                text: 'Montos usados por partidas'
+                            },
+                            indexAxis: 'y'
+                        },
+                        plugins: [noDataPlugin]
+                    });
+                }
+            });
+        }
+
+        let chartPartidasInstance = null;
+
+        function chart_partidas() {
+            var chartPartidas = document.getElementById("chart_partidas");
+            chartPartidas.height = 50;
+            const gestion = $('#gestion_partidas').val()
+
+            if (chartPartidasInstance) {
+                chartPartidasInstance.destroy();
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "{{ route('ver_partidas_gastos') }}",
+                dataType: "JSON",
+                data: {
+                    gestion: gestion
+                },
+                success: function(res) {
+                    var array_codigo = [];
+                    var array_monto = [];
+                    var array_presupuesto = [];
+                    var array_usado = [];
+
+                    res.forEach(val => {
+                        array_codigo.push(val.codigo);
+                        array_monto.push(val.total_monto_sum);
+                        array_presupuesto.push(val.total_presupuesto_sum);
+                        array_usado.push(val.total_usado_sum);
+                    });
+                    chartPartidasInstance = new Chart(chartPartidas, {
+                        type: 'bar',
+                        data: {
+                            labels: array_codigo,
+                            datasets: [{
+                                label: "Total monto",
+                                backgroundColor: [
+                                    colors.primary,
+                                ],
+                                data: array_monto
+                            }, {
+                                label: "Monto ejecutado",
+                                backgroundColor: [
+                                    colors.success,
+                                ],
+                                data: array_usado
+                            }, {
+                                label: "Monto pendiente",
+                                backgroundColor: [
+                                    colors.danger,
+                                ],
+                                data: array_presupuesto
+                            }]
+                        },
+                        options: {
+                            legend: {
+                                display: false
+                            },
+                            title: {
+                                display: true,
+                                text: 'Montos usados por partidas'
+                            }
+                        },
+                        plugins: [noDataPlugin]
+                    });
+                }
+            });
+        }
+
+        let chartCarrerasInstance = null;
+
+        function chart_carreras() {
+            var chartCarreras = document.getElementById("chart_carreras");
+            chartCarreras.height = 50;
+            const gestion = $('#gestion_carreras').val()
+
+            if (chartCarrerasInstance) {
+                chartCarrerasInstance.destroy();
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "{{ route('ver_carreras_gastos') }}",
+                dataType: "JSON",
+                data: {
+                    gestion: gestion
+                },
+                success: function(res) {
+                    var array_carrera = [];
+                    var array_monto = [];
+                    var array_presupuesto = [];
+                    var array_usado = [];
+
+                    res.forEach(val => {
+                        array_carrera.push(val.carrera);
+                        array_monto.push(val.total_monto_sum);
+                        array_presupuesto.push(val.total_presupuesto_sum);
+                        array_usado.push(val.total_usado_sum);
+                    });
+                    chartCarrerasInstance = new Chart(chartCarreras, {
+                        type: 'bar',
+                        data: {
+                            labels: array_carrera,
+                            datasets: [{
+                                label: "Total monto",
+                                backgroundColor: [
+                                    colors.primary,
+                                ],
+                                data: array_monto
+                            }, {
+                                label: "Monto ejecutado",
+                                backgroundColor: [
+                                    colors.success,
+                                ],
+                                data: array_usado
+                            }, {
+                                label: "Monto pendiente",
+                                backgroundColor: [
+                                    colors.danger,
+                                ],
+                                data: array_presupuesto
+                            }]
+                        },
+                        options: {
+                            legend: {
+                                display: false
+                            },
+                            title: {
+                                display: true,
+                                text: 'Montos usados por carreras'
+                            }
+                        },
+                        plugins: [noDataPlugin]
+                    });
+                }
+            });
+        }
+
+        $(document).ready(function() {
+            if (!sessionStorage.getItem("init_session")) {
+                Swal.fire({
+                    title: "¡Bienvenido al sistema del POA!",
+                    text: "Recuerde tener un correo electronico valido, se enviara notificaciones como seguimiento de cada tramite.",
+                    icon: "success",
+                    confirmButtonText: "Aceptar"
+                });
+
+                // marcar que ya lo mostró
+                sessionStorage.setItem("init_session", "true");
+            }
+
+            chart_gestiones();
+            chart_financiamientos();
+            chart_partidas();
+            chart_carreras();
+        });
+    </script>
 @endsection
