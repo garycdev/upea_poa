@@ -29,9 +29,12 @@ use App\Http\Controllers\Formulacion\Controlador_formulario2;
 use App\Http\Controllers\Formulacion\Controlador_formulario5;
 use App\Http\Controllers\Formulacion\FutMot\ControladorFormulacionFUT;
 use App\Http\Controllers\Formulacion\FutMot\ControladorFormulacionMOT;
+use App\Http\Controllers\Reportes_graficas_controlador;
+use App\Http\Controllers\Reportes_PDF_controlador;
 use App\Http\Controllers\Usuario\Administracion_usuario;
 use App\Http\Controllers\Usuario_controlador;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\View;
 
 Route::prefix('/')->middleware(['no_autenticados'])->group(function () {
     Route::get('/', function () {
@@ -55,13 +58,6 @@ Route::prefix('/poa')->middleware(['autenticados'])->group(function () {
         Route::get('inicio', 'inicio')->name('inicio');
         Route::post('cerrar_session', 'cerrar_session')->name('salir');
         Route::post('cerrar_session_api', 'cerrar_session_api')->name('salir_api');
-
-
-        // Graficos
-        Route::post('ver_gestion_gastos', 'ver_gestion_gastos')->name('ver_gestion_gastos');
-        Route::post('ver_partidas_gastos', 'ver_partidas_gastos')->name('ver_partidas_gastos');
-        Route::post('ver_carreras_gastos', 'ver_carreras_gastos')->name('ver_carreras_gastos');
-        Route::post('ver_financiamiento_gastos', 'ver_financiamiento_gastos')->name('ver_financiamiento_gastos');
     });
 
     /**
@@ -638,6 +634,28 @@ Route::prefix('/poa')->middleware(['autenticados'])->group(function () {
         Route::get('/fut/formulacion/{id_fut}', 'formulacionPdfFut')->name('fut.pdf');
         Route::get('/mot/formulacion/{id_mot}', 'formulacionPdfMot')->name('mot.pdf');
     });
+
+    /**
+     * GRAFICAS
+     */
+    Route::controller(Reportes_graficas_controlador::class)->group(function () {
+        Route::post('ver_gestion_gastos', 'ver_gestion_gastos')->name('ver_gestion_gastos');
+        Route::post('ver_partidas_gastos', 'ver_partidas_gastos')->name('ver_partidas_gastos');
+        Route::post('ver_carreras_gastos', 'ver_carreras_gastos')->name('ver_carreras_gastos');
+        Route::post('ver_financiamiento_gastos', 'ver_financiamiento_gastos')->name('ver_financiamiento_gastos');
+    });
+
+    /**
+     * GRAFICAS PDF
+     */
+    Route::prefix('pdf')->controller(Reportes_PDF_controlador::class)->group(function () {
+        Route::get('/', 'inicio')->name('pdf.inicio');
+        Route::post('generarPdf', 'generarPdf')->name('pdf.generar');
+
+        Route::get('gestion/{tipo}/{gestions}/{fuente_fin}/{cua}/{graficos}', 'filtrar_gestion')->name('pdf.gestion');
+    });
+
+    Route::get('/graf/{gestion}', [Reportes_PDF_controlador::class, 'ver_gestion_gastos']);
 });
 
 Route::prefix('/plan')->middleware(['autenticados'])->group(function () {

@@ -137,7 +137,7 @@
     <div class="chartsjs-area">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-md-4">
                     <div class="card-box-style">
                         <div class="others-title d-flex justify-content-between">
                             <h3>MONTOS POR GESTION</h3>
@@ -158,7 +158,7 @@
                         <canvas id="chart_gestiones"></canvas>
                     </div>
                 </div>
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-md-8">
                     <div class="card-box-style">
                         <div class="others-title d-flex justify-content-between">
                             <h3>MONTOS POR FUENTE DE FINANCIAMIENTO</h3>
@@ -446,7 +446,7 @@
 
         function chart_gestiones() {
             var chartPartidas = document.getElementById("chart_gestiones");
-            chartPartidas.height = 100;
+            chartPartidas.height = 150;
             const gestions = $('#gestions').val()
 
             if (chartGestionesInstance) {
@@ -464,13 +464,13 @@
                     var array_gestion = [];
                     var array_monto = [];
                     var array_presupuesto = [];
-                    var array_usado = [];
+                    var array_pendiente = [];
 
                     res.forEach(val => {
                         array_gestion.push(val.gestion);
                         array_monto.push(val.total_monto_sum);
                         array_presupuesto.push(val.total_presupuesto_sum);
-                        array_usado.push(val.total_usado_sum);
+                        array_pendiente.push(val.total_pendiente_sum);
                     });
                     chartGestionesInstance = new Chart(chartPartidas, {
                         type: 'line',
@@ -498,7 +498,7 @@
                                 label: "Monto pendiente",
                                 backgroundColor: 'rgba(220, 53, 69, 0.2)',
                                 borderColor: colors.danger,
-                                data: array_usado,
+                                data: array_pendiente,
                                 fill: true,
                                 tension: 0.25,
                                 pointHoverRadius: 6,
@@ -542,7 +542,7 @@
 
         function chart_financiamientos() {
             var chartfinanciamientos = document.getElementById("chart_financiamientos");
-            chartfinanciamientos.height = 100;
+            chartfinanciamientos.height = 75;
             const gestion = $('#gestion_fin').val()
 
             if (chartFinanciamientoInstance) {
@@ -560,13 +560,13 @@
                     var array_finan = [];
                     var array_monto = [];
                     var array_presupuesto = [];
-                    var array_usado = [];
+                    var array_pendiente = [];
 
                     res.forEach(val => {
                         array_finan.push(val.descripcion);
                         array_monto.push(val.total_monto_sum);
                         array_presupuesto.push(val.total_presupuesto_sum);
-                        array_usado.push(val.total_usado_sum);
+                        array_pendiente.push(val.total_pendiente_sum);
                     });
                     chartFinanciamientoInstance = new Chart(chartfinanciamientos, {
                         type: 'bar',
@@ -583,13 +583,13 @@
                                 backgroundColor: [
                                     colors.success,
                                 ],
-                                data: array_usado
+                                data: array_presupuesto
                             }, {
                                 label: "Monto pendiente",
                                 backgroundColor: [
                                     colors.danger,
                                 ],
-                                data: array_presupuesto
+                                data: array_pendiente
                             }]
 
 
@@ -632,13 +632,13 @@
                     var array_codigo = [];
                     var array_monto = [];
                     var array_presupuesto = [];
-                    var array_usado = [];
+                    var array_pendiente = [];
 
                     res.forEach(val => {
                         array_codigo.push(val.codigo);
                         array_monto.push(val.total_monto_sum);
                         array_presupuesto.push(val.total_presupuesto_sum);
-                        array_usado.push(val.total_usado_sum);
+                        array_pendiente.push(val.total_pendiente_sum);
                     });
                     chartPartidasInstance = new Chart(chartPartidas, {
                         type: 'bar',
@@ -655,13 +655,13 @@
                                 backgroundColor: [
                                     colors.success,
                                 ],
-                                data: array_usado
+                                data: array_presupuesto
                             }, {
                                 label: "Monto pendiente",
                                 backgroundColor: [
                                     colors.danger,
                                 ],
-                                data: array_presupuesto
+                                data: array_pendiente
                             }]
                         },
                         options: {
@@ -701,13 +701,13 @@
                     var array_carrera = [];
                     var array_monto = [];
                     var array_presupuesto = [];
-                    var array_usado = [];
+                    var array_pendiente = [];
 
                     res.forEach(val => {
                         array_carrera.push(val.carrera);
                         array_monto.push(val.total_monto_sum);
                         array_presupuesto.push(val.total_presupuesto_sum);
-                        array_usado.push(val.total_usado_sum);
+                        array_pendiente.push(val.total_pendiente_sum);
                     });
                     chartCarrerasInstance = new Chart(chartCarreras, {
                         type: 'bar',
@@ -724,13 +724,13 @@
                                 backgroundColor: [
                                     colors.success,
                                 ],
-                                data: array_usado
+                                data: array_presupuesto
                             }, {
                                 label: "Monto pendiente",
                                 backgroundColor: [
                                     colors.danger,
                                 ],
-                                data: array_presupuesto
+                                data: array_pendiente
                             }]
                         },
                         options: {

@@ -6,7 +6,7 @@
                 <a href="https://utic.upea.bo/" target="_blank">
                     <img src="{{ asset('logos/utic.png') }}" alt="utic" width="30">
                 </a>
-                &nbsp;v1.1
+                &nbsp;v1.2
             </p>
         </div>
     </div>

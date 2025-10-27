@@ -189,7 +189,7 @@
                 @endcan
             @endif
             @can('Menu_formulario_modificacion')
-                <li class="@if ($menu == '19' || $menu == '20') {{ 'mm-active' }} @endif">
+                <li class="@if ($menu == '19' || $menu == '20' || $menu == '23') {{ 'mm-active' }} @endif">
                     <a href="#" class="has-arrow box-style d-flex align-items-center">
                         <div class="icon">
                             <img src="{{ asset('plantilla_admin/images/icon/draft.svg') }}" alt="usuario">
@@ -264,7 +264,7 @@
 
             {{-- REPORTES PDF --}}
             @can('reportes_pdf')
-                <li class="@if ($menu == '15' || $menu == '16' || $menu == '17' || $menu == '18') {{ 'mm-active' }} @endif">
+                <li class="@if ($menu == '15' || $menu == '16' || $menu == '17' || $menu == '18' || $menu == '24') {{ 'mm-active' }} @endif">
                     <a href="#" class="has-arrow box-style d-flex align-items-center">
                         <div class="icon">
                             <img src="{{ asset('plantilla_admin/images/icon/book.svg') }}" alt="usuario">
@@ -303,6 +303,14 @@
                             </a>
                         </li>
                     </ul> --}}
+
+                    <ul class="sidemenu-nav-second-level">
+                        <li class="@if ($menu == '24') {{ 'active' }} @endif">
+                            <a href="{{ route('pdf.inicio') }}">
+                                <span class="menu-title">Resumen general<br>de gastos y<br>sueldos</span>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
             @endcan
         </ul>
