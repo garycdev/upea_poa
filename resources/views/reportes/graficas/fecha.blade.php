@@ -225,7 +225,7 @@
     @if ($graficos)
         <br>
         <center>
-            {{-- <img src="{{ $chartFechaFut }}" style="width:75%;margin:auto;"> --}}
+            <img src="{{ $chartFechaFut }}" style="width:75%;margin:auto;">
         </center>
     @endif
     <br>
@@ -309,7 +309,7 @@
     @if ($graficos)
         <br>
         <center>
-            {{-- <img src="{{ $chartFinanFut }}" style="width:75%;margin:auto;"> --}}
+            <img src="{{ $chartFinanFut }}" style="width:75%;margin:auto;">
         </center>
     @endif
     <br>
@@ -395,7 +395,7 @@
     @if ($graficos)
         <br>
         <center>
-            {{-- <img src="{{ $chartUnidadesFut }}" style="width:75%;margin:auto;"> --}}
+            <img src="{{ $chartUnidadesFut }}" style="width:75%;margin:auto;">
         </center>
     @endif
     @if ($partidas)
@@ -480,7 +480,7 @@
         @if ($graficos)
             <br>
             <center>
-                {{-- <img src="{{ $chartPartidasFut }}" style="width:100%;margin:auto;"> --}}
+                <img src="{{ $chartPartidasFut }}" style="width:100%;margin:auto;">
             </center>
         @endif
     @endif
@@ -533,7 +533,7 @@
     @if ($graficos)
         <br>
         <center>
-            {{-- <img src="{{ $chartFechaMot }}" style="width:75%;margin:auto;"> --}}
+            <img src="{{ $chartFechaMot }}" style="width:75%;margin:auto;">
         </center>
     @endif
     <br>
@@ -626,7 +626,7 @@
     @if ($graficos)
         <br>
         <center>
-            {{-- <img src="{{ $chartFinanMot }}" style="width:75%;margin:auto;"> --}}
+            <img src="{{ $chartFinanMot }}" style="width:75%;margin:auto;">
         </center>
     @endif
     <br>
@@ -721,7 +721,7 @@
     @if ($graficos)
         <br>
         <center>
-            {{-- <img src="{{ $chartUnidadesMot }}" style="width:75%;margin:auto;"> --}}
+            <img src="{{ $chartUnidadesMot }}" style="width:75%;margin:auto;">
         </center>
     @endif
     @if ($partidas)
@@ -736,9 +736,9 @@
                     </tr>
                     <tr>
                         <th>Codigo partidas</th>
-                        <th colspan="2">Aprobado</th>
-                        <th colspan="2">Verificado</th>
                         <th colspan="2">Elaborado</th>
+                        <th colspan="2">Verificado</th>
+                        <th colspan="2">Aprobado</th>
                         <th colspan="2">Monto total</th>
                     </tr>
                 </thead>
@@ -819,9 +819,9 @@
                     </tr>
                     <tr>
                         <th>Codigo partidas</th>
-                        <th colspan="2">Aprobados</th>
-                        <th colspan="2">Verificado</th>
                         <th colspan="2">Elaborado</th>
+                        <th colspan="2">Verificado</th>
+                        <th colspan="2">Aprobados</th>
                         <th colspan="2">Monto total</th>
                     </tr>
                 </thead>
@@ -893,72 +893,66 @@
             </center>
         @endif --}}
         <br>
-        <center><b style="font-size: 14px">Resumen</b></center>
+        {{-- @dd($datos['por_fecha_partidas_mot']) --}}
+        <center><b style="font-size: 14px">Resumen de modificaciones por partidas</b></center>
         <div class="table-responsive">
             <table class="my-table" style="font-size:8px;width:90%;margin:auto;">
                 <thead>
                     <tr>
-                        <th colspan="9">{{ $datos['por_fecha_mot']['fecha'] }}</th>
+                        <th colspan="4">{{ $datos['por_fecha_mot']['fecha'] }}</th>
                     </tr>
                     <tr>
-                        <th></th>
-                        <th colspan="2">Aprobado</th>
-                        <th colspan="2">Verificado</th>
-                        <th colspan="2">Elaborado</th>
-                        <th colspan="2">Monto total</th>
+                        <th>Partida</th>
+                        <th>Monto origen</th>
+                        <th>Monto destino</th>
+                        <th>Total</th>
                     </tr>
                 </thead>
                 <tbody>
                     @php
-                        $ptotal1 = $total41 != 0 ? ($total11 * 100) / $total41 : 0;
-                        $ptotal2 = $total41 != 0 ? ($total21 * 100) / $total41 : 0;
-                        $ptotal3 = $total41 != 0 ? ($total31 * 100) / $total41 : 0;
-                        $ptotal4 = $ptotal1 + $ptotal2 + $ptotal3;
+                        $totalDe = 0;
+                        $totalA = 0;
+                        $saldo = 0;
+                        $totalTotal = 0;
                     @endphp
+                    @foreach ($datos['por_fecha_partidas_mot'] as $item)
+                        @php
+                            $total = 0;
+                            $i = 0;
+                        @endphp
+                        <tr>
+                            <td>{{ $item['partida'] }}</td>
+                            @if ($item['accion'] == 'DE')
+                                @php
+                                    $total += $item['total_monto_sum'];
+                                    $totalDe += $item['total_monto_sum'];
+                                    $saldo += $item['total_monto_sum'];
+                                    $totalTotal += $item['total_monto_sum'];
+                                @endphp
+                                <td>{{ con_separador_comas($item['total_monto_sum']) }} bs</td>
+                                <td>-</td>
+                            @else
+                                @php
+                                    $total += $item['total_monto_sum'];
+                                    $totalA += $item['total_monto_sum'];
+                                    $saldo -= $item['total_monto_sum'];
+                                    $totalTotal += $item['total_monto_sum'];
+                                @endphp
+                                <td>-</td>
+                                <td>{{ con_separador_comas($item['total_monto_sum']) }} bs</td>
+                            @endif
+                            <td><b>{{ con_separador_comas($total) }} bs</b></td>
+                        </tr>
+                    @endforeach
                     <tr>
-                        <td>Partidas origen</td>
-                        <td>{{ $total31 != 0 ? con_separador_comas($total31) . ' bs' : '-' }}</td>
-                        <td>{{ $ptotal3 != 0 ? round($ptotal3, 2) . '%' : '-' }}</td>
-                        <td>{{ $total21 != 0 ? con_separador_comas($total21) . ' bs' : '-' }}</td>
-                        <td>{{ $ptotal2 != 0 ? round($ptotal2, 2) . '%' : '-' }}</td>
-                        <td>{{ $total11 != 0 ? con_separador_comas($total11) . ' bs' : '-' }}</td>
-                        <td>{{ $ptotal1 != 0 ? round($ptotal1, 2) . '%' : '-' }}</td>
-                        <td><b>{{ con_separador_comas($total41) }} bs</b></td>
-                        <td><b>{{ round($ptotal4, 2) }}%</b></td>
+                        <td><b>Total</b></td>
+                        <td><b>{{ con_separador_comas($totalDe) }} bs</b></td>
+                        <td><b>{{ con_separador_comas($totalA) }} bs</b></td>
+                        <td><b>{{ con_separador_comas($totalTotal - $totalA) }} bs</b></td>
                     </tr>
-                    @php
-                        $p1 = $total11 != 0 ? ($total12 * 100) / $total11 : 0;
-                        $p2 = $total21 != 0 ? ($total22 * 100) / $total21 : 0;
-                        $p3 = $total31 != 0 ? ($total32 * 100) / $total31 : 0;
-                        $p4 = $total41 != 0 ? ($total42 * 100) / $total41 : 0;
-                    @endphp
                     <tr>
-                        <td>Partidas destino</td>
-                        <td>{{ $total32 != 0 ? con_separador_comas($total32) . ' bs' : '-' }}</td>
-                        <td>{{ $p3 != 0 ? round($p3, 2) . '%' : '-' }}</td>
-                        <td>{{ $total22 != 0 ? con_separador_comas($total22) . ' bs' : '-' }}</td>
-                        <td>{{ $p2 != 0 ? round($p2, 2) . '%' : '-' }}</td>
-                        <td>{{ $total12 != 0 ? con_separador_comas($total12) . ' bs' : '-' }}</td>
-                        <td>{{ $p1 != 0 ? round($p1, 2) . '%' : '-' }}</td>
-                        <td><b>{{ con_separador_comas($total42) }} bs</b></td>
-                        <td><b>{{ round($p4, 2) }}%</b></td>
-                    </tr>
-                    @php
-                        $p12 = $total11 != 0 ? (($total11 - $total12) * 100) / $total11 : 0;
-                        $p22 = $total21 != 0 ? (($total21 - $total22) * 100) / $total21 : 0;
-                        $p32 = $total31 != 0 ? (($total31 - $total32) * 100) / $total31 : 0;
-                        $p42 = $total41 != 0 ? (($total41 - $total42) * 100) / $total41 : 0;
-                    @endphp
-                    <tr>
-                        <td><b>SALDO</b></td>
-                        <td><b>{{ con_separador_comas($total31 - $total32) }}bs</b></td>
-                        <td><b>{{ round($p32, 2) }}%</b></td>
-                        <td><b>{{ con_separador_comas($total21 - $total22) }}bs</b></td>
-                        <td><b>{{ round($p22, 2) }}%</b></td>
-                        <td><b>{{ con_separador_comas($total11 - $total12) }}bs</b></td>
-                        <td><b>{{ round($p12, 2) }}%</b></td>
-                        <td><b><b>{{ con_separador_comas($total41 - $total42) }} bs</b></b></td>
-                        <td><b>{{ round($p42, 2) }}%</b></td>
+                        <td colspan="3" align="right"><b>Saldo</b></td>
+                        <td><b>{{ con_separador_comas($saldo) }} bs</b></td>
                     </tr>
                 </tbody>
             </table>

@@ -909,13 +909,15 @@ class Reportes_PDF_controlador extends Controller
             });
 
             $base43mot              = clone $baseMotDe;
-            $por_fecha_partidas_mot = $base43mot->groupBy('mm.partida_codigo', 'mpp.accion')
+            $por_fecha_partidas_mot = $base43mot
+                ->whereNotIn('mot.estado', ['pendiente', 'elaborado'])
+                ->groupBy('mm.partida_codigo', 'mpp.accion')
                 ->select(
                     'mm.partida_codigo',
                     DB::raw('SUM(mm.partida_monto) as total_monto_sum'),
                     'mpp.accion'
                 )
-                ->orderBy('mot.id_mot')->get();
+                ->orderBy('mpp.id_mot_pp', 'ASC')->get();
 
             $porFechaPartidasMot = $por_fecha_partidas_mot->map(function ($item) {
                 return [
@@ -1173,26 +1175,35 @@ class Reportes_PDF_controlador extends Controller
             $data['chartUnidadesMot'] = $chartUnidades;
 
             if ($partidas) {
-                $array_partidas = collect($porFechaPartidasMot)->pluck('partida');
-                $array_monto    = collect($porFechaPartidasMot)->pluck('total_monto_sum');
-                $array_acciones = collect();
+                $array_partidas    = collect($porFechaPartidasMot)->pluck('partida');
+                $array_monto       = collect($porFechaPartidasMot)->pluck('total_monto_sum');
+                $array_acciones    = collect();
+                $array_accion_tipo = collect();
+
                 foreach ($porFechaPartidasMot as $value) {
                     if ($value['accion'] == 'DE') {
                         $array_acciones->push('rgba(220, 53, 69, 1)');
+                        $array_accion_tipo->push('DE');
                     } else {
                         $array_acciones->push('rgba(40, 167, 69, 1)');
+                        $array_accion_tipo->push('A');
                     }
                 }
 
                 $chartConfig = [
-                    'type' => 'bar',
-                    'data' => [
+                    'type'    => 'bar',
+                    'data'    => [
                         'labels'   => $array_partidas->toArray(),
                         'datasets' => [[
-                            'label'           => 'Total',
+                            'label'           => 'Modificaciones',
                             'backgroundColor' => $array_acciones->toArray(),
                             'data'            => $array_monto->toArray(),
                         ]],
+                    ],
+                    'options' => [
+                        'plugins' => [
+                            'legend' => ['display' => false],
+                        ],
                     ],
                 ];
 
