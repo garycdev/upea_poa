@@ -104,14 +104,14 @@
                     <div class="row">
                         <div class="col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6">
                             <fieldset>
-                                <legend>Filtrar por</legend>
+                                <legend>Generar por</legend>
                                 <select name="filtrar" id="filtrar" class="form-select select2_simple1"
                                     style="width: 100%" onchange="selectOpcion(this)">
                                     <option value="" selected>[SELECCIONE UNA OPCION]</option>
-                                    <option value="1">Por gestion</option>
                                     <option value="2">Por gestion especifica</option>
-                                    <option value="3">Por periodo</option>
-                                    <option value="4">Por rango de fechas</option>
+                                    <option value="1">Por gestion</option>
+                                    <option value="3">Gastos por periodo</option>
+                                    <option value="4">Gastos por rango de fechas</option>
                                 </select>
                             </fieldset>
                         </div>
@@ -150,10 +150,10 @@
                                     style="width: 100%">
                                     <option value="" selected>[SELECCIONE UN PERIODO]
                                     </option>
-                                    <option value="7">Ultimos 7 dias</option>
-                                    <option value="30">Ultimos 30 dias</option>
+                                    <option value="1">Ultimos 7 dias</option>
+                                    <option value="2">Ultimos 30 dias</option>
                                     <option value="3">Ultimos 3 meses</option>
-                                    <option value="6">Ultimos 6 meses</option>
+                                    <option value="4">Ultimos 6 meses</option>
                                 </select>
                             </fieldset>
                         </div>
@@ -181,7 +181,7 @@
                                 <legend>Por carrera/unidad/area</legend>
                                 <select name="cua" id="cua" class="form-select select2_simple1"
                                     style="width: 100%">
-                                    <option value="0" selected>-</option>
+                                    <option value="0" selected>TODAS</option>
                                     @foreach ($cua as $lis)
                                         <option value="{{ $lis->id }}">{{ $lis->nombre_completo }}</option>
                                     @endforeach
@@ -193,7 +193,7 @@
                                 <legend>Por Fuente de financiamiento</legend>
                                 <select name="fuente_fin" id="fuente_fin" class="form-select select2_simple1"
                                     style="width: 100%">
-                                    <option value="0" selected>-</option>
+                                    <option value="0" selected>TODAS</option>
                                     @foreach ($fuente as $lis)
                                         <option value="{{ $lis->id }}">{{ $lis->descripcion }}</option>
                                     @endforeach
@@ -207,19 +207,18 @@
                                 <legend>Opciones extra (puede tardar en generar el PDF)</legend>
                                 <div class="d-flex flex-column justify-content-center">
                                     <div class="ms-5 form-check form-switch">
-                                        <label class="form-check-label" for="graficos">
-                                            Mostrar graficos
-                                        </label>
-                                        <input class="form-check-input" type="checkbox" role="switch" id="graficos"
-                                            name="graficos" checked>
-                                    </div>
-
-                                    <div class="ms-5 form-check form-switch">
                                         <label class="form-check-label" for="partidas">
                                             Mostrar datos por partidas
                                         </label>
                                         <input class="form-check-input" type="checkbox" role="switch" id="partidas"
-                                            name="partidas">
+                                            name="partidas" checked>
+                                    </div>
+                                    <div class="ms-5 form-check form-switch">
+                                        <label class="form-check-label" for="graficos">
+                                            Mostrar graficos
+                                        </label>
+                                        <input class="form-check-input" type="checkbox" role="switch" id="graficos"
+                                            name="graficos">
                                     </div>
 
                                     {{-- <div class="ms-5 form-check form-switch">

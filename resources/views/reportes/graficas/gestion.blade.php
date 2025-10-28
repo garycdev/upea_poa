@@ -311,8 +311,8 @@
     @endphp
     <div class="grid-container" style="width:100%;">
         {{-- @php
-                $pares = collect($datos['por_gestion_fuente'])->chunk(2);
-            @endphp --}}
+            $pares = collect($datos['por_gestion_fuente'])->chunk(2);
+        @endphp --}}
         @foreach ($datos['por_gestion_fuente'] as $item)
             <div style="width:100%;">
                 <table class="my-table" style="font-size:8px;">
@@ -422,6 +422,7 @@
                 </table>
             </div>
             @if ($graficos)
+                <br>
                 <center>
                     <img src="{{ $chartsFinan[$item['gestion']] }}" style="width:75%;margin:auto;">
                 </center>
@@ -494,8 +495,8 @@
     @endphp
     <div class="grid-container" style="width:100%;">
         {{-- @php
-                $pares = collect($datos['por_gestion_unidad'])->chunk(2);
-            @endphp --}}
+            $pares = collect($datos['por_gestion_unidad'])->chunk(2);
+        @endphp --}}
         {{-- @dd($datos['por_gestion_unidad']) --}}
         @foreach ($datos['por_gestion_unidad'] as $key => $item)
             <table class="my-table" style="width:100%;font-size:8px;">
@@ -563,6 +564,7 @@
                 </tbody>
             </table>
             @if ($graficos)
+                <br>
                 <center>
                     <img src="{{ $chartsUnidades[$item['gestion']] }}" style="width:75%;margin:auto;">
                 </center>
@@ -570,6 +572,94 @@
             <br>
         @endforeach
     </div>
+    @if ($partidas)
+        <br>
+        <center><b>MONTOS POR GESTION Y PARTIDAS</b></center>
+        <br>
+        {{-- @php
+            $unidades = count($datos['por_gestion_partida'][0]['unidades']);
+        @endphp --}}
+        <div class="grid-container" style="width:100%;">
+            {{-- @php
+                $pares = collect($datos['por_gestion_unidad'])->chunk(2);
+            @endphp --}}
+            {{-- @dd($datos['por_gestion_partidas']) --}}
+            @foreach ($datos['por_gestion_partidas'] as $key => $item)
+                <table class="my-table" style="width:100%;font-size:8px;">
+                    <thead>
+                        <tr>
+                            <th colspan="7" style="font-size:13px">
+                                <b>{{ $item['gestion'] }}</b>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <th colspan="2">Monto ejecutado</th>
+                            <th colspan="2">Saldo</th>
+                            <th colspan="2">Monto total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @php
+                            $total1 = 0;
+                            $total2 = 0;
+                            $total3 = 0;
+                        @endphp
+                        @foreach ($item['partidas'] as $key => $item2)
+                            @php
+                                $presupuesto = $item2['total_presupuesto_sum'];
+                                $pendiente = $item2['total_pendiente_sum'];
+                                $total = $item2['total_monto_sum'];
+
+                                $total1 += $presupuesto;
+                                $total2 += $pendiente;
+                                $total3 += $total;
+
+                                $ptotal1 = $total != 0 ? ($presupuesto * 100) / $total : 0;
+                                $ptotal2 = $total != 0 ? ($pendiente * 100) / $total : 0;
+                            @endphp
+                            <tr>
+                                <td><b>{{ $item2['codigo'] }}</b></td>
+                                <td>
+                                    {{ con_separador_comas($presupuesto) }} bs
+                                </td>
+                                <td>{{ round($ptotal1, 2) }}%</td>
+                                <td>
+                                    {{ con_separador_comas($pendiente) }} bs
+                                </td>
+                                <td>{{ round($ptotal2, 2) }}%</td>
+                                <td>
+                                    <b>{{ con_separador_comas($total) }} bs</b>
+                                </td>
+                                <td><b>{{ round($ptotal1 + $ptotal2) }}%</b></td>
+                            </tr>
+                        @endforeach
+                        @php
+                            $ptotal1 = $total3 != 0 ? ($total1 * 100) / $total3 : 0;
+                            $ptotal2 = $total3 != 0 ? ($total2 * 100) / $total3 : 0;
+                        @endphp
+                        <tr>
+                            <td><b>Total</b></td>
+                            <td><b>{{ con_separador_comas($total1) }} bs</b></td>
+                            <td><b>{{ round($ptotal1, 2) }}%</b></td>
+                            <td><b>{{ con_separador_comas($total2) }} bs</b></td>
+                            <td><b>{{ round($ptotal2, 2) }}%</b></td>
+                            <td><b>{{ con_separador_comas($total3) }} bs</b></td>
+                            <td><b>{{ round($ptotal1 + $ptotal2) }}%</b></td>
+                        </tr>
+                    </tbody>
+                </table>
+                @if ($graficos)
+                    <br>
+                    <center>
+                        <img src="{{ $chartsPartidas[$item['gestion']] }}"
+                            style="width:100%;margin:auto;font-size:8px;">
+                    </center>
+                @endif
+                <br>
+            @endforeach
+        </div>
+    @endif
 </body>
 
 </html>

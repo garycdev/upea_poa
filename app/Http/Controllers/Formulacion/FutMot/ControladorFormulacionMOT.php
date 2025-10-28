@@ -121,7 +121,7 @@ class ControladorFormulacionMOT extends Controller
             ->where('rl_medida_bienservicio.total_presupuesto', '>', 0.00)
             ->where('f5.gestion_id', $gestiones_id)
             ->where('f5.unidadCarrera_id', Auth::user()->id_unidad_carrera)
-            // ->whereNull('rl_medida_bienservicio.descripcion')
+        // ->whereNull('rl_medida_bienservicio.descripcion')
             ->select('ft.*')
             ->distinct('')
             ->get();
@@ -138,7 +138,7 @@ class ControladorFormulacionMOT extends Controller
         // ->where('mbs.tipo_financiamiento_id', '=', $financiamiento)
             ->where('f5.gestion_id', $gestiones_id)
             ->where('f5.unidadCarrera_id', Auth::user()->id_unidad_carrera)
-            // ->whereNull('mbs.descripcion')
+        // ->whereNull('mbs.descripcion')
             ->select('mbs.*', 'dc3.id as id_detalle', 'dc3.titulo as titulo_detalle', 'c3.codigo as partida', 'c3.titulo', 'c3.descripcion', 'ft.sigla', 'ft.descripcion as financiamiento', 'mbs.descripcion as descr')
             ->get();
         $partidas_formulado4 = DB::table('rl_medida_bienservicio AS mbs')
@@ -153,7 +153,7 @@ class ControladorFormulacionMOT extends Controller
         // ->where('mbs.tipo_financiamiento_id', '=', $financiamiento)
             ->where('f5.gestion_id', $gestiones_id)
             ->where('f5.unidadCarrera_id', Auth::user()->id_unidad_carrera)
-            // ->whereNull('mbs.descripcion')
+        // ->whereNull('mbs.descripcion')
             ->select('mbs.*', 'dc4.id as id_detalle', 'dc4.titulo as titulo_detalle', 'c4.codigo as partida', 'c4.titulo', 'c4.descripcion', 'ft.sigla', 'ft.descripcion as financiamiento', 'mbs.descripcion as descr')
             ->get();
         $partidas_formulado5 = DB::table('rl_medida_bienservicio AS mbs')
@@ -168,7 +168,7 @@ class ControladorFormulacionMOT extends Controller
         // ->where('mbs.tipo_financiamiento_id', '=', $financiamiento)
             ->where('f5.gestion_id', $gestiones_id)
             ->where('f5.unidadCarrera_id', Auth::user()->id_unidad_carrera)
-            // ->whereNull('mbs.descripcion')
+        // ->whereNull('mbs.descripcion')
             ->select('mbs.*', 'dc5.id as id_detalle', 'dc5.titulo as titulo_detalle', 'c5.codigo as partida', 'c5.titulo', 'c5.descripcion', 'ft.sigla', 'ft.descripcion as financiamiento', 'mbs.descripcion as descr')
             ->get();
 

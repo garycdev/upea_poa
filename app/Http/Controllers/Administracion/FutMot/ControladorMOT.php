@@ -209,12 +209,21 @@ class ControladorMOT extends Controller
                 ->get();
 
             foreach ($movs as $mov) {
-                $mbs              = Medida_bienservicio::find($mov->id_mbs);
-                $mbs->descripcion = 'verificado';
-                $mbs->save();
+                if ($mov->motpp->accion == 'DE') {
+                    $mbs              = Medida_bienservicio::find($mov->id_mbs);
+                    $mbs->descripcion = 'modifica verificado';
+                    $mbs->save();
 
-                $mov->descripcion = 'verificado';
-                $mov->save();
+                    $mov->descripcion = 'modifica verificado';
+                    $mov->save();
+                } else { // A
+                    $mbs              = Medida_bienservicio::find($mov->id_mbs);
+                    $mbs->descripcion = 'incrementa verificado';
+                    $mbs->save();
+
+                    $mov->descripcion = 'incrementa verificado';
+                    $mov->save();
+                }
             }
 
             Mail::to($mot->usuario->email)->send(new NotificacionGeneral(
@@ -239,12 +248,21 @@ class ControladorMOT extends Controller
                 ->get();
 
             foreach ($movs as $mov) {
-                $mbs              = Medida_bienservicio::find($mov->id_mbs);
-                $mbs->descripcion = null; // null para valido
-                $mbs->save();
+                if ($mov->motpp->accion == 'DE') {
+                    $mbs              = Medida_bienservicio::find($mov->id_mbs);
+                    $mbs->descripcion = null; // null para valido
+                    $mbs->save();
 
-                $mov->descripcion = 'aprobado';
-                $mov->save();
+                    $mov->descripcion = 'modifica aprobado';
+                    $mov->save();
+                } else { // A
+                    $mbs              = Medida_bienservicio::find($mov->id_mbs);
+                    $mbs->descripcion = null; // null para valido
+                    $mbs->save();
+
+                    $mov->descripcion = 'incrementa aprobado';
+                    $mov->save();
+                }
             }
 
             Mail::to($mot->usuario->email)->send(new NotificacionGeneral(

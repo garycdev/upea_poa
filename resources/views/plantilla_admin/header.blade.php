@@ -15,11 +15,11 @@
                         </a>
                     </div>
 
-                    <form class="search-bar d-flex">
+                    {{-- <form class="search-bar d-flex">
                         <img src="{{ asset('plantilla_admin/images/icon/search-normal.svg') }}" alt="search-normal">
 
                         <input class="form-control" type="search" placeholder="Search" aria-label="Search">
-                    </form>
+                    </form> --}}
 
                     <div class="option-item for-mobile-devices d-block d-lg-none">
                         <i class="search-btn ri-search-line"></i>

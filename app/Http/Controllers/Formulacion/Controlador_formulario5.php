@@ -55,9 +55,31 @@ class Controlador_formulario5 extends Controller
         //para todo lo de demas indicadores y formulario 2
         $formulario2 = Formulario2::with('formulario1', 'indicador', 'politica_desarrollo_pei', 'objetivo_estrategico_sub', 'objetivo_institucional')->find($formulario4->formulario2_id);
 
-        $resultado = Detalle_tercerClasificador::select('id', 'titulo', DB::raw("'tercerD' as origen"))
-            ->union(Detalle_cuartoClasificador::select('id', 'titulo', DB::raw("'cuartoD' as origen")))
-            ->union(Detalle_quintoClasificador::select('id', 'titulo', DB::raw("'quintoD' as origen")))
+        $resultado = Detalle_tercerClasificador::select(
+            'rl_detalleClasiTercero.id',
+            'rl_detalleClasiTercero.titulo',
+            'rl_clasificador_tercero.codigo',
+            DB::raw("'tercerD' as origen")
+        )
+            ->join('rl_clasificador_tercero', 'rl_clasificador_tercero.id', '=', 'rl_detalleClasiTercero.tercerclasificador_id')
+            ->union(
+                Detalle_cuartoClasificador::select(
+                    'rl_detalleClasiCuarto.id',
+                    'rl_detalleClasiCuarto.titulo',
+                    'rl_clasificador_cuarto.codigo',
+                    DB::raw("'cuartoD' as origen")
+                )
+                    ->join('rl_clasificador_cuarto', 'rl_clasificador_cuarto.id', '=', 'rl_detalleClasiCuarto.cuartoclasificador_id')
+            )
+            ->union(
+                Detalle_quintoClasificador::select(
+                    'rl_detalleClasiQuinto.id',
+                    'rl_detalleClasiQuinto.titulo',
+                    'rl_clasificador_quinto.codigo',
+                    DB::raw("'quintoD' as origen")
+                )
+                    ->join('rl_clasificador_quinto', 'rl_clasificador_quinto.id', '=', 'rl_detalleClasiQuinto.quintoclasificador_id')
+            )
             ->get();
 
         //para ver la medida

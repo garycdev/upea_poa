@@ -652,7 +652,8 @@ Route::prefix('/poa')->middleware(['autenticados'])->group(function () {
         Route::get('/', 'inicio')->name('pdf.inicio');
         Route::post('generarPdf', 'generarPdf')->name('pdf.generar');
 
-        Route::get('gestion/{tipo}/{gestions}/{fuente_fin}/{cua}/{graficos}', 'filtrar_gestion')->name('pdf.gestion');
+        Route::get('gestion/{tipo}/{gestions}/{fuente_fin}/{cua}/{graficos}/{partidas}', 'filtrar_gestion')->name('pdf.gestion');
+        Route::get('fecha/{tipo}/{fuente_fin}/{cua}/{graficos}/{partidas}/{fecha}/{fecha_fin}', 'filtrar_fecha')->name('pdf.fecha');
     });
 
     Route::get('/graf/{gestion}', [Reportes_PDF_controlador::class, 'ver_gestion_gastos']);

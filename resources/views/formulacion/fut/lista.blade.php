@@ -60,6 +60,9 @@
                                     </thead>
                                     <tbody>
                                         @if (count($fut) > 0)
+                                            @php
+                                                $total = 0;
+                                            @endphp
                                             @foreach ($fut as $item)
                                                 <tr>
                                                     <td>{{ formatear_con_ceros($item->nro) }}</td>
@@ -78,12 +81,9 @@
                                                         </ul>
                                                     </td>
                                                     <td>{{ con_separador_comas($item->importe) }}&nbsp;bs.</td>
-                                                    {{-- @php
-                                                        $total1 = 0;
-                                                        foreach ($item->total as $value) {
-                                                            $total1 += $value->partida_monto;
-                                                        }
-                                                    @endphp --}}
+                                                    @php
+                                                        $total += $item->importe;
+                                                    @endphp
                                                     <td>
                                                         <span
                                                             class="badge bg-{{ $item->estado == 'aprobado' ? 'success' : ($item->estado == 'rechazado' ? 'danger' : ($item->estado == 'verificado' ? 'primary' : ($item->estado == 'elaborado' ? 'info' : 'warning'))) }} text-{{ $item->estado == 'elaborado' ? 'dark' : 'light' }}">
@@ -148,9 +148,14 @@
                                                     </td> --}}
                                                 </tr>
                                             @endforeach
+                                            <tr>
+                                                <td colspan="3" align="right"><b>Total</b></td>
+                                                <td><b>{{ con_separador_comas($total) }} bs</b></td>
+                                                <td colspan="4"></td>
+                                            </tr>
                                         @else
                                             <tr>
-                                                <td colspan="6" align="center">
+                                                <td colspan="8" align="center">
                                                     Ningun formulario
                                                 </td>
                                             </tr>

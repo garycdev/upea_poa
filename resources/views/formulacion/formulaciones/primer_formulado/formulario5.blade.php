@@ -369,7 +369,6 @@
             </div>
         </div>
     </div>
-
     {{-- MODAL PARA ASIGNAR LOS REQUERIMIENTOS #5 --}}
     <div class="modal slide" id="asignar_requerimientosf5" data-bs-backdrop="static" data-bs-keyboard="false"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -395,7 +394,8 @@
                                         onchange="mostrar_clasificador_ver(this.value)">
                                         <option value="selected" selected disabled>[SELECCIONE CLASIFICADOR]</option>
                                         @foreach ($union_tres as $lis)
-                                            <option value="{{ $lis->id . '_' . $lis->origen }}">{{ $lis->titulo }}
+                                            <option value="{{ $lis->id . '_' . $lis->origen }}">
+                                                [{{ $lis->codigo }}] {{ $lis->titulo }}
                                             </option>
                                         @endforeach
                                     </select>
