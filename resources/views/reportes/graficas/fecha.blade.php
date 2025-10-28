@@ -193,8 +193,8 @@
                 </tr>
                 <tr>
                     <th colspan="2">Compra ejecutada</th>
-                    <th colspan="2">Compra pendiente</th>
-                    <th colspan="2">Saldo</th>
+                    <th colspan="2">Monto ya verificado</th>
+                    <th colspan="2">Monto por revisar</th>
                     <th colspan="2">Monto total</th>
                 </tr>
             </thead>
@@ -225,7 +225,7 @@
     @if ($graficos)
         <br>
         <center>
-            {{-- <img src="{{ $chartFechaFut }}" style="width:75%;margin:auto;"> --}}
+            <img src="{{ $chartFechaFut }}" style="width:75%;margin:auto;">
         </center>
     @endif
     <br>
@@ -240,8 +240,8 @@
                 <tr>
                     <th>Fuentes de financiamiento</th>
                     <th colspan="2">Compra ejecutada</th>
-                    <th colspan="2">Compra pendiente</th>
-                    <th colspan="2">Saldo</th>
+                    <th colspan="2">Monto ya verificado</th>
+                    <th colspan="2">Monto por revisar</th>
                     <th colspan="2">Monto total</th>
                 </tr>
             </thead>
@@ -309,7 +309,7 @@
     @if ($graficos)
         <br>
         <center>
-            {{-- <img src="{{ $chartFinanFut }}" style="width:75%;margin:auto;"> --}}
+            <img src="{{ $chartFinanFut }}" style="width:75%;margin:auto;">
         </center>
     @endif
     <br>
@@ -326,8 +326,8 @@
                 <tr>
                     <th>Unidad area carrera</th>
                     <th colspan="2">Compra ejecutada</th>
-                    <th colspan="2">Compra pendiente</th>
-                    <th colspan="2">Saldo</th>
+                    <th colspan="2">Monto ya verificado</th>
+                    <th colspan="2">Monto por revisar</th>
                     <th colspan="2">Monto total</th>
                 </tr>
             </thead>
@@ -395,7 +395,7 @@
     @if ($graficos)
         <br>
         <center>
-            {{-- <img src="{{ $chartUnidadesFut }}" style="width:75%;margin:auto;"> --}}
+            <img src="{{ $chartUnidadesFut }}" style="width:75%;margin:auto;">
         </center>
     @endif
     @if ($partidas)
@@ -411,8 +411,8 @@
                     <tr>
                         <th>Codigo partidas</th>
                         <th colspan="2">Compra ejecutada</th>
-                        <th colspan="2">Compra pendiente</th>
-                        <th colspan="2">Saldo</th>
+                        <th colspan="2">Monto ya verificado</th>
+                        <th colspan="2">Monto por revisar</th>
                         <th colspan="2">Monto total</th>
                     </tr>
                 </thead>
@@ -447,7 +447,7 @@
                             $pt4 = $total_total != 0 ? ($total * 100) / $total_total : 0;
                         @endphp
                         <tr>
-                            <td><b>{{ $item['partida'] }}</b></td>
+                            <td>{{ $item['partida'] }}</td>
                             <td>{{ $aprobado != 0 ? con_separador_comas($aprobado) . ' bs' : '-' }}</td>
                             <td>{{ $pt1 != 0 ? round($pt1, 2) . '%' : '-' }}</td>
                             <td>{{ $verificado != 0 ? con_separador_comas($verificado) . ' bs' : '-' }}</td>
@@ -480,7 +480,7 @@
         @if ($graficos)
             <br>
             <center>
-                {{-- <img src="{{ $chartPartidasFut }}" style="width:100%;margin:auto;"> --}}
+                <img src="{{ $chartPartidasFut }}" style="width:100%;margin:auto;">
             </center>
         @endif
     @endif
@@ -493,13 +493,17 @@
         <table class="my-table" style="width: 100%;margin:auto; font-size:10px;">
             <thead>
                 <tr>
-                    <th colspan="8">{{ $datos['por_fecha_mot']['fecha'] }}</th>
+                    <th colspan="10">{{ $datos['por_fecha_mot']['fecha'] }}</th>
                 </tr>
                 <tr>
-                    <th colspan="2">Aprobado</th>
-                    <th colspan="2">Verificado</th>
-                    <th colspan="2">Elaborado</th>
-                    <th colspan="2">Monto total</th>
+                    <th colspan="2" rowspan="2">Modificacion aprobada</th>
+                    <th colspan="2" rowspan="2">Monto ya verificado</th>
+                    <th colspan="4">Pendiente</th>
+                    <th colspan="2" rowspan="2">Monto total</th>
+                </tr>
+                <tr>
+                    <th colspan="2">Monto por revisar</th>
+                    <th colspan="2">Monto sin destinar</th>
                 </tr>
             </thead>
             @php
@@ -516,14 +520,14 @@
             @endphp
             <tbody>
                 <tr>
-                    <td>{{ con_separador_comas($pendiente) }} bs</td>
-                    <td>{{ round($ptotal3, 2) }}%</td>
-                    <td>{{ con_separador_comas($verificado) }} bs</td>
-                    <td>{{ round($ptotal2, 2) }}%</td>
                     <td>{{ con_separador_comas($aprobado) }} bs</td>
                     <td>{{ round($ptotal1, 2) }}%</td>
-                    {{-- <td>{{ con_separador_comas($saldo) }} bs</td>
-                    <td>{{ round($ptotal4, 2) }}%</td> --}}
+                    <td>{{ con_separador_comas($verificado) }} bs</td>
+                    <td>{{ round($ptotal2, 2) }}%</td>
+                    <td>{{ con_separador_comas($pendiente) }} bs</td>
+                    <td>{{ round($ptotal3, 2) }}%</td>
+                    <td>{{ con_separador_comas($saldo) }} bs</td>
+                    <td>{{ round($ptotal4, 2) }}%</td>
                     <td><b>{{ con_separador_comas($total) }} bs</b></td>
                     <td><b>{{ round($ptotal1 + $ptotal2 + $ptotal3, 0) }}%</b></td>
                 </tr>
@@ -533,7 +537,7 @@
     @if ($graficos)
         <br>
         <center>
-            {{-- <img src="{{ $chartFechaMot }}" style="width:75%;margin:auto;"> --}}
+            <img src="{{ $chartFechaMot }}" style="width:75%;margin:auto;">
         </center>
     @endif
     <br>
@@ -543,14 +547,18 @@
         <table class="my-table" style="font-size:8px;">
             <thead>
                 <tr>
-                    <th colspan="9">{{ $datos['por_fecha_mot']['fecha'] }}</th>
+                    <th colspan="11">{{ $datos['por_fecha_mot']['fecha'] }}</th>
                 </tr>
                 <tr>
-                    <th>Fuentes de financiamiento</th>
-                    <th colspan="2">Aprobado</th>
-                    <th colspan="2">Verificado</th>
-                    <th colspan="2">Elaborado</th>
-                    <th colspan="2">Monto total</th>
+                    <th rowspan="2">Fuentes de financiamiento</th>
+                    <th colspan="2" rowspan="2">Modificacion aprobada</th>
+                    <th colspan="2" rowspan="2">Monto ya verificado</th>
+                    <th colspan="4">Pendiente</th>
+                    <th colspan="2" rowspan="2">Monto total</th>
+                </tr>
+                <tr>
+                    <th colspan="2">Monto por revisar</th>
+                    <th colspan="2">Monto sin destinar</th>
                 </tr>
             </thead>
             @php
@@ -589,14 +597,14 @@
                     @endphp
                     <tr>
                         <td>{{ $item['descripcion'] }}</td>
-                        <td>{{ $pendiente != 0 ? con_separador_comas($pendiente) . ' bs' : '-' }}</td>
-                        <td>{{ $pt3 != 0 ? round($pt3, 2) . '%' : '-' }}</td>
-                        <td>{{ $verificado != 0 ? con_separador_comas($verificado) . ' bs' : '-' }}</td>
-                        <td>{{ $pt2 != 0 ? round($pt2, 2) . '%' : '-' }}</td>
                         <td>{{ $aprobado != 0 ? con_separador_comas($aprobado) . ' bs' : '-' }}</td>
                         <td>{{ $pt1 != 0 ? round($pt1, 2) . '%' : '-' }}</td>
-                        {{-- <td>{{ $saldo != 0 ? con_separador_comas($saldo) . ' bs' : '-' }}</td>
-                        <td>{{ $pt4 != 0 ? round($pt4, 2) . '%' : '-' }}</td> --}}
+                        <td>{{ $verificado != 0 ? con_separador_comas($verificado) . ' bs' : '-' }}</td>
+                        <td>{{ $pt2 != 0 ? round($pt2, 2) . '%' : '-' }}</td>
+                        <td>{{ $pendiente != 0 ? con_separador_comas($pendiente) . ' bs' : '-' }}</td>
+                        <td>{{ $pt3 != 0 ? round($pt3, 2) . '%' : '-' }}</td>
+                        <td>{{ $saldo != 0 ? con_separador_comas($saldo) . ' bs' : '-' }}</td>
+                        <td>{{ $pt4 != 0 ? round($pt4, 2) . '%' : '-' }}</td>
                         <td><b>{{ con_separador_comas($total) }} bs</b></td>
                         <td><b>{{ round($pt5, 2) }}%</b></td>
                     </tr>
@@ -609,14 +617,14 @@
                 @endphp
                 <tr>
                     <td><b>TOTAL</b></td>
-                    <td><b>{{ con_separador_comas($total3) }} bs</b></td>
-                    <td><b>{{ round($ptotal3, 2) }}%</b></td>
-                    <td><b>{{ con_separador_comas($total2) }} bs</b></td>
-                    <td><b>{{ round($ptotal2, 2) }}%</b></td>
                     <td><b>{{ con_separador_comas($total1) }} bs</b></td>
                     <td><b>{{ round($ptotal1, 2) }}%</b></td>
-                    {{-- <td><b>{{ con_separador_comas($total4) }} bs</b></td>
-                    <td><b>{{ round($ptotal4, 2) }}%</b></td> --}}
+                    <td><b>{{ con_separador_comas($total2) }} bs</b></td>
+                    <td><b>{{ round($ptotal2, 2) }}%</b></td>
+                    <td><b>{{ con_separador_comas($total3) }} bs</b></td>
+                    <td><b>{{ round($ptotal3, 2) }}%</b></td>
+                    <td><b>{{ con_separador_comas($total4) }} bs</b></td>
+                    <td><b>{{ round($ptotal4, 2) }}%</b></td>
                     <td><b>{{ con_separador_comas($total5) }} bs</b></td>
                     <td><b>{{ round($ptotal1 + $ptotal2 + $ptotal3, 0) }}%</b></td>
                 </tr>
@@ -626,7 +634,7 @@
     @if ($graficos)
         <br>
         <center>
-            {{-- <img src="{{ $chartFinanMot }}" style="width:75%;margin:auto;"> --}}
+            <img src="{{ $chartFinanMot }}" style="width:75%;margin:auto;">
         </center>
     @endif
     <br>
@@ -638,14 +646,18 @@
         <table class="my-table" style="font-size:8px;">
             <thead>
                 <tr>
-                    <th colspan="9">{{ $datos['por_fecha_mot']['fecha'] }}</th>
+                    <th colspan="11">{{ $datos['por_fecha_mot']['fecha'] }}</th>
                 </tr>
                 <tr>
-                    <th>Unidad carrera area</th>
-                    <th colspan="2">Aprobado</th>
-                    <th colspan="2">Verificado</th>
-                    <th colspan="2">Elaborado</th>
-                    <th colspan="2">Monto total</th>
+                    <th rowspan="2">Unidad carrera area</th>
+                    <th colspan="2" rowspan="2">Modificacion aprobada</th>
+                    <th colspan="2" rowspan="2">Monto ya verificado</th>
+                    <th colspan="4">Pendiente</th>
+                    <th colspan="2" rowspan="2">Monto total</th>
+                </tr>
+                <tr>
+                    <th colspan="2">Monto por revisar</th>
+                    <th colspan="2">Monto sin destinar</th>
                 </tr>
             </thead>
             @php
@@ -684,14 +696,14 @@
                     @endphp
                     <tr>
                         <td>{{ $item['unidad'] }}</td>
-                        <td>{{ $pendiente != 0 ? con_separador_comas($pendiente) . ' bs' : '-' }}</td>
-                        <td>{{ $pt3 != 0 ? round($pt3, 2) . '%' : '-' }}</td>
-                        <td>{{ $verificado != 0 ? con_separador_comas($verificado) . ' bs' : '-' }}</td>
-                        <td>{{ $pt2 != 0 ? round($pt2, 2) . '%' : '-' }}</td>
                         <td>{{ $aprobado != 0 ? con_separador_comas($aprobado) . ' bs' : '-' }}</td>
                         <td>{{ $pt1 != 0 ? round($pt1, 2) . '%' : '-' }}</td>
-                        {{-- <td>{{ $saldo != 0 ? con_separador_comas($saldo) . ' bs' : '-' }}</td>
-                        <td>{{ $pt4 != 0 ? round($pt4, 2) . '%' : '-' }}</td> --}}
+                        <td>{{ $verificado != 0 ? con_separador_comas($verificado) . ' bs' : '-' }}</td>
+                        <td>{{ $pt2 != 0 ? round($pt2, 2) . '%' : '-' }}</td>
+                        <td>{{ $pendiente != 0 ? con_separador_comas($pendiente) . ' bs' : '-' }}</td>
+                        <td>{{ $pt3 != 0 ? round($pt3, 2) . '%' : '-' }}</td>
+                        <td>{{ $saldo != 0 ? con_separador_comas($saldo) . ' bs' : '-' }}</td>
+                        <td>{{ $pt4 != 0 ? round($pt4, 2) . '%' : '-' }}</td>
                         <td><b>{{ con_separador_comas($total) }} bs</b></td>
                         <td><b>{{ round($pt5, 2) }}%</b></td>
                     </tr>
@@ -704,14 +716,14 @@
                 @endphp
                 <tr>
                     <td><b>TOTAL</b></td>
-                    <td><b>{{ con_separador_comas($total3) }} bs</b></td>
-                    <td><b>{{ round($ptotal3, 2) }}%</b></td>
-                    <td><b>{{ con_separador_comas($total2) }} bs</b></td>
-                    <td><b>{{ round($ptotal2, 2) }}%</b></td>
                     <td><b>{{ con_separador_comas($total1) }} bs</b></td>
                     <td><b>{{ round($ptotal1, 2) }}%</b></td>
-                    {{-- <td><b>{{ con_separador_comas($total4) }} bs</b></td>
-                    <td><b>{{ round($ptotal4, 2) }}%</b></td> --}}
+                    <td><b>{{ con_separador_comas($total2) }} bs</b></td>
+                    <td><b>{{ round($ptotal2, 2) }}%</b></td>
+                    <td><b>{{ con_separador_comas($total3) }} bs</b></td>
+                    <td><b>{{ round($ptotal3, 2) }}%</b></td>
+                    <td><b>{{ con_separador_comas($total4) }} bs</b></td>
+                    <td><b>{{ round($ptotal4, 2) }}%</b></td>
                     <td><b>{{ con_separador_comas($total5) }} bs</b></td>
                     <td><b>{{ round($ptotal1 + $ptotal2 + $ptotal3, 0) }}%</b></td>
                 </tr>
@@ -721,7 +733,7 @@
     @if ($graficos)
         <br>
         <center>
-            {{-- <img src="{{ $chartUnidadesMot }}" style="width:75%;margin:auto;"> --}}
+            <img src="{{ $chartUnidadesMot }}" style="width:75%;margin:auto;">
         </center>
     @endif
     @if ($partidas)
@@ -736,9 +748,9 @@
                     </tr>
                     <tr>
                         <th>Codigo partidas</th>
-                        <th colspan="2">Aprobado</th>
-                        <th colspan="2">Verificado</th>
-                        <th colspan="2">Elaborado</th>
+                        <th colspan="2">Modificacion aprobada</th>
+                        <th colspan="2">Monto ya verificado</th>
+                        <th colspan="2">Monto por revisar</th>
                         <th colspan="2">Monto total</th>
                     </tr>
                 </thead>
@@ -774,12 +786,12 @@
                         @endphp
                         <tr>
                             <td>{{ $item['partida'] }}</td>
-                            <td>{{ $pendiente != 0 ? con_separador_comas($pendiente) . ' bs' : '-' }}</td>
-                            <td>{{ $pt3 != 0 ? round($pt3, 2) . '%' : '-' }}</td>
-                            <td>{{ $verificado != 0 ? con_separador_comas($verificado) . ' bs' : '-' }}</td>
-                            <td>{{ $pt2 != 0 ? round($pt2, 2) . '%' : '-' }}</td>
                             <td>{{ $aprobado != 0 ? con_separador_comas($aprobado) . ' bs' : '-' }}</td>
                             <td>{{ $pt1 != 0 ? round($pt1, 2) . '%' : '-' }}</td>
+                            <td>{{ $verificado != 0 ? con_separador_comas($verificado) . ' bs' : '-' }}</td>
+                            <td>{{ $pt2 != 0 ? round($pt2, 2) . '%' : '-' }}</td>
+                            <td>{{ $pendiente != 0 ? con_separador_comas($pendiente) . ' bs' : '-' }}</td>
+                            <td>{{ $pt3 != 0 ? round($pt3, 2) . '%' : '-' }}</td>
                             <td><b>{{ con_separador_comas($total) }} bs</b></td>
                             <td><b>{{ round($pt4, 2) }}%</b></td>
                         </tr>
@@ -791,24 +803,24 @@
                     @endphp
                     <tr>
                         <td><b>TOTAL</b></td>
-                        <td><b>{{ con_separador_comas($total31) }} bs</b></td>
-                        <td><b>{{ round($ptotal31, 2) }}%</b></td>
-                        <td><b>{{ con_separador_comas($total21) }} bs</b></td>
-                        <td><b>{{ round($ptotal21, 2) }}%</b></td>
                         <td><b>{{ con_separador_comas($total11) }} bs</b></td>
                         <td><b>{{ round($ptotal11, 2) }}%</b></td>
+                        <td><b>{{ con_separador_comas($total21) }} bs</b></td>
+                        <td><b>{{ round($ptotal21, 2) }}%</b></td>
+                        <td><b>{{ con_separador_comas($total31) }} bs</b></td>
+                        <td><b>{{ round($ptotal31, 2) }}%</b></td>
                         <td><b>{{ con_separador_comas($total41) }} bs</b></td>
                         <td><b>{{ round($ptotal11 + $ptotal21 + $ptotal31, 0) }}%</b></td>
                     </tr>
                 </tbody>
             </table>
         </div>
-        {{-- @if ($graficos)
+        @if ($graficos)
             <br>
             <center>
                 <img src="{{ $chartPartidasMotDE }}" style="width:100%;margin:auto;">
             </center>
-        @endif --}}
+        @endif
         <br>
         <center><b style="font-size: 14px">Partidas de destino</b></center>
         <div class="table-responsive">
@@ -819,9 +831,9 @@
                     </tr>
                     <tr>
                         <th>Codigo partidas</th>
-                        <th colspan="2">Aprobados</th>
-                        <th colspan="2">Verificado</th>
-                        <th colspan="2">Elaborado</th>
+                        <th colspan="2">Modificacion aprobada</th>
+                        <th colspan="2">Monto ya verificado</th>
+                        <th colspan="2">Monto por revisar</th>
                         <th colspan="2">Monto total</th>
                     </tr>
                 </thead>
@@ -857,12 +869,12 @@
                         @endphp
                         <tr>
                             <td>{{ $item['partida'] }}</td>
-                            <td>{{ $pendiente != 0 ? con_separador_comas($pendiente) . ' bs' : '-' }}</td>
-                            <td>{{ $pt3 != 0 ? round($pt3, 2) . '%' : '-' }}</td>
-                            <td>{{ $verificado != 0 ? con_separador_comas($verificado) . ' bs' : '-' }}</td>
-                            <td>{{ $pt2 != 0 ? round($pt2, 2) . '%' : '-' }}</td>
                             <td>{{ $aprobado != 0 ? con_separador_comas($aprobado) . ' bs' : '-' }}</td>
                             <td>{{ $pt1 != 0 ? round($pt1, 2) . '%' : '-' }}</td>
+                            <td>{{ $verificado != 0 ? con_separador_comas($verificado) . ' bs' : '-' }}</td>
+                            <td>{{ $pt2 != 0 ? round($pt2, 2) . '%' : '-' }}</td>
+                            <td>{{ $pendiente != 0 ? con_separador_comas($pendiente) . ' bs' : '-' }}</td>
+                            <td>{{ $pt3 != 0 ? round($pt3, 2) . '%' : '-' }}</td>
                             <td><b>{{ con_separador_comas($total) }} bs</b></td>
                             <td><b>{{ round($pt4, 2) }}%</b></td>
                         </tr>
@@ -874,24 +886,24 @@
                     @endphp
                     <tr>
                         <td><b>TOTAL</b></td>
-                        <td><b>{{ con_separador_comas($total32) }} bs</b></td>
-                        <td><b>{{ round($ptotal32, 2) }}%</b></td>
-                        <td><b>{{ con_separador_comas($total22) }} bs</b></td>
-                        <td><b>{{ round($ptotal22, 2) }}%</b></td>
                         <td><b>{{ con_separador_comas($total12) }} bs</b></td>
                         <td><b>{{ round($ptotal12, 2) }}%</b></td>
+                        <td><b>{{ con_separador_comas($total22) }} bs</b></td>
+                        <td><b>{{ round($ptotal22, 2) }}%</b></td>
+                        <td><b>{{ con_separador_comas($total32) }} bs</b></td>
+                        <td><b>{{ round($ptotal32, 2) }}%</b></td>
                         <td><b>{{ con_separador_comas($total42) }} bs</b></td>
                         <td><b>{{ round($ptotal12 + $ptotal22 + $ptotal32, 0) }}%</b></td>
                     </tr>
                 </tbody>
             </table>
         </div>
-        {{-- @if ($graficos)
+        @if ($graficos)
             <br>
             <center>
                 <img src="{{ $chartPartidasMotA }}" style="width:100%;margin:auto;">
             </center>
-        @endif --}}
+        @endif
         <br>
         <center><b style="font-size: 14px">Resumen</b></center>
         <div class="table-responsive">
@@ -902,9 +914,9 @@
                     </tr>
                     <tr>
                         <th></th>
-                        <th colspan="2">Aprobado</th>
-                        <th colspan="2">Verificado</th>
-                        <th colspan="2">Elaborado</th>
+                        <th colspan="2">Modificacion aprobada</th>
+                        <th colspan="2">Monto ya verificado</th>
+                        <th colspan="2">Monto por revisar</th>
                         <th colspan="2">Monto total</th>
                     </tr>
                 </thead>
@@ -917,12 +929,12 @@
                     @endphp
                     <tr>
                         <td>Partidas origen</td>
-                        <td>{{ $total31 != 0 ? con_separador_comas($total31) . ' bs' : '-' }}</td>
-                        <td>{{ $ptotal3 != 0 ? round($ptotal3, 2) . '%' : '-' }}</td>
-                        <td>{{ $total21 != 0 ? con_separador_comas($total21) . ' bs' : '-' }}</td>
-                        <td>{{ $ptotal2 != 0 ? round($ptotal2, 2) . '%' : '-' }}</td>
                         <td>{{ $total11 != 0 ? con_separador_comas($total11) . ' bs' : '-' }}</td>
                         <td>{{ $ptotal1 != 0 ? round($ptotal1, 2) . '%' : '-' }}</td>
+                        <td>{{ $total21 != 0 ? con_separador_comas($total21) . ' bs' : '-' }}</td>
+                        <td>{{ $ptotal2 != 0 ? round($ptotal2, 2) . '%' : '-' }}</td>
+                        <td>{{ $total31 != 0 ? con_separador_comas($total31) . ' bs' : '-' }}</td>
+                        <td>{{ $ptotal3 != 0 ? round($ptotal3, 2) . '%' : '-' }}</td>
                         <td><b>{{ con_separador_comas($total41) }} bs</b></td>
                         <td><b>{{ round($ptotal4, 2) }}%</b></td>
                     </tr>
@@ -934,12 +946,12 @@
                     @endphp
                     <tr>
                         <td>Partidas destino</td>
-                        <td>{{ $total32 != 0 ? con_separador_comas($total32) . ' bs' : '-' }}</td>
-                        <td>{{ $p3 != 0 ? round($p3, 2) . '%' : '-' }}</td>
-                        <td>{{ $total22 != 0 ? con_separador_comas($total22) . ' bs' : '-' }}</td>
-                        <td>{{ $p2 != 0 ? round($p2, 2) . '%' : '-' }}</td>
                         <td>{{ $total12 != 0 ? con_separador_comas($total12) . ' bs' : '-' }}</td>
                         <td>{{ $p1 != 0 ? round($p1, 2) . '%' : '-' }}</td>
+                        <td>{{ $total22 != 0 ? con_separador_comas($total22) . ' bs' : '-' }}</td>
+                        <td>{{ $p2 != 0 ? round($p2, 2) . '%' : '-' }}</td>
+                        <td>{{ $total32 != 0 ? con_separador_comas($total32) . ' bs' : '-' }}</td>
+                        <td>{{ $p3 != 0 ? round($p3, 2) . '%' : '-' }}</td>
                         <td><b>{{ con_separador_comas($total42) }} bs</b></td>
                         <td><b>{{ round($p4, 2) }}%</b></td>
                     </tr>
@@ -951,12 +963,12 @@
                     @endphp
                     <tr>
                         <td><b>SALDO</b></td>
-                        <td><b>{{ con_separador_comas($total31 - $total32) }}bs</b></td>
-                        <td><b>{{ round($p32, 2) }}%</b></td>
-                        <td><b>{{ con_separador_comas($total21 - $total22) }}bs</b></td>
-                        <td><b>{{ round($p22, 2) }}%</b></td>
                         <td><b>{{ con_separador_comas($total11 - $total12) }}bs</b></td>
                         <td><b>{{ round($p12, 2) }}%</b></td>
+                        <td><b>{{ con_separador_comas($total21 - $total22) }}bs</b></td>
+                        <td><b>{{ round($p22, 2) }}%</b></td>
+                        <td><b>{{ con_separador_comas($total31 - $total32) }}bs</b></td>
+                        <td><b>{{ round($p32, 2) }}%</b></td>
                         <td><b><b>{{ con_separador_comas($total41 - $total42) }} bs</b></b></td>
                         <td><b>{{ round($p42, 2) }}%</b></td>
                     </tr>

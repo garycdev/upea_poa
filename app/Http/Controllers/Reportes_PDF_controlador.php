@@ -907,23 +907,6 @@ class Reportes_PDF_controlador extends Controller
                     'total_aprobado_sum'   => $item->total_aprobado_sum,
                 ];
             });
-
-            $base43mot              = clone $baseMotDe;
-            $por_fecha_partidas_mot = $base43mot->groupBy('mm.partida_codigo', 'mpp.accion')
-                ->select(
-                    'mm.partida_codigo',
-                    DB::raw('SUM(mm.partida_monto) as total_monto_sum'),
-                    'mpp.accion'
-                )
-                ->orderBy('mot.id_mot')->get();
-
-            $porFechaPartidasMot = $por_fecha_partidas_mot->map(function ($item) {
-                return [
-                    'partida'         => $item->partida_codigo,
-                    'total_monto_sum' => $item->total_monto_sum,
-                    'accion'          => $item->accion,
-                ];
-            });
         }
 
         // Resultados
@@ -938,7 +921,6 @@ class Reportes_PDF_controlador extends Controller
             'por_fecha_unidad_mot'         => $porFechaUnidadMot,
             'por_fecha_partidas_mot_de'    => $porFechaPartidasMotDE,
             'por_fecha_partidas_mot_a'     => $porFechaPartidasMotA,
-            'por_fecha_partidas_mot'       => $porFechaPartidasMot,
         ];
 
         // Resultados graficos (si graficos esta checked)
@@ -951,21 +933,21 @@ class Reportes_PDF_controlador extends Controller
                 'data'    => [
                     'labels'   => [$porFechaFut['fecha']],
                     'datasets' => [[
-                        'label'           => 'Compras ejecutadas',
-                        'backgroundColor' => 'rgba(40, 167, 69, 1)',
-                        'data'            => [$porFechaFut['total_aprobado_sum']],
-                    ], [
-                        'label'           => 'Compras pendientes',
-                        'backgroundColor' => 'rgba(255,193,7, 1)',
-                        'data'            => [$porFechaFut['total_verificado_sum']],
-                    ], [
-                        'label'           => 'Saldo',
-                        'backgroundColor' => 'rgba(220, 53, 69, 1)',
-                        'data'            => [$porFechaFut['total_pendiente_sum']],
-                    ], [
                         'label'           => 'Total',
                         'backgroundColor' => 'rgba(54, 162, 235, 1)',
                         'data'            => [$porFechaFut['total_monto_sum']],
+                    ], [
+                        'label'           => 'Ejecutado',
+                        'backgroundColor' => 'rgba(40, 167, 69, 1)',
+                        'data'            => [$porFechaFut['total_aprobado_sum']],
+                    ], [
+                        'label'           => 'Verificado',
+                        'backgroundColor' => 'rgba(255,193,7, 1)',
+                        'data'            => [$porFechaFut['total_verificado_sum']],
+                    ], [
+                        'label'           => 'Elaborado',
+                        'backgroundColor' => 'rgba(220, 53, 69, 1)',
+                        'data'            => [$porFechaFut['total_pendiente_sum']],
                     ]],
                 ],
                 'options' => [
@@ -989,21 +971,21 @@ class Reportes_PDF_controlador extends Controller
                 'data' => [
                     'labels'   => $array_fuentes->toArray(),
                     'datasets' => [[
-                        'label'           => 'Compras ejecutadas',
-                        'backgroundColor' => 'rgba(40, 167, 69, 1)',
-                        'data'            => $array_aprobado->toArray(),
-                    ], [
-                        'label'           => 'Compras pendientes',
-                        'backgroundColor' => 'rgba(255,193,7, 1)',
-                        'data'            => $array_verificado->toArray(),
-                    ], [
-                        'label'           => 'Saldo',
-                        'backgroundColor' => 'rgba(220, 53, 69, 1)',
-                        'data'            => $array_pendiente->toArray(),
-                    ], [
                         'label'           => 'Total',
                         'backgroundColor' => 'rgba(54, 162, 235, 1)',
                         'data'            => $array_monto->toArray(),
+                    ], [
+                        'label'           => 'Ejecutado',
+                        'backgroundColor' => 'rgba(40, 167, 69, 1)',
+                        'data'            => $array_aprobado->toArray(),
+                    ], [
+                        'label'           => 'Verificado',
+                        'backgroundColor' => 'rgba(255,193,7, 1)',
+                        'data'            => $array_verificado->toArray(),
+                    ], [
+                        'label'           => 'Elaborado',
+                        'backgroundColor' => 'rgba(220, 53, 69, 1)',
+                        'data'            => $array_pendiente->toArray(),
                     ]],
                 ],
             ];
@@ -1022,21 +1004,21 @@ class Reportes_PDF_controlador extends Controller
                 'data' => [
                     'labels'   => $array_unidades->toArray(),
                     'datasets' => [[
-                        'label'           => 'Compras ejecutadas',
-                        'backgroundColor' => 'rgba(40, 167, 69, 1)',
-                        'data'            => $array_aprobado->toArray(),
-                    ], [
-                        'label'           => 'Compras pendientes',
-                        'backgroundColor' => 'rgba(255,193,7, 1)',
-                        'data'            => $array_verificado->toArray(),
-                    ], [
-                        'label'           => 'Saldo',
-                        'backgroundColor' => 'rgba(220, 53, 69, 1)',
-                        'data'            => $array_pendiente->toArray(),
-                    ], [
                         'label'           => 'Total',
                         'backgroundColor' => 'rgba(54, 162, 235, 1)',
                         'data'            => $array_monto->toArray(),
+                    ], [
+                        'label'           => 'Ejecutado',
+                        'backgroundColor' => 'rgba(40, 167, 69, 1)',
+                        'data'            => $array_aprobado->toArray(),
+                    ], [
+                        'label'           => 'Verificado',
+                        'backgroundColor' => 'rgba(255,193,7, 1)',
+                        'data'            => $array_verificado->toArray(),
+                    ], [
+                        'label'           => 'Elaborado',
+                        'backgroundColor' => 'rgba(220, 53, 69, 1)',
+                        'data'            => $array_pendiente->toArray(),
                     ]],
                 ],
             ];
@@ -1056,21 +1038,21 @@ class Reportes_PDF_controlador extends Controller
                     'data' => [
                         'labels'   => $array_partidas->toArray(),
                         'datasets' => [[
-                            'label'           => 'Compras ejecutadas',
-                            'backgroundColor' => 'rgba(40, 167, 69, 1)',
-                            'data'            => $array_aprobado->toArray(),
-                        ], [
-                            'label'           => 'Compras pendientes',
-                            'backgroundColor' => 'rgba(255,193,7, 1)',
-                            'data'            => $array_verificado->toArray(),
-                        ], [
-                            'label'           => 'Saldo',
-                            'backgroundColor' => 'rgba(220, 53, 69, 1)',
-                            'data'            => $array_pendiente->toArray(),
-                        ], [
                             'label'           => 'Total',
                             'backgroundColor' => 'rgba(54, 162, 235, 1)',
                             'data'            => $array_monto->toArray(),
+                        ], [
+                            'label'           => 'Ejecutado',
+                            'backgroundColor' => 'rgba(40, 167, 69, 1)',
+                            'data'            => $array_aprobado->toArray(),
+                        ], [
+                            'label'           => 'Verificado',
+                            'backgroundColor' => 'rgba(255,193,7, 1)',
+                            'data'            => $array_verificado->toArray(),
+                        ], [
+                            'label'           => 'Elaborado',
+                            'backgroundColor' => 'rgba(220, 53, 69, 1)',
+                            'data'            => $array_pendiente->toArray(),
                         ]],
                     ],
                 ];
@@ -1086,20 +1068,23 @@ class Reportes_PDF_controlador extends Controller
                 'type'    => 'bar',
                 'data'    => [
                     'labels'   => [$porFechaMot['fecha']],
-                    'datasets' => [
-                        [
-                            'label'           => 'Elaborado',
-                            'backgroundColor' => 'rgba(220, 53, 69, 1)',
-                            'data'            => [$porFechaMot['total_pendiente_sum']],
-                        ], [
-                            'label'           => 'Verificado',
-                            'backgroundColor' => 'rgba(255,193,7, 1)',
-                            'data'            => [$porFechaMot['total_verificado_sum']],
-                        ], [
-                            'label'           => 'Aprobado',
-                            'backgroundColor' => 'rgba(40, 167, 69, 1)',
-                            'data'            => [$porFechaMot['total_aprobado_sum']],
-                        ]],
+                    'datasets' => [[
+                        'label'           => 'Total',
+                        'backgroundColor' => 'rgba(54, 162, 235, 1)',
+                        'data'            => [$porFechaMot['total_monto_sum']],
+                    ], [
+                        'label'           => 'Aprobado',
+                        'backgroundColor' => 'rgba(40, 167, 69, 1)',
+                        'data'            => [$porFechaMot['total_aprobado_sum']],
+                    ], [
+                        'label'           => 'Verificado',
+                        'backgroundColor' => 'rgba(255,193,7, 1)',
+                        'data'            => [$porFechaMot['total_verificado_sum']],
+                    ], [
+                        'label'           => 'Elaborado',
+                        'backgroundColor' => 'rgba(220, 53, 69, 1)',
+                        'data'            => [$porFechaMot['total_pendiente_sum']],
+                    ]],
                 ],
                 'options' => [
                     'title' => [
@@ -1121,21 +1106,23 @@ class Reportes_PDF_controlador extends Controller
                 'type' => 'bar',
                 'data' => [
                     'labels'   => $array_fuentes->toArray(),
-                    'datasets' => [
-                        [
-                            'label'           => 'Elaborado',
-                            'backgroundColor' => 'rgba(220, 53, 69, 1)',
-                            'data'            => $array_pendiente->toArray(),
-                        ],
-                        [
-                            'label'           => 'Verificado',
-                            'backgroundColor' => 'rgba(255,193,7, 1)',
-                            'data'            => $array_verificado->toArray(),
-                        ], [
-                            'label'           => 'Aprobado',
-                            'backgroundColor' => 'rgba(40, 167, 69, 1)',
-                            'data'            => $array_aprobado->toArray(),
-                        ]],
+                    'datasets' => [[
+                        'label'           => 'Total',
+                        'backgroundColor' => 'rgba(54, 162, 235, 1)',
+                        'data'            => $array_monto->toArray(),
+                    ], [
+                        'label'           => 'Aprobado',
+                        'backgroundColor' => 'rgba(40, 167, 69, 1)',
+                        'data'            => $array_aprobado->toArray(),
+                    ], [
+                        'label'           => 'Verificado',
+                        'backgroundColor' => 'rgba(255,193,7, 1)',
+                        'data'            => $array_verificado->toArray(),
+                    ], [
+                        'label'           => 'Elaborado',
+                        'backgroundColor' => 'rgba(220, 53, 69, 1)',
+                        'data'            => $array_pendiente->toArray(),
+                    ]],
                 ],
             ];
 
@@ -1152,20 +1139,23 @@ class Reportes_PDF_controlador extends Controller
                 'type' => count($porFechaUnidadMot) > 1 ? 'horizontalBar' : 'bar',
                 'data' => [
                     'labels'   => $array_unidades->toArray(),
-                    'datasets' => [
-                        [
-                            'label'           => 'Elaborado',
-                            'backgroundColor' => 'rgba(220, 53, 69, 1)',
-                            'data'            => $array_pendiente->toArray(),
-                        ], [
-                            'label'           => 'Verificado',
-                            'backgroundColor' => 'rgba(255,193,7, 1)',
-                            'data'            => $array_verificado->toArray(),
-                        ], [
-                            'label'           => 'Aprobado',
-                            'backgroundColor' => 'rgba(40, 167, 69, 1)',
-                            'data'            => $array_aprobado->toArray(),
-                        ]],
+                    'datasets' => [[
+                        'label'           => 'Total',
+                        'backgroundColor' => 'rgba(54, 162, 235, 1)',
+                        'data'            => $array_monto->toArray(),
+                    ], [
+                        'label'           => 'Aprobado',
+                        'backgroundColor' => 'rgba(40, 167, 69, 1)',
+                        'data'            => $array_aprobado->toArray(),
+                    ], [
+                        'label'           => 'Verificado',
+                        'backgroundColor' => 'rgba(255,193,7, 1)',
+                        'data'            => $array_verificado->toArray(),
+                    ], [
+                        'label'           => 'Elaborado',
+                        'backgroundColor' => 'rgba(220, 53, 69, 1)',
+                        'data'            => $array_pendiente->toArray(),
+                    ]],
                 ],
             ];
 
@@ -1173,16 +1163,11 @@ class Reportes_PDF_controlador extends Controller
             $data['chartUnidadesMot'] = $chartUnidades;
 
             if ($partidas) {
-                $array_partidas = collect($porFechaPartidasMot)->pluck('partida');
-                $array_monto    = collect($porFechaPartidasMot)->pluck('total_monto_sum');
-                $array_acciones = collect();
-                foreach ($porFechaPartidasMot as $value) {
-                    if ($value['accion'] == 'DE') {
-                        $array_acciones->push('rgba(220, 53, 69, 1)');
-                    } else {
-                        $array_acciones->push('rgba(40, 167, 69, 1)');
-                    }
-                }
+                $array_partidas   = collect($porFechaPartidasMotDE)->pluck('partida');
+                $array_monto      = collect($porFechaPartidasMotDE)->pluck('total_monto_sum');
+                $array_aprobado   = collect($porFechaPartidasMotDE)->pluck('total_aprobado_sum');
+                $array_verificado = collect($porFechaPartidasMotDE)->pluck('total_verificado_sum');
+                $array_pendiente  = collect($porFechaPartidasMotDE)->pluck('total_pendiente_sum');
 
                 $chartConfig = [
                     'type' => 'bar',
@@ -1190,8 +1175,118 @@ class Reportes_PDF_controlador extends Controller
                         'labels'   => $array_partidas->toArray(),
                         'datasets' => [[
                             'label'           => 'Total',
-                            'backgroundColor' => $array_acciones->toArray(),
+                            'backgroundColor' => 'rgba(54, 162, 235, 1)',
                             'data'            => $array_monto->toArray(),
+                        ], [
+                            'label'           => 'Aprobado',
+                            'backgroundColor' => 'rgba(40, 167, 69, 1)',
+                            'data'            => $array_aprobado->toArray(),
+                        ], [
+                            'label'           => 'Verificado',
+                            'backgroundColor' => 'rgba(255,193,7, 1)',
+                            'data'            => $array_verificado->toArray(),
+                        ], [
+                            'label'           => 'Elaborado',
+                            'backgroundColor' => 'rgba(220, 53, 69, 1)',
+                            'data'            => $array_pendiente->toArray(),
+                        ]],
+                    ],
+                ];
+
+                $chart                      = "https://quickchart.io/chart?w=750&c=" . urlencode(json_encode($chartConfig));
+                $data['chartPartidasMotDE'] = $chart;
+
+                $array_partidas   = collect($porFechaPartidasMotA)->pluck('partida');
+                $array_monto      = collect($porFechaPartidasMotA)->pluck('total_monto_sum');
+                $array_aprobado   = collect($porFechaPartidasMotA)->pluck('total_aprobado_sum');
+                $array_verificado = collect($porFechaPartidasMotA)->pluck('total_verificado_sum');
+                $array_pendiente  = collect($porFechaPartidasMotA)->pluck('total_pendiente_sum');
+
+                $chartConfig = [
+                    'type' => 'bar',
+                    'data' => [
+                        'labels'   => $array_partidas->toArray(),
+                        'datasets' => [[
+                            'label'           => 'Total',
+                            'backgroundColor' => 'rgba(54, 162, 235, 1)',
+                            'data'            => $array_monto->toArray(),
+                        ], [
+                            'label'           => 'Aprobado',
+                            'backgroundColor' => 'rgba(40, 167, 69, 1)',
+                            'data'            => $array_aprobado->toArray(),
+                        ], [
+                            'label'           => 'Verificado',
+                            'backgroundColor' => 'rgba(255,193,7, 1)',
+                            'data'            => $array_verificado->toArray(),
+                        ], [
+                            'label'           => 'Elaborado',
+                            'backgroundColor' => 'rgba(220, 53, 69, 1)',
+                            'data'            => $array_pendiente->toArray(),
+                        ]],
+                    ],
+                ];
+
+                $chart                     = "https://quickchart.io/chart?w=750&c=" . urlencode(json_encode($chartConfig));
+                $data['chartPartidasMotA'] = $chart;
+
+                $array_titulo = collect([
+                    'Partidas origen',
+                    'Partidas destino',
+                    'Saldo',
+                ]);
+
+                $total_DE    = $porFechaPartidasMotDE->sum('total_monto_sum');
+                $total_A     = $porFechaPartidasMotA->sum('total_monto_sum');
+                $array_total = collect([
+                    $total_DE,
+                    $total_A,
+                    $total_DE - $total_A,
+                ]);
+
+                $aprobado_DE    = $porFechaPartidasMotDE->sum('total_aprobado_sum');
+                $aprobado_A     = $porFechaPartidasMotA->sum('total_aprobado_sum');
+                $array_aprobado = collect([
+                    $aprobado_DE,
+                    $aprobado_A,
+                    $aprobado_DE - $aprobado_A,
+                ]);
+
+                $verificado_DE    = $porFechaPartidasMotDE->sum('total_verificado_sum');
+                $verificado_A     = $porFechaPartidasMotA->sum('total_verificado_sum');
+                $array_verificado = collect([
+                    $verificado_DE,
+                    $verificado_A,
+                    $verificado_DE - $verificado_A,
+                ]);
+
+                $pendiente_DE    = $porFechaPartidasMotDE->sum('total_pendiente_sum');
+                $pendiente_A     = $porFechaPartidasMotA->sum('total_pendiente_sum');
+                $array_pendiente = collect([
+                    $pendiente_DE,
+                    $pendiente_A,
+                    $pendiente_DE - $pendiente_A,
+                ]);
+
+                $chartConfig = [
+                    'type' => 'bar',
+                    'data' => [
+                        'labels'   => $array_titulo->toArray(),
+                        'datasets' => [[
+                            'label'           => 'Total',
+                            'backgroundColor' => 'rgba(54, 162, 235, 1)',
+                            'data'            => $array_total->toArray(),
+                        ], [
+                            'label'           => 'Aprobado',
+                            'backgroundColor' => 'rgba(40, 167, 69, 1)',
+                            'data'            => $array_aprobado->toArray(),
+                        ], [
+                            'label'           => 'Verificado',
+                            'backgroundColor' => 'rgba(255,193,7, 1)',
+                            'data'            => $array_verificado->toArray(),
+                        ], [
+                            'label'           => 'Elaborado',
+                            'backgroundColor' => 'rgba(220, 53, 69, 1)',
+                            'data'            => $array_pendiente->toArray(),
                         ]],
                     ],
                 ];
