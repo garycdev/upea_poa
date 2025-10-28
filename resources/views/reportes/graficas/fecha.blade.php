@@ -314,89 +314,91 @@
     @endif
     <br>
     {{-- @dd($datos['por_fecha_unidad']) --}}
-    <br>
-    <center><b>GASTOS POR UNIDAD/CARRERA</b></center>
-    <br>
-    <div class="table-responsive">
-        <table class="my-table" style="font-size:8px;">
-            <thead>
-                <tr>
-                    <th colspan="9">{{ $datos['por_fecha_fut']['fecha'] }}</th>
-                </tr>
-                <tr>
-                    <th>Unidad area carrera</th>
-                    <th colspan="2">Compra ejecutada</th>
-                    <th colspan="2">Compra pendiente</th>
-                    <th colspan="2">Saldo</th>
-                    <th colspan="2">Monto total</th>
-                </tr>
-            </thead>
-            @php
-                $total1 = 0;
-                $total2 = 0;
-                $total3 = 0;
-                $total4 = 0;
+    @if (!isset($unidad_carrera))
+        <br>
+        <center><b>GASTOS POR UNIDAD/CARRERA</b></center>
+        <br>
+        <div class="table-responsive">
+            <table class="my-table" style="font-size:8px;">
+                <thead>
+                    <tr>
+                        <th colspan="9">{{ $datos['por_fecha_fut']['fecha'] }}</th>
+                    </tr>
+                    <tr>
+                        <th>Unidad area carrera</th>
+                        <th colspan="2">Compra ejecutada</th>
+                        <th colspan="2">Compra pendiente</th>
+                        <th colspan="2">Saldo</th>
+                        <th colspan="2">Monto total</th>
+                    </tr>
+                </thead>
+                @php
+                    $total1 = 0;
+                    $total2 = 0;
+                    $total3 = 0;
+                    $total4 = 0;
 
-                $total_total = 0;
+                    $total_total = 0;
 
-                foreach ($datos['por_fecha_unidad_fut'] as $value) {
-                    $total_total += $value['total_monto_sum'];
-                }
-            @endphp
-            <tbody>
-                @foreach ($datos['por_fecha_unidad_fut'] as $item)
+                    foreach ($datos['por_fecha_unidad_fut'] as $value) {
+                        $total_total += $value['total_monto_sum'];
+                    }
+                @endphp
+                <tbody>
+                    @foreach ($datos['por_fecha_unidad_fut'] as $item)
+                        @php
+                            $aprobado = $item['total_aprobado_sum'];
+                            $verificado = $item['total_verificado_sum'];
+                            $pendiente = $item['total_pendiente_sum'];
+                            $total = $item['total_monto_sum'];
+
+                            $total1 += $aprobado;
+                            $total2 += $verificado;
+                            $total3 += $pendiente;
+                            $total4 += $total;
+
+                            $pt1 = $total != 0 ? ($aprobado * 100) / $total : 0;
+                            $pt2 = $total != 0 ? ($verificado * 100) / $total : 0;
+                            $pt3 = $total != 0 ? ($pendiente * 100) / $total : 0;
+                            $pt4 = $total_total != 0 ? ($total * 100) / $total_total : 0;
+                        @endphp
+                        <tr>
+                            <td>{{ $item['unidad'] }}</td>
+                            <td>{{ $aprobado != 0 ? con_separador_comas($aprobado) . ' bs' : '-' }}</td>
+                            <td>{{ $pt1 != 0 ? round($pt1, 2) . '%' : '-' }}</td>
+                            <td>{{ $verificado != 0 ? con_separador_comas($verificado) . ' bs' : '-' }}</td>
+                            <td>{{ $pt2 != 0 ? round($pt2, 2) . '%' : '-' }}</td>
+                            <td>{{ $pendiente != 0 ? con_separador_comas($pendiente) . ' bs' : '-' }}</td>
+                            <td>{{ $pt3 != 0 ? round($pt3, 2) . '%' : '-' }}</td>
+                            <td><b>{{ con_separador_comas($total) }} bs</b></td>
+                            <td><b>{{ round($pt4, 2) }}%</b></td>
+                        </tr>
+                    @endforeach
                     @php
-                        $aprobado = $item['total_aprobado_sum'];
-                        $verificado = $item['total_verificado_sum'];
-                        $pendiente = $item['total_pendiente_sum'];
-                        $total = $item['total_monto_sum'];
-
-                        $total1 += $aprobado;
-                        $total2 += $verificado;
-                        $total3 += $pendiente;
-                        $total4 += $total;
-
-                        $pt1 = $total != 0 ? ($aprobado * 100) / $total : 0;
-                        $pt2 = $total != 0 ? ($verificado * 100) / $total : 0;
-                        $pt3 = $total != 0 ? ($pendiente * 100) / $total : 0;
-                        $pt4 = $total_total != 0 ? ($total * 100) / $total_total : 0;
+                        $ptotal1 = $total4 != 0 ? ($total1 * 100) / $total4 : 0;
+                        $ptotal2 = $total4 != 0 ? ($total2 * 100) / $total4 : 0;
+                        $ptotal3 = $total4 != 0 ? ($total3 * 100) / $total4 : 0;
                     @endphp
                     <tr>
-                        <td>{{ $item['unidad'] }}</td>
-                        <td>{{ $aprobado != 0 ? con_separador_comas($aprobado) . ' bs' : '-' }}</td>
-                        <td>{{ $pt1 != 0 ? round($pt1, 2) . '%' : '-' }}</td>
-                        <td>{{ $verificado != 0 ? con_separador_comas($verificado) . ' bs' : '-' }}</td>
-                        <td>{{ $pt2 != 0 ? round($pt2, 2) . '%' : '-' }}</td>
-                        <td>{{ $pendiente != 0 ? con_separador_comas($pendiente) . ' bs' : '-' }}</td>
-                        <td>{{ $pt3 != 0 ? round($pt3, 2) . '%' : '-' }}</td>
-                        <td><b>{{ con_separador_comas($total) }} bs</b></td>
-                        <td><b>{{ round($pt4, 2) }}%</b></td>
+                        <td><b>TOTAL</b></td>
+                        <td><b>{{ con_separador_comas($total1) }} bs</b></td>
+                        <td><b>{{ round($ptotal1, 2) }}%</b></td>
+                        <td><b>{{ con_separador_comas($total2) }} bs</b></td>
+                        <td><b>{{ round($ptotal2, 2) }}%</b></td>
+                        <td><b>{{ con_separador_comas($total3) }} bs</b></td>
+                        <td><b>{{ round($ptotal3, 2) }}%</b></td>
+                        <td><b>{{ con_separador_comas($total4) }} bs</b></td>
+                        <td><b>{{ round($ptotal1 + $ptotal2 + $ptotal3, 0) }}%</b></td>
                     </tr>
-                @endforeach
-                @php
-                    $ptotal1 = $total4 != 0 ? ($total1 * 100) / $total4 : 0;
-                    $ptotal2 = $total4 != 0 ? ($total2 * 100) / $total4 : 0;
-                    $ptotal3 = $total4 != 0 ? ($total3 * 100) / $total4 : 0;
-                @endphp
-                <tr>
-                    <td><b>TOTAL</b></td>
-                    <td><b>{{ con_separador_comas($total1) }} bs</b></td>
-                    <td><b>{{ round($ptotal1, 2) }}%</b></td>
-                    <td><b>{{ con_separador_comas($total2) }} bs</b></td>
-                    <td><b>{{ round($ptotal2, 2) }}%</b></td>
-                    <td><b>{{ con_separador_comas($total3) }} bs</b></td>
-                    <td><b>{{ round($ptotal3, 2) }}%</b></td>
-                    <td><b>{{ con_separador_comas($total4) }} bs</b></td>
-                    <td><b>{{ round($ptotal1 + $ptotal2 + $ptotal3, 0) }}%</b></td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    @if ($graficos)
-        <br>
-        <center>
-            <img src="{{ $chartUnidadesFut }}" style="width:75%;margin:auto;">
-        </center>
+                </tbody>
+            </table>
+        </div>
+        @if ($graficos)
+            <br>
+            <center>
+                <img src="{{ $chartUnidadesFut }}" style="width:75%;margin:auto;">
+            </center>
+        @endif
     @endif
     @if ($partidas)
         <br>
@@ -631,98 +633,100 @@
     @endif
     <br>
     {{-- @dd($datos['por_fecha_unidad']) --}}
-    <br>
-    <center><b>MODIFICACIONES POR UNIDAD/CARRERA</b></center>
-    <br>
-    <div class="table-responsive">
-        <table class="my-table" style="font-size:8px;">
-            <thead>
-                <tr>
-                    <th colspan="9">{{ $datos['por_fecha_mot']['fecha'] }}</th>
-                </tr>
-                <tr>
-                    <th>Unidad carrera area</th>
-                    <th colspan="2">Aprobado</th>
-                    <th colspan="2">Verificado</th>
-                    <th colspan="2">Elaborado</th>
-                    <th colspan="2">Monto total</th>
-                </tr>
-            </thead>
-            @php
-                $total1 = 0;
-                $total2 = 0;
-                $total3 = 0;
-                $total4 = 0;
-                $total5 = 0;
+    @if (!isset($unidad_carrera))
+        <br>
+        <center><b>MODIFICACIONES POR UNIDAD/CARRERA</b></center>
+        <br>
+        <div class="table-responsive">
+            <table class="my-table" style="font-size:8px;">
+                <thead>
+                    <tr>
+                        <th colspan="9">{{ $datos['por_fecha_mot']['fecha'] }}</th>
+                    </tr>
+                    <tr>
+                        <th>Unidad carrera area</th>
+                        <th colspan="2">Aprobado</th>
+                        <th colspan="2">Verificado</th>
+                        <th colspan="2">Elaborado</th>
+                        <th colspan="2">Monto total</th>
+                    </tr>
+                </thead>
+                @php
+                    $total1 = 0;
+                    $total2 = 0;
+                    $total3 = 0;
+                    $total4 = 0;
+                    $total5 = 0;
 
-                $total_total = 0;
+                    $total_total = 0;
 
-                foreach ($datos['por_fecha_unidad_mot'] as $value) {
-                    $total_total += $value['total_monto_sum'];
-                }
-            @endphp
-            <tbody>
-                @foreach ($datos['por_fecha_unidad_mot'] as $item)
+                    foreach ($datos['por_fecha_unidad_mot'] as $value) {
+                        $total_total += $value['total_monto_sum'];
+                    }
+                @endphp
+                <tbody>
+                    @foreach ($datos['por_fecha_unidad_mot'] as $item)
+                        @php
+                            $aprobado = $item['total_aprobado_sum'];
+                            $verificado = $item['total_verificado_sum'];
+                            $pendiente = $item['total_pendiente_sum'];
+                            $saldo = $item['total_saldo_sum'];
+                            $total = $item['total_monto_sum'];
+
+                            $total1 += $aprobado;
+                            $total2 += $verificado;
+                            $total3 += $pendiente;
+                            $total4 += $saldo;
+                            $total5 += $total;
+
+                            $pt1 = $total != 0 ? ($aprobado * 100) / $total : 0;
+                            $pt2 = $total != 0 ? ($verificado * 100) / $total : 0;
+                            $pt3 = $total != 0 ? ($pendiente * 100) / $total : 0;
+                            $pt4 = $pendiente != 0 ? ($saldo * 100) / $pendiente : 0;
+                            $pt5 = $total_total != 0 ? ($total * 100) / $total_total : 0;
+                        @endphp
+                        <tr>
+                            <td>{{ $item['unidad'] }}</td>
+                            <td>{{ $pendiente != 0 ? con_separador_comas($pendiente) . ' bs' : '-' }}</td>
+                            <td>{{ $pt3 != 0 ? round($pt3, 2) . '%' : '-' }}</td>
+                            <td>{{ $verificado != 0 ? con_separador_comas($verificado) . ' bs' : '-' }}</td>
+                            <td>{{ $pt2 != 0 ? round($pt2, 2) . '%' : '-' }}</td>
+                            <td>{{ $aprobado != 0 ? con_separador_comas($aprobado) . ' bs' : '-' }}</td>
+                            <td>{{ $pt1 != 0 ? round($pt1, 2) . '%' : '-' }}</td>
+                            {{-- <td>{{ $saldo != 0 ? con_separador_comas($saldo) . ' bs' : '-' }}</td>
+                        <td>{{ $pt4 != 0 ? round($pt4, 2) . '%' : '-' }}</td> --}}
+                            <td><b>{{ con_separador_comas($total) }} bs</b></td>
+                            <td><b>{{ round($pt5, 2) }}%</b></td>
+                        </tr>
+                    @endforeach
                     @php
-                        $aprobado = $item['total_aprobado_sum'];
-                        $verificado = $item['total_verificado_sum'];
-                        $pendiente = $item['total_pendiente_sum'];
-                        $saldo = $item['total_saldo_sum'];
-                        $total = $item['total_monto_sum'];
-
-                        $total1 += $aprobado;
-                        $total2 += $verificado;
-                        $total3 += $pendiente;
-                        $total4 += $saldo;
-                        $total5 += $total;
-
-                        $pt1 = $total != 0 ? ($aprobado * 100) / $total : 0;
-                        $pt2 = $total != 0 ? ($verificado * 100) / $total : 0;
-                        $pt3 = $total != 0 ? ($pendiente * 100) / $total : 0;
-                        $pt4 = $pendiente != 0 ? ($saldo * 100) / $pendiente : 0;
-                        $pt5 = $total_total != 0 ? ($total * 100) / $total_total : 0;
+                        $ptotal1 = $total5 != 0 ? ($total1 * 100) / $total5 : 0;
+                        $ptotal2 = $total5 != 0 ? ($total2 * 100) / $total5 : 0;
+                        $ptotal3 = $total5 != 0 ? ($total3 * 100) / $total5 : 0;
+                        $ptotal4 = $total3 != 0 ? ($total4 * 100) / $total3 : 0;
                     @endphp
                     <tr>
-                        <td>{{ $item['unidad'] }}</td>
-                        <td>{{ $pendiente != 0 ? con_separador_comas($pendiente) . ' bs' : '-' }}</td>
-                        <td>{{ $pt3 != 0 ? round($pt3, 2) . '%' : '-' }}</td>
-                        <td>{{ $verificado != 0 ? con_separador_comas($verificado) . ' bs' : '-' }}</td>
-                        <td>{{ $pt2 != 0 ? round($pt2, 2) . '%' : '-' }}</td>
-                        <td>{{ $aprobado != 0 ? con_separador_comas($aprobado) . ' bs' : '-' }}</td>
-                        <td>{{ $pt1 != 0 ? round($pt1, 2) . '%' : '-' }}</td>
-                        {{-- <td>{{ $saldo != 0 ? con_separador_comas($saldo) . ' bs' : '-' }}</td>
-                        <td>{{ $pt4 != 0 ? round($pt4, 2) . '%' : '-' }}</td> --}}
-                        <td><b>{{ con_separador_comas($total) }} bs</b></td>
-                        <td><b>{{ round($pt5, 2) }}%</b></td>
-                    </tr>
-                @endforeach
-                @php
-                    $ptotal1 = $total5 != 0 ? ($total1 * 100) / $total5 : 0;
-                    $ptotal2 = $total5 != 0 ? ($total2 * 100) / $total5 : 0;
-                    $ptotal3 = $total5 != 0 ? ($total3 * 100) / $total5 : 0;
-                    $ptotal4 = $total3 != 0 ? ($total4 * 100) / $total3 : 0;
-                @endphp
-                <tr>
-                    <td><b>TOTAL</b></td>
-                    <td><b>{{ con_separador_comas($total3) }} bs</b></td>
-                    <td><b>{{ round($ptotal3, 2) }}%</b></td>
-                    <td><b>{{ con_separador_comas($total2) }} bs</b></td>
-                    <td><b>{{ round($ptotal2, 2) }}%</b></td>
-                    <td><b>{{ con_separador_comas($total1) }} bs</b></td>
-                    <td><b>{{ round($ptotal1, 2) }}%</b></td>
-                    {{-- <td><b>{{ con_separador_comas($total4) }} bs</b></td>
+                        <td><b>TOTAL</b></td>
+                        <td><b>{{ con_separador_comas($total3) }} bs</b></td>
+                        <td><b>{{ round($ptotal3, 2) }}%</b></td>
+                        <td><b>{{ con_separador_comas($total2) }} bs</b></td>
+                        <td><b>{{ round($ptotal2, 2) }}%</b></td>
+                        <td><b>{{ con_separador_comas($total1) }} bs</b></td>
+                        <td><b>{{ round($ptotal1, 2) }}%</b></td>
+                        {{-- <td><b>{{ con_separador_comas($total4) }} bs</b></td>
                     <td><b>{{ round($ptotal4, 2) }}%</b></td> --}}
-                    <td><b>{{ con_separador_comas($total5) }} bs</b></td>
-                    <td><b>{{ round($ptotal1 + $ptotal2 + $ptotal3, 0) }}%</b></td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    @if ($graficos)
-        <br>
-        <center>
-            <img src="{{ $chartUnidadesMot }}" style="width:75%;margin:auto;">
-        </center>
+                        <td><b>{{ con_separador_comas($total5) }} bs</b></td>
+                        <td><b>{{ round($ptotal1 + $ptotal2 + $ptotal3, 0) }}%</b></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        @if ($graficos)
+            <br>
+            <center>
+                <img src="{{ $chartUnidadesMot }}" style="width:75%;margin:auto;">
+            </center>
+        @endif
     @endif
     @if ($partidas)
         <br>
