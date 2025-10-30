@@ -307,7 +307,7 @@
                     <ul class="sidemenu-nav-second-level">
                         <li class="@if ($menu == '24') {{ 'active' }} @endif">
                             <a href="{{ route('pdf.inicio') }}">
-                                <span class="menu-title">Resumen general<br>de gastos y<br>sueldos</span>
+                                <span class="menu-title">Resumen general<br>de gastos y<br>saldos</span>
                             </a>
                         </li>
                     </ul>

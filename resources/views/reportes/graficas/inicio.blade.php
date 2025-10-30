@@ -108,10 +108,14 @@
                                 <select name="filtrar" id="filtrar" class="form-select select2_simple1"
                                     style="width: 100%" onchange="selectOpcion(this)">
                                     <option value="" selected>[SELECCIONE UNA OPCION]</option>
-                                    <option value="2">Por gestion especifica</option>
-                                    <option value="1">Por gestion</option>
-                                    <option value="3">Gastos por periodo</option>
-                                    <option value="4">Gastos por rango de fechas</option>
+                                    <optgroup label="Reporte de formulados">
+                                        <option value="2">Reporte por gestion especifica</option>
+                                        <option value="1">Reporte por gestion</option>
+                                    </optgroup>
+                                    <optgroup label="Reporte de gastos (FUT) y modificaciones (MOT)">
+                                        <option value="3">Gastos por periodo</option>
+                                        <option value="4">Gastos por rango de fechas</option>
+                                    </optgroup>
                                 </select>
                             </fieldset>
                         </div>
@@ -150,10 +154,27 @@
                                     style="width: 100%">
                                     <option value="" selected>[SELECCIONE UN PERIODO]
                                     </option>
-                                    <option value="1">Ultimos 7 dias</option>
-                                    <option value="2">Ultimos 30 dias</option>
-                                    <option value="3">Ultimos 3 meses</option>
-                                    <option value="4">Ultimos 6 meses</option>
+                                    <optgroup label="Periodo">
+                                        <option value="7">Hoy</option>
+                                        <option value="1">Ultimos 7 dias</option>
+                                        <option value="2">Ultimos 30 dias</option>
+                                        <option value="3">Ultimos 3 meses</option>
+                                        <option value="4">Ultimos 6 meses</option>
+                                        <option value="5">Mes actual</option>
+                                        <option value="6">Gestión actual</option>
+                                    </optgroup>
+                                    <optgroup label="Gestiones">
+                                        @foreach ($gestiones as $lis)
+                                            <option value="8{{ $lis->gestion }}">
+                                                Gestión {{ $lis->gestion }}
+                                            </option>
+                                        @endforeach
+                                        @foreach ($gestion as $lis)
+                                            <option value="9{{ $lis->inicio_gestion }}{{ $lis->fin_gestion }}">
+                                                Gestiones {{ $lis->inicio_gestion }} - {{ $lis->fin_gestion }}
+                                            </option>
+                                        @endforeach
+                                    </optgroup>
                                 </select>
                             </fieldset>
                         </div>
@@ -164,12 +185,6 @@
                                     value="{{ now()->subMonth()->format('d-m-Y') }} - {{ date('d-m-Y') }}" />
                             </fieldset>
                         </div>
-
-                        <div class="mb-5 col-12 d-flex justify-content-center">
-                            <button class="btn btn-secondary" type="button" id="btn-reset"
-                                onclick="resetFormu()">Reset</button>
-                        </div>
-
                         <div class="filtrar-opcion">
                             <div class="d-flex justify-content-center">
                                 <h4>Filtrar por: </h4>&nbsp;<span class="text-muted">(Opcionales)</span>
@@ -248,11 +263,10 @@
                                 </button>
                             </div>
                             <div class="mt-3 col-12 d-flex justify-content-center">
-                                <button class="btn btn-danger btn-lg fm-btn" type="button" onclick="setTipo(1)">
+                                <button class="btn btn-primary btn-lg fm-btn" type="button" onclick="setTipo(1)">
                                     <i class="ri-file-pdf-line"></i> Generar PDF FUT (Gastos)
                                 </button>
-                                <button class="ms-2 btn btn-danger btn-lg fm-btn" type="button"
-                                    onclick="setTipo(2)">
+                                <button class="ms-2 btn btn-primary btn-lg fm-btn" type="button" onclick="setTipo(2)">
                                     <i class="ri-file-pdf-line"></i> Generar PDF MOT (Modificaciones)
                                 </button>
                             </div>
@@ -316,30 +330,20 @@
         }
 
         function mostrarOpciones() {
-            const gestion = $('#gestion').val()
-            const gestion_esp = $('#gestion_esp').val()
-            const periodos = $('#periodos').val()
-            const rango = $('#rango').val()
+            const filtrar = $('#filtrar').val()
 
-            if (gestion != '' || gestion_esp != '' || periodos != '' || rango != '') {
+            if (filtrar != '') {
                 $('.filtrar-opcion').css('display', 'block')
-                $('#btn-reset').removeAttr('disabled')
             } else {
                 $('.filtrar-opcion').css('display', 'none')
-                $('#btn-reset').attr('disabled', 'disabled')
             }
         }
 
         function resetFormu() {
-            // $('#filtrar').val('').trigger('change')
-
             $('#gestion').val('').trigger('change')
             $('#gestion_esp').val('').trigger('change')
             $('#periodos').val('').trigger('change')
             $('#rango').val('').trigger('change')
-
-            // $('#fuente_fin').val('0').trigger('change')
-            // $('#cua').val('0').trigger('change')
         }
     </script>
 @endsection
