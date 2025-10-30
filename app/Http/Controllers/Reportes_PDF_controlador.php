@@ -41,14 +41,14 @@ class Reportes_PDF_controlador extends Controller
                 return redirect()->route('pdf.gestion', [encriptar(2), encriptar($req->gestion_esp), encriptar($req->fuente_fin), encriptar($req->cua), encriptar($graficos), encriptar($partidas)]);
                 break;
             case '3':
-                return redirect()->route('pdf.fecha', [encriptar(3), encriptar($req->fuente_fin), encriptar($req->cua), encriptar($graficos), encriptar($partidas), encriptar($req->periodos), encriptar(0)]);
+                return redirect()->route('pdf.fecha', [encriptar(3), encriptar($req->fuente_fin), encriptar($req->cua), encriptar($graficos), encriptar($partidas), encriptar($req->periodos), encriptar(0), encriptar($req->tipo)]);
                 break;
             case '4':
                 [$inicio, $fin] = explode(' - ', $req->rango);
                 $inicio         = Carbon::parse($inicio);
                 $fin            = Carbon::parse($fin);
 
-                return redirect()->route('pdf.fecha', [encriptar(4), encriptar($req->fuente_fin), encriptar($req->cua), encriptar($graficos), encriptar($partidas), encriptar($inicio->timestamp), encriptar($fin->timestamp)]);
+                return redirect()->route('pdf.fecha', [encriptar(4), encriptar($req->fuente_fin), encriptar($req->cua), encriptar($graficos), encriptar($partidas), encriptar($inicio->timestamp), encriptar($fin->timestamp), encriptar($req->tipo)]);
                 break;
             default:
                 dd($req);
@@ -351,10 +351,6 @@ class Reportes_PDF_controlador extends Controller
                 'data'    => [
                     'labels'   => $array_gestion->toArray(),
                     'datasets' => [[
-                        'label'           => 'Total monto',
-                        'backgroundColor' => 'rgba(54, 162, 235, 1)',
-                        'data'            => $array_monto->toArray(),
-                    ], [
                         'label'           => 'Monto ejecutado',
                         'backgroundColor' => 'rgba(40, 167, 69, 1)',
                         'data'            => $array_presupuesto->toArray(),
@@ -362,12 +358,40 @@ class Reportes_PDF_controlador extends Controller
                         'label'           => 'Saldo',
                         'backgroundColor' => 'rgba(220, 53, 69, 1)',
                         'data'            => $array_pendiente->toArray(),
+                    ], [
+                        'label'           => 'Monto total',
+                        'backgroundColor' => 'rgba(54, 162, 235, 1)',
+                        'data'            => $array_monto->toArray(),
                     ]],
                 ],
                 'options' => [
-                    'title' => [
+                    'title'   => [
                         'display' => true,
                         'text'    => 'Montos asignados por gestión',
+                    ],
+                    'scales'  => [
+                        'yAxes' => [[
+                            'ticks'      => [
+                                'beginAtZero' => true,
+                                'fontStyle'   => 'bold',
+                            ],
+                            'scaleLabel' => [
+                                'display'     => true,
+                                'labelString' => 'Monto en Bs',
+                                'fontStyle'   => 'bold',
+                            ],
+                        ]],
+                        'xAxes' => [[
+                            'ticks' => [
+                                'fontStyle' => 'bold',
+                            ],
+                        ]],
+                    ],
+                    'plugins' => [
+                        'tickFormat' => [
+                            'minimumFractionDigits' => 2,
+                            'locale'                => 'en-US',
+                        ],
                     ],
                 ],
             ];
@@ -382,14 +406,10 @@ class Reportes_PDF_controlador extends Controller
                 $array_pendiente   = collect($value['fuentes'])->pluck('total_pendiente_sum');
 
                 $chartConfig = [
-                    'type' => 'bar',
-                    'data' => [
+                    'type'    => 'bar',
+                    'data'    => [
                         'labels'   => $array_fuentes->toArray(),
                         'datasets' => [[
-                            'label'           => 'Total monto asignado',
-                            'backgroundColor' => 'rgba(54, 162, 235, 1)',
-                            'data'            => $array_monto->toArray(),
-                        ], [
                             'label'           => 'Monto ejecutado',
                             'backgroundColor' => 'rgba(40, 167, 69, 1)',
                             'data'            => $array_presupuesto->toArray(),
@@ -397,14 +417,38 @@ class Reportes_PDF_controlador extends Controller
                             'label'           => 'Saldo',
                             'backgroundColor' => 'rgba(220, 53, 69, 1)',
                             'data'            => $array_pendiente->toArray(),
+                        ], [
+                            'label'           => 'Monto total',
+                            'backgroundColor' => 'rgba(54, 162, 235, 1)',
+                            'data'            => $array_monto->toArray(),
                         ]],
                     ],
-                    // 'options' => [
-                    //     'title' => [
-                    //         'display' => true,
-                    //         'text'    => $value['gestion'],
-                    //     ],
-                    // ],
+                    'options' => [
+                        'scales'  => [
+                            'yAxes' => [[
+                                'ticks'      => [
+                                    'beginAtZero' => true,
+                                    'fontStyle'   => 'bold',
+                                ],
+                                'scaleLabel' => [
+                                    'display'     => true,
+                                    'labelString' => 'Monto en Bs',
+                                    'fontStyle'   => 'bold',
+                                ],
+                            ]],
+                            'xAxes' => [[
+                                'ticks' => [
+                                    'fontStyle' => 'bold',
+                                ],
+                            ]],
+                        ],
+                        'plugins' => [
+                            'tickFormat' => [
+                                'minimumFractionDigits' => 2,
+                                'locale'                => 'en-US',
+                            ],
+                        ],
+                    ],
                 ];
 
                 $chart                          = "https://quickchart.io/chart?h=225&c=" . urlencode(json_encode($chartConfig));
@@ -420,14 +464,10 @@ class Reportes_PDF_controlador extends Controller
                 $array_pendiente   = collect($value['unidades'])->pluck('total_pendiente_sum');
 
                 $chartConfig = [
-                    'type' => count($value['unidades']) > 1 ? 'horizontalBar' : 'bar',
-                    'data' => [
+                    'type'    => count($array_unidades) > 1 ? 'horizontalBar' : 'bar',
+                    'data'    => [
                         'labels'   => $array_unidades->toArray(),
                         'datasets' => [[
-                            'label'           => 'Total monto asignado',
-                            'backgroundColor' => 'rgba(54, 162, 235, 1)',
-                            'data'            => $array_monto->toArray(),
-                        ], [
                             'label'           => 'Monto ejecutado',
                             'backgroundColor' => 'rgba(40, 167, 69, 1)',
                             'data'            => $array_presupuesto->toArray(),
@@ -435,17 +475,48 @@ class Reportes_PDF_controlador extends Controller
                             'label'           => 'Saldo',
                             'backgroundColor' => 'rgba(220, 53, 69, 1)',
                             'data'            => $array_pendiente->toArray(),
+                        ], [
+                            'label'           => 'Monto total',
+                            'backgroundColor' => 'rgba(54, 162, 235, 1)',
+                            'data'            => $array_monto->toArray(),
                         ]],
                     ],
-                    // 'options' => [
-                    //     'title' => [
-                    //         'display' => true,
-                    //         'text'    => $value['gestion'],
-                    //     ],
-                    // ],
+                    'options' => [
+                        'scales'  => [
+                            'yAxes' => [[
+                                'ticks'      => [
+                                    'beginAtZero' => true,
+                                    'fontStyle'   => 'bold',
+                                ],
+                                'scaleLabel' => [
+                                    'display'     => count($array_unidades) > 1 ? false : true,
+                                    'labelString' => 'Monto en Bs',
+                                    'fontStyle'   => 'bold',
+                                ],
+                            ]],
+                            'xAxes' => [[
+                                'ticks'      => [
+                                    'beginAtZero' => true,
+                                    'fontStyle'   => 'bold',
+                                ],
+                                'scaleLabel' => [
+                                    'display'     => count($array_unidades) > 1 ? true : false,
+                                    'labelString' => 'Monto en Bs',
+                                    'fontStyle'   => 'bold',
+                                ],
+                            ]],
+                        ],
+                        'plugins' => [
+                            'tickFormat' => [
+                                'minimumFractionDigits' => count($array_unidades) > 1 ? 0 : 2,
+                                'locale'                => 'en-US',
+                            ],
+                        ],
+                    ],
                 ];
 
-                $chart                             = "https://quickchart.io/chart?" . (count($value['unidades']) > 1 ? '' : 'h=225&') . "c=" . urlencode(json_encode($chartConfig));
+                $height                            = max(300, min(1200, 35 * count($array_unidades)));
+                $chart                             = "https://quickchart.io/chart?" . (count($array_unidades) > 1 ? "h=$height&" : 'h=225&') . "c=" . urlencode(json_encode($chartConfig));
                 $chartsUnidades[$value['gestion']] = $chart;
             }
             $data['chartsUnidades'] = $chartsUnidades;
@@ -459,14 +530,10 @@ class Reportes_PDF_controlador extends Controller
                     $array_pendiente   = collect($value['partidas'])->pluck('total_pendiente_sum');
 
                     $chartConfig = [
-                        'type' => 'bar',
-                        'data' => [
+                        'type'    => 'horizontalBar',
+                        'data'    => [
                             'labels'   => $array_partidas->toArray(),
                             'datasets' => [[
-                                'label'           => 'Total monto asignado',
-                                'backgroundColor' => 'rgba(54, 162, 235, 1)',
-                                'data'            => $array_monto->toArray(),
-                            ], [
                                 'label'           => 'Monto ejecutado',
                                 'backgroundColor' => 'rgba(40, 167, 69, 1)',
                                 'data'            => $array_presupuesto->toArray(),
@@ -474,17 +541,42 @@ class Reportes_PDF_controlador extends Controller
                                 'label'           => 'Saldo',
                                 'backgroundColor' => 'rgba(220, 53, 69, 1)',
                                 'data'            => $array_pendiente->toArray(),
+                            ], [
+                                'label'           => 'Monto total',
+                                'backgroundColor' => 'rgba(54, 162, 235, 1)',
+                                'data'            => $array_monto->toArray(),
                             ]],
                         ],
-                        // 'options' => [
-                        //     'title' => [
-                        //         'display' => true,
-                        //         'text'    => $value['gestion'],
-                        //     ],
-                        // ],
+                        'options' => [
+                            'scales'  => [
+                                'yAxes' => [[
+                                    'ticks' => [
+                                        'fontStyle' => 'bold',
+                                    ],
+                                ]],
+                                'xAxes' => [[
+                                    'ticks'      => [
+                                        'beginAtZero' => true,
+                                        'fontStyle'   => 'bold',
+                                    ],
+                                    'scaleLabel' => [
+                                        'display'     => true,
+                                        'labelString' => 'Monto en Bs',
+                                        'fontStyle'   => 'bold',
+                                    ],
+                                ]],
+                            ],
+                            'plugins' => [
+                                'tickFormat' => [
+                                    'minimumFractionDigits' => 2,
+                                    'locale'                => 'en-US',
+                                ],
+                            ],
+                        ],
                     ];
 
-                    $chart                             = "https://quickchart.io/chart?w=1000&c=" . urlencode(json_encode($chartConfig));
+                    $height                            = max(300, min(1200, 25 * count($array_partidas)));
+                    $chart                             = "https://quickchart.io/chart?h=" . $height . "&c=" . urlencode(json_encode($chartConfig));
                     $chartsPartidas[$value['gestion']] = $chart;
                 }
                 $data['chartsPartidas'] = $chartsPartidas;
@@ -500,7 +592,7 @@ class Reportes_PDF_controlador extends Controller
         return response($pdfContent, 200)->header('Content-Type', 'application/pdf');
     }
 
-    public function filtrar_fecha($tipo, $id_financiamiento, $id_unidad_carrera, $graficos, $partidas, $fecha, $fecha_fin = 0)
+    public function filtrar_fecha($tipo, $id_financiamiento, $id_unidad_carrera, $graficos, $partidas, $fecha, $fecha_fin = 0, $_tipo)
     {
         $tipo              = desencriptar($tipo);
         $id_financiamiento = desencriptar($id_financiamiento);
@@ -509,6 +601,7 @@ class Reportes_PDF_controlador extends Controller
         $partidas          = desencriptar($partidas);
         $fecha             = desencriptar($fecha);
         $fecha_fin         = desencriptar($fecha_fin);
+        $_tipo             = desencriptar($_tipo);
 
         // Rango de fechas personalizado
         if ($tipo == 4) {
@@ -621,6 +714,14 @@ class Reportes_PDF_controlador extends Controller
 
         $data['graficos'] = $graficos;
         $data['partidas'] = $partidas;
+        if ($_tipo == 1) {
+            $_tipo = 'fut';
+        } else if ($_tipo == 2) {
+            $_tipo = 'mot';
+        } else {
+            $_tipo = '';
+        }
+        $data['tipo'] = $_tipo;
 
         /**
          * GENERAL FUT
@@ -971,13 +1072,38 @@ class Reportes_PDF_controlador extends Controller
                     ]],
                 ],
                 'options' => [
-                    'title' => [
+                    'title'   => [
                         'display' => true,
                         'text'    => $porFechaFut['fecha'],
                     ],
+                    'scales'  => [
+                        'yAxes' => [[
+                            'ticks'      => [
+                                'beginAtZero' => true,
+                                'fontStyle'   => 'bold',
+                            ],
+                            'scaleLabel' => [
+                                'display'     => true,
+                                'labelString' => 'Monto en Bs',
+                                'fontStyle'   => 'bold',
+                            ],
+                        ]],
+                        'xAxes' => [[
+                            'ticks' => [
+                                'fontStyle' => 'bold',
+                            ],
+                        ]],
+                    ],
+                    'plugins' => [
+                        'tickFormat' => [
+                            'minimumFractionDigits' => 2,
+                            'locale'                => 'en-US',
+                        ],
+                    ],
                 ],
             ];
-            $chartFecha            = "https://quickchart.io/chart?h=250&c=" . urlencode(json_encode($chartConfig));
+
+            $chartFecha            = "https://quickchart.io/chart?format=svg&h=250&c=" . urlencode(json_encode($chartConfig));
             $data['chartFechaFut'] = $chartFecha;
 
             $array_fuentes    = collect($porFechaFinanciamientoFut)->pluck('fuente');
@@ -987,8 +1113,8 @@ class Reportes_PDF_controlador extends Controller
             $array_pendiente  = collect($porFechaFinanciamientoFut)->pluck('total_pendiente_sum');
 
             $chartConfig = [
-                'type' => 'bar',
-                'data' => [
+                'type'    => 'bar',
+                'data'    => [
                     'labels'   => $array_fuentes->toArray(),
                     'datasets' => [[
                         'label'           => 'Compras ejecutadas',
@@ -1008,6 +1134,32 @@ class Reportes_PDF_controlador extends Controller
                         'data'            => $array_monto->toArray(),
                     ]],
                 ],
+                'options' => [
+                    'scales'  => [
+                        'yAxes' => [[
+                            'ticks'      => [
+                                'beginAtZero' => true,
+                                'fontStyle'   => 'bold',
+                            ],
+                            'scaleLabel' => [
+                                'display'     => true,
+                                'labelString' => 'Monto en Bs',
+                                'fontStyle'   => 'bold',
+                            ],
+                        ]],
+                        'xAxes' => [[
+                            'ticks' => [
+                                'fontStyle' => 'bold',
+                            ],
+                        ]],
+                    ],
+                    'plugins' => [
+                        'tickFormat' => [
+                            'minimumFractionDigits' => 2,
+                            'locale'                => 'en-US',
+                        ],
+                    ],
+                ],
             ];
 
             $chartFinan            = "https://quickchart.io/chart?h=225&c=" . urlencode(json_encode($chartConfig));
@@ -1020,8 +1172,8 @@ class Reportes_PDF_controlador extends Controller
             $array_pendiente  = collect($porFechaUnidadFut)->pluck('total_pendiente_sum');
 
             $chartConfig = [
-                'type' => count($porFechaUnidadFut) > 1 ? 'horizontalBar' : 'bar',
-                'data' => [
+                'type'    => count($array_unidades) > 1 ? 'horizontalBar' : 'bar',
+                'data'    => [
                     'labels'   => $array_unidades->toArray(),
                     'datasets' => [[
                         'label'           => 'Compras ejecutadas',
@@ -1041,9 +1193,42 @@ class Reportes_PDF_controlador extends Controller
                         'data'            => $array_monto->toArray(),
                     ]],
                 ],
+                'options' => [
+                    'scales'  => [
+                        'yAxes' => [[
+                            'ticks'      => [
+                                'beginAtZero' => true,
+                                'fontStyle'   => 'bold',
+                            ],
+                            'scaleLabel' => [
+                                'display'     => count($array_unidades) > 1 ? false : true,
+                                'labelString' => 'Monto en Bs',
+                                'fontStyle'   => 'bold',
+                            ],
+                        ]],
+                        'xAxes' => [[
+                            'ticks'      => [
+                                'beginAtZero' => true,
+                                'fontStyle'   => 'bold',
+                            ],
+                            'scaleLabel' => [
+                                'display'     => count($array_unidades) > 1 ? true : false,
+                                'labelString' => 'Monto en Bs',
+                                'fontStyle'   => 'bold',
+                            ],
+                        ]],
+                    ],
+                    'plugins' => [
+                        'tickFormat' => [
+                            'minimumFractionDigits' => count($porFechaUnidadFut) > 1 ? 0 : 2,
+                            'locale'                => 'en-US',
+                        ],
+                    ],
+                ],
             ];
 
-            $chartUnidades            = "https://quickchart.io/chart?" . (count($porFechaPartidasFut) > 1 ? '' : 'h=225&') . "c=" . urlencode(json_encode($chartConfig));
+            $height                   = max(300, min(300, 35 * count($array_unidades)));
+            $chartUnidades            = "https://quickchart.io/chart?" . (count($array_unidades) > 1 ? "h=$height&" : 'h=225&') . "c=" . urlencode(json_encode($chartConfig));
             $data['chartUnidadesFut'] = $chartUnidades;
 
             if ($partidas) {
@@ -1054,8 +1239,8 @@ class Reportes_PDF_controlador extends Controller
                 $array_pendiente  = collect($porFechaPartidasFut)->pluck('total_pendiente_sum');
 
                 $chartConfig = [
-                    'type' => 'bar',
-                    'data' => [
+                    'type'    => 'horizontalBar',
+                    'data'    => [
                         'labels'   => $array_partidas->toArray(),
                         'datasets' => [[
                             'label'           => 'Compras ejecutadas',
@@ -1075,9 +1260,36 @@ class Reportes_PDF_controlador extends Controller
                             'data'            => $array_monto->toArray(),
                         ]],
                     ],
+                    'options' => [
+                        'scales'  => [
+                            'yAxes' => [[
+                                'ticks' => [
+                                    'fontStyle' => 'bold',
+                                ],
+                            ]],
+                            'xAxes' => [[
+                                'ticks'      => [
+                                    'beginAtZero' => true,
+                                    'fontStyle'   => 'bold',
+                                ],
+                                'scaleLabel' => [
+                                    'display'     => true,
+                                    'labelString' => 'Monto en Bs',
+                                    'fontStyle'   => 'bold',
+                                ],
+                            ]],
+                        ],
+                        'plugins' => [
+                            'tickFormat' => [
+                                'minimumFractionDigits' => 2,
+                                'locale'                => 'en-US',
+                            ],
+                        ],
+                    ],
                 ];
 
-                $chart                    = "https://quickchart.io/chart?w=1000&c=" . urlencode(json_encode($chartConfig));
+                $height                   = max(250, min(900, 25 * count($array_partidas)));
+                $chart                    = "https://quickchart.io/chart?h=" . $height . "&c=" . urlencode(json_encode($chartConfig));
                 $data['chartPartidasFut'] = $chart;
             }
 
@@ -1104,9 +1316,33 @@ class Reportes_PDF_controlador extends Controller
                         ]],
                 ],
                 'options' => [
-                    'title' => [
+                    'title'   => [
                         'display' => true,
                         'text'    => $porFechaMot['fecha'],
+                    ],
+                    'scales'  => [
+                        'yAxes' => [[
+                            'ticks'      => [
+                                'beginAtZero' => true,
+                                'fontStyle'   => 'bold',
+                            ],
+                            'scaleLabel' => [
+                                'display'     => true,
+                                'labelString' => 'Monto en Bs',
+                                'fontStyle'   => 'bold',
+                            ],
+                        ]],
+                        'xAxes' => [[
+                            'ticks' => [
+                                'fontStyle' => 'bold',
+                            ],
+                        ]],
+                    ],
+                    'plugins' => [
+                        'tickFormat' => [
+                            'minimumFractionDigits' => 2,
+                            'locale'                => 'en-US',
+                        ],
                     ],
                 ],
             ];
@@ -1120,8 +1356,8 @@ class Reportes_PDF_controlador extends Controller
             $array_pendiente  = collect($porFechaFinanciamientoMot)->pluck('total_pendiente_sum');
 
             $chartConfig = [
-                'type' => 'bar',
-                'data' => [
+                'type'    => 'bar',
+                'data'    => [
                     'labels'   => $array_fuentes->toArray(),
                     'datasets' => [
                         [
@@ -1139,6 +1375,32 @@ class Reportes_PDF_controlador extends Controller
                             'data'            => $array_aprobado->toArray(),
                         ]],
                 ],
+                'options' => [
+                    'scales'  => [
+                        'yAxes' => [[
+                            'ticks'      => [
+                                'beginAtZero' => true,
+                                'fontStyle'   => 'bold',
+                            ],
+                            'scaleLabel' => [
+                                'display'     => true,
+                                'labelString' => 'Monto en Bs',
+                                'fontStyle'   => 'bold',
+                            ],
+                        ]],
+                        'xAxes' => [[
+                            'ticks' => [
+                                'fontStyle' => 'bold',
+                            ],
+                        ]],
+                    ],
+                    'plugins' => [
+                        'tickFormat' => [
+                            'minimumFractionDigits' => 2,
+                            'locale'                => 'en-US',
+                        ],
+                    ],
+                ],
             ];
 
             $chartFinan            = "https://quickchart.io/chart?h=225&c=" . urlencode(json_encode($chartConfig));
@@ -1151,8 +1413,8 @@ class Reportes_PDF_controlador extends Controller
             $array_pendiente  = collect($porFechaUnidadMot)->pluck('total_pendiente_sum');
 
             $chartConfig = [
-                'type' => count($porFechaUnidadMot) > 1 ? 'horizontalBar' : 'bar',
-                'data' => [
+                'type'    => count($array_unidades) > 1 ? 'horizontalBar' : 'bar',
+                'data'    => [
                     'labels'   => $array_unidades->toArray(),
                     'datasets' => [
                         [
@@ -1169,9 +1431,43 @@ class Reportes_PDF_controlador extends Controller
                             'data'            => $array_aprobado->toArray(),
                         ]],
                 ],
+                'options' => [
+                    'scales'  => [
+                        'yAxes' => [[
+                            'ticks'      => [
+                                'beginAtZero' => true,
+                                'fontStyle'   => 'bold',
+                            ],
+                            'scaleLabel' => [
+                                'min'         => 0,
+                                'display'     => count($array_unidades) > 1 ? false : true,
+                                'labelString' => 'Monto en Bs',
+                                'fontStyle'   => 'bold',
+                            ],
+                        ]],
+                        'xAxes' => [[
+                            'ticks'      => [
+                                'beginAtZero' => true,
+                                'fontStyle'   => 'bold',
+                            ],
+                            'scaleLabel' => [
+                                'display'     => count($array_unidades) > 1 ? true : false,
+                                'labelString' => 'Monto en Bs',
+                                'fontStyle'   => 'bold',
+                            ],
+                        ]],
+                    ],
+                    'plugins' => [
+                        'tickFormat' => [
+                            'minimumFractionDigits' => count($porFechaUnidadMot) > 1 ? 0 : 2,
+                            'locale'                => 'en-US',
+                        ],
+                    ],
+                ],
             ];
 
-            $chartUnidades            = "https://quickchart.io/chart?" . (count($porFechaUnidadMot) > 1 ? '' : 'h=225&') . "c=" . urlencode(json_encode($chartConfig));
+            $height                   = max(250, min(900, 25 * count($array_unidades)));
+            $chartUnidades            = "https://quickchart.io/chart?" . (count($array_unidades) > 1 ? "h=$height&" : 'h=225&') . "c=" . urlencode(json_encode($chartConfig));
             $data['chartUnidadesMot'] = $chartUnidades;
 
             if ($partidas) {
@@ -1191,7 +1487,7 @@ class Reportes_PDF_controlador extends Controller
                 }
 
                 $chartConfig = [
-                    'type'    => 'bar',
+                    'type'    => 'horizontalBar',
                     'data'    => [
                         'labels'   => $array_partidas->toArray(),
                         'datasets' => [[
@@ -1204,10 +1500,35 @@ class Reportes_PDF_controlador extends Controller
                         'plugins' => [
                             'legend' => ['display' => false],
                         ],
+                        'scales'  => [
+                            'yAxes' => [[
+                                'ticks' => [
+                                    'fontStyle' => 'bold',
+                                ],
+                            ]],
+                            'xAxes' => [[
+                                'ticks'      => [
+                                    'beginAtZero' => true,
+                                    'fontStyle'   => 'bold',
+                                ],
+                                'scaleLabel' => [
+                                    'display'     => true,
+                                    'labelString' => 'Monto en Bs',
+                                    'fontStyle'   => 'bold',
+                                ],
+                            ]],
+                        ],
+                        'plugins' => [
+                            'tickFormat' => [
+                                'minimumFractionDigits' => 2,
+                                'locale'                => 'en-US',
+                            ],
+                        ],
                     ],
                 ];
 
-                $chart                    = "https://quickchart.io/chart?c=" . urlencode(json_encode($chartConfig));
+                $height                   = max(250, min(900, 25 * count($array_partidas)));
+                $chart                    = "https://quickchart.io/chart?h=" . $height . "&c=" . urlencode(json_encode($chartConfig));
                 $data['chartPartidasMot'] = $chart;
             }
         }
@@ -1218,6 +1539,7 @@ class Reportes_PDF_controlador extends Controller
         $dompdf->loadHtml($html);
         $dompdf->setPaper('letter', 'portrait');
         $dompdf->render();
+        // $dompdf->stream('reporte.pdf');
 
         $pdfContent = $dompdf->output();
         return response($pdfContent, 200)->header('Content-Type', 'application/pdf');

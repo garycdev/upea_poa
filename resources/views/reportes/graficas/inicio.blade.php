@@ -99,7 +99,7 @@
                 </center>
                 <div class="others-title d-flex align-items-center"></div>
 
-                <form action="{{ route('pdf.generar') }}" method="POST" autocomplete="off" target="_blank">
+                <form action="{{ route('pdf.generar') }}" method="POST" autocomplete="off" target="_blank" id="formPDF">
                     @csrf
                     <div class="row">
                         <div class="col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6">
@@ -241,9 +241,19 @@
                         </div>
 
                         <div class="filtrar-opcion">
+                            <input type="hidden" id="tipo" name="tipo" value="0">
                             <div class="col-12 d-flex justify-content-center">
-                                <button class="btn btn-danger btn-lg" type="submit" id="btn-reset">
+                                <button class="btn btn-danger btn-lg" type="button" onclick="setTipo(0)">
                                     <i class="ri-file-pdf-line"></i> Generar PDF
+                                </button>
+                            </div>
+                            <div class="mt-3 col-12 d-flex justify-content-center">
+                                <button class="btn btn-danger btn-lg fm-btn" type="button" onclick="setTipo(1)">
+                                    <i class="ri-file-pdf-line"></i> Generar PDF FUT (Gastos)
+                                </button>
+                                <button class="ms-2 btn btn-danger btn-lg fm-btn" type="button"
+                                    onclick="setTipo(2)">
+                                    <i class="ri-file-pdf-line"></i> Generar PDF MOT (Modificaciones)
                                 </button>
                             </div>
                         </div>
@@ -283,12 +293,23 @@
             })
         });
 
+        function setTipo(tipo) {
+            $('#tipo').val(tipo)
+            $('#formPDF').submit()
+        }
+
         function selectOpcion(sel) {
             const opcion = $(sel).val()
 
             $('.opciones').css('display', 'none')
             $('.opcion').val('')
             $('#opcion' + opcion).css('display', 'block')
+
+            if (opcion == 1 || opcion == 2) {
+                $('.fm-btn').css('display', 'none')
+            } else {
+                $('.fm-btn').css('display', 'block')
+            }
 
             resetFormu()
             mostrarOpciones()
@@ -317,8 +338,8 @@
             $('#periodos').val('').trigger('change')
             $('#rango').val('').trigger('change')
 
-            $('#fuente_fin').val('0').trigger('change')
-            $('#cua').val('0').trigger('change')
+            // $('#fuente_fin').val('0').trigger('change')
+            // $('#cua').val('0').trigger('change')
         }
     </script>
 @endsection
