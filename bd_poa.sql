@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.2
+-- version 5.2.3
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost
--- Tiempo de generación: 06-10-2025 a las 21:40:14
--- Versión del servidor: 12.0.2-MariaDB-log
--- Versión de PHP: 8.4.13
+-- Tiempo de generación: 04-11-2025 a las 21:38:25
+-- Versión del servidor: 12.0.2-MariaDB
+-- Versión de PHP: 8.4.14
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `bd_poa`
+-- Base de datos: `bd_poa_prueba1`
 --
 
 DELIMITER $$
@@ -1423,58 +1423,10 @@ CREATE TABLE `model_has_roles` (
 --
 
 INSERT INTO `model_has_roles` (`role_id`, `model_type`, `model_id`) VALUES
-(1, 'App\\Models\\User', 1),
-(4, 'App\\Models\\User', 3),
-(4, 'App\\Models\\User', 4),
-(1, 'App\\Models\\User', 5),
-(2, 'App\\Models\\User', 5),
-(4, 'App\\Models\\User', 5),
 (1, 'App\\Models\\User', 6),
-(4, 'App\\Models\\User', 7),
-(4, 'App\\Models\\User', 8),
-(4, 'App\\Models\\User', 9),
-(4, 'App\\Models\\User', 10),
-(4, 'App\\Models\\User', 11),
-(4, 'App\\Models\\User', 12),
-(4, 'App\\Models\\User', 13),
-(4, 'App\\Models\\User', 14),
-(4, 'App\\Models\\User', 15),
-(4, 'App\\Models\\User', 16),
-(4, 'App\\Models\\User', 17),
-(4, 'App\\Models\\User', 18),
-(4, 'App\\Models\\User', 19),
-(4, 'App\\Models\\User', 20),
-(4, 'App\\Models\\User', 21),
-(4, 'App\\Models\\User', 22),
-(4, 'App\\Models\\User', 23),
-(4, 'App\\Models\\User', 24),
-(4, 'App\\Models\\User', 25),
-(4, 'App\\Models\\User', 26),
-(4, 'App\\Models\\User', 27),
-(4, 'App\\Models\\User', 28),
-(4, 'App\\Models\\User', 29),
-(4, 'App\\Models\\User', 30),
-(4, 'App\\Models\\User', 31),
-(4, 'App\\Models\\User', 32),
-(4, 'App\\Models\\User', 33),
-(4, 'App\\Models\\User', 34),
-(4, 'App\\Models\\User', 35),
-(4, 'App\\Models\\User', 36),
-(4, 'App\\Models\\User', 37),
-(4, 'App\\Models\\User', 38),
-(4, 'App\\Models\\User', 39),
-(1, 'App\\Models\\User', 40),
-(1, 'App\\Models\\User', 41),
-(1, 'App\\Models\\User', 45),
-(2, 'App\\Models\\User', 46),
-(2, 'App\\Models\\User', 47),
-(1, 'App\\Models\\User', 48),
 (2, 'App\\Models\\User', 49),
 (4, 'App\\Models\\User', 50),
-(1, 'App\\Models\\User', 51),
-(1, 'App\\Models\\User', 53),
-(1, 'App\\Models\\User', 54),
-(4, 'App\\Models\\User', 55),
+(1, 'App\\Models\\User', 55),
 (2, 'App\\Models\\User', 61);
 
 -- --------------------------------------------------------
@@ -2752,7 +2704,7 @@ CREATE TABLE `rl_formulario1` (
 --
 
 INSERT INTO `rl_formulario1` (`id`, `fecha`, `maxima_autoridad`, `usuario_id`, `gestion_id`, `configFormulado_id`, `unidadCarrera_id`, `creado_el`, `editado_el`) VALUES
-(1, '2025-09-11', 'Dr. Carlos Condori Titirico', 48, 6, 1, 41, '2025-09-11 16:38:58', '2025-09-11 16:38:58');
+(1, '2025-09-11', 'Dr. Carlos Condori Titirico', 55, 6, 1, 41, '2025-09-11 16:38:58', '2025-09-11 16:38:58');
 
 -- --------------------------------------------------------
 
@@ -3333,9 +3285,9 @@ CREATE TABLE `rl_medida_bienservicio` (
 --
 
 INSERT INTO `rl_medida_bienservicio` (`id`, `formulario5_id`, `medida_id`, `cantidad`, `precio_unitario`, `total_presupuesto`, `total_monto`, `descripcion`, `tipo_financiamiento_id`, `fecha_requerida`, `creado_el`, `editado_el`) VALUES
-(1, 4, 4, '12', '860.00', 10320.00, 10320.00, NULL, 2, '2026-01-20', '2025-09-15 16:09:15', '2025-09-15 16:09:15'),
-(2, 4, 6, '1', '3,741.00', 3741.00, 3741.00, NULL, 2, '2026-01-20', '2025-09-16 13:16:05', '2025-09-16 13:16:05'),
-(3, 4, 6, '1', '3,741.00', 3741.00, 3741.00, NULL, 2, '2026-01-20', '2025-09-16 13:16:58', '2025-09-16 13:16:58'),
+(1, 4, 4, '12', '860.00', 10320.00, 10320.00, NULL, 2, '2026-01-20', '2025-09-15 16:09:15', '2025-10-13 15:25:00'),
+(2, 4, 6, '1', '3,741.00', 3741.00, 3741.00, NULL, 2, '2026-01-20', '2025-09-16 13:16:05', '2025-10-13 15:14:41'),
+(3, 4, 6, '1', '3,741.00', 3741.00, 3741.00, NULL, 2, '2026-01-20', '2025-09-16 13:16:58', '2025-10-13 15:14:41'),
 (4, 4, 6, '1', '1,260.00', 1260.00, 1260.00, NULL, 2, '2026-01-20', '2025-09-16 13:18:02', '2025-09-16 13:18:02'),
 (5, 5, 6, '1', '9,850.00', 9850.00, 9850.00, NULL, 2, '2026-01-20', '2025-09-16 13:42:10', '2025-09-16 13:42:10'),
 (6, 7, 2, '30000', '0.06', 1800.00, 1800.00, NULL, 2, '2026-01-20', '2025-09-16 13:43:55', '2025-09-16 13:43:55'),
@@ -3389,7 +3341,7 @@ INSERT INTO `rl_medida_bienservicio` (`id`, `formulario5_id`, `medida_id`, `cant
 (54, 6, 1, '15', '7', 105.00, 105.00, NULL, 2, '2026-01-20', '2025-09-16 16:34:38', '2025-09-16 16:34:38'),
 (55, 6, 1, '5', '25', 125.00, 125.00, NULL, 2, '2026-01-20', '2025-09-16 16:34:53', '2025-09-16 16:34:53'),
 (56, 6, 1, '2', '1,800.00', 3600.00, 3600.00, NULL, 2, '2026-01-20', '2025-09-16 16:35:15', '2025-09-16 16:35:15'),
-(57, 6, 1, '1', '1,950.00', 1950.00, 1950.00, NULL, 2, '2026-01-20', '2025-09-16 16:35:42', '2025-09-16 16:35:42'),
+(57, 6, 1, '1', '1,950.00', 1950.00, 1950.00, NULL, 2, '2026-01-20', '2025-09-16 16:35:42', '2025-10-13 15:25:00'),
 (58, 6, 1, '1', '980.00', 980.00, 980.00, NULL, 2, '2026-01-20', '2025-09-16 16:36:06', '2025-09-16 16:36:06'),
 (59, 6, 1, '5', '150.00', 750.00, 750.00, NULL, 2, '2026-01-20', '2025-09-16 16:36:24', '2025-09-16 16:36:24'),
 (60, 6, 1, '15', '20', 300.00, 300.00, NULL, 2, '2026-01-20', '2025-09-16 16:36:39', '2025-09-16 16:36:39'),
@@ -3423,7 +3375,7 @@ INSERT INTO `rl_medida_bienservicio` (`id`, `formulario5_id`, `medida_id`, `cant
 (88, 6, 1, '2', '975.00', 1950.00, 1950.00, NULL, 2, '2026-01-20', '2025-09-16 16:51:13', '2025-09-16 16:51:13'),
 (89, 6, 1, '1', '270.00', 270.00, 270.00, NULL, 2, '2026-01-20', '2025-09-16 16:51:28', '2025-09-16 16:51:28'),
 (90, 6, 1, '1', '240.00', 240.00, 240.00, NULL, 2, '2026-01-20', '2025-09-16 16:51:46', '2025-09-16 16:51:46'),
-(91, 10, 1, '1', '19,780.00', 19780.00, 19780.00, NULL, 2, '2026-01-20', '2025-09-16 16:52:34', '2025-09-16 16:52:34'),
+(91, 10, 1, '1', '19,780.00', 19780.00, 19780.00, NULL, 2, '2026-01-20', '2025-09-16 16:52:34', '2025-10-06 21:43:24'),
 (92, 10, 1, '1', '6,000.00', 6000.00, 6000.00, NULL, 2, '2026-01-20', '2025-09-16 16:53:00', '2025-09-16 16:53:00'),
 (93, 10, 1, '1', '2,400.00', 2400.00, 2400.00, NULL, 2, '2026-01-20', '2025-09-16 16:53:20', '2025-09-16 16:53:20'),
 (94, 10, 1, '2', '2,100.00', 4200.00, 4200.00, NULL, 2, '2026-01-20', '2025-09-16 16:53:39', '2025-09-16 16:53:39'),
@@ -4236,6 +4188,7 @@ INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES
 (1, 4),
 (34, 4),
 (35, 4),
+(36, 4),
 (39, 4);
 
 -- --------------------------------------------------------
@@ -4290,57 +4243,11 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `ci_persona`, `nombre`, `apellido`, `usuario`, `password`, `estado`, `celular`, `perfil`, `email`, `remember_token`, `creado_el`, `editado_el`, `deleted_at`, `id_unidad_carrera`) VALUES
-(1, '10028685', 'Rodrigo', 'Lecoña', '10028685', '$2y$10$N4e5t4UZB7IxDruWu2rmM.wk5o.p428nAzYcHkqyJZMz0yZVEHZMO', 'activo', '63259224', NULL, 'rodrigolecona03@gmail.com', 'Po7HafCoWvLs8TcP1afyhIV2pmn6rdO3vgKVNXzShVI61RUDYOSdK2K19jPj', '2023-06-02 19:04:25', '2024-08-14 18:40:25', NULL, NULL),
-(3, '12345678', 'David Carlos', 'Mamani', '12345678', '$2y$10$OaPc17BdqP/aSK7J6pNty.jQY0KWMGAu9Z3DHzsY857quJUIck0qC', 'activo', '78758567', NULL, 'usuario1@gmail.com', 'yFJ5ZUQfL0boRidsZYd77EOpQsOWw0KD9lB1XEpy17DhtANEhQjr2JEw7DcR', '2023-06-02 19:04:26', '2024-08-14 18:37:10', NULL, 1),
-(4, '10028684', 'Antonio', 'Lopez', '10028684', '$2y$10$a72bHmOqN3iV8d2AtY//iuY0Tpq7NYFgNHfxe.I/Lf1beX8Et9HxO', 'activo', '78758567', NULL, 'usuario2@gmail.com', 'pa3JHwsdnKSGObjNgPnqnzsqnHl3x4brZuKqE6vvM03OjoBrfyFtKtJTESuP', '2023-06-02 19:04:26', '2023-06-24 15:12:42', NULL, 48),
-(5, '00000', 'Me', 'La pelas', 'Us_00000', '$2y$10$LJQuIc/qiM4Oa98/0SjU0.5WtPiwNjHippD8k5hbTf8CJrJlUC53m', 'activo', NULL, NULL, 'hola@cdnc', 'TE9H2r6Lku', '2023-06-07 21:54:44', '2023-06-07 21:55:04', '2023-06-07 21:55:04', NULL),
-(6, '87654321', 'Juan Regis', 'Muñes', 'regis', '$2y$10$JIh/SzV2ANw0yBe3jI6AHe.PKUym7yTSr7bsV5X3q9rDbwOwGEcHG', 'activo', NULL, NULL, 'regis@gmail.com', 'VE77hcMwaS22wkqZehlkKWK9dWCmf2SCttDaz2ARPxu91pieqGBmPBUtZPY7', '2023-06-12 19:47:14', '2023-06-12 19:47:14', NULL, NULL),
-(7, '4807896', 'CARLOS', 'CONDORI TITIRICO', 'CARLOS_4807896', '$2y$10$meBWfDK6wMvRIr33C21NHu6bA.dMYLDxdAZOU6oXqCb4i3yxdOxv6', 'activo', NULL, NULL, 'carlos.condori@gmail.com', 'TUEPIqSLPR', '2023-06-30 02:29:45', '2023-06-30 02:29:45', NULL, 36),
-(8, '6005765', 'EFRAIN', 'CHAMBI VARGAS', 'EFRAIN_6005765', '$2y$10$kOzpIEnaUOuJGJ1nNdDB5.3kWngm47pKPjm6eJjnHM3vAK4rU3oRu', 'activo', NULL, NULL, 'efrain.chambi@gmail.com', 'F9ngHsplh4utgIif336niK0wFbvUB3fZWn67H5kJ7QN2BJujL1hk6boRRlXk', '2023-06-30 02:30:39', '2023-06-30 02:30:39', NULL, 37),
-(9, '4982774', 'TEODOSIA NICOLASA', 'TANCARA CALLECUSI', 'Teodosia_4982774', '$2y$10$/a.aFqhoPwCZ19l69JXG5uX7xZ38B7QeKiFrgRyaYlO2cQoJturvu', 'activo', NULL, NULL, 'teodosia.nicolasa@gmail.com', 'EfN9vU8K6c', '2023-06-30 02:39:46', '2023-06-30 02:39:46', NULL, 29),
-(10, '5995789', 'JHONNY SANTOS', 'ROJAS ROQUE', 'Jhonny_5995789', '$2y$10$sTNG8IeyrC2NTzDKutfnq.cOPO0pbIjffwDXqN4/8X1zMcjQ06t7i', 'activo', NULL, NULL, 'jhonny.santos@gmail.com', 'uAp0qVdi3kJN0GQe0aYZDPY4MXHxDVnqpmB21mTVkh5J4uJmf2LtIEjIhbwy', '2023-06-30 02:41:14', '2023-06-30 02:41:14', NULL, 64),
-(11, '4299127', 'RODOLFO EFRAIN', 'BERDEJA OVIDIO', 'Rodolfo_4299127', '$2y$10$6Z9wzFVUTLEr/ChxXlusaOKYkDA1sbgRoaexosLoWQ.AiWUFDftze', 'activo', NULL, NULL, 'rodolfo.efrain@gmail.com', 'TNDiepqkoU', '2023-06-30 02:42:45', '2023-06-30 02:42:45', NULL, 20),
-(12, '3536013', 'LUIS FERNANDO', 'SOTO GONZALES', 'Luis_3536013', '$2y$10$P0m/QxzJk15G9t8.BL91guGJ55CragfTNEjZUUAxU48Y6Uu8dOTDu', 'activo', NULL, NULL, 'luis.fernando@gmail.com', 'aQYFLj4pQR', '2023-06-30 04:23:18', '2024-02-14 01:16:54', NULL, 5),
-(13, '4253557', 'AURELIO', 'CHURA', 'David_4253557', '$2y$10$imNm.SoQct9LLGc29y9wDuagTpLj7M2mb69wkTsHZXDYG5tTRRbcC', 'activo', NULL, NULL, 'aurelio.chura@gmail.com', 'l43uCWZ2j1', '2023-06-30 04:24:16', '2024-12-18 13:45:52', NULL, 23),
-(14, '5950269', 'ROSIO LILIAN', 'CALLISAYA TINTAYA', 'Rosio_5950269', '$2y$10$m3GRj0uP/2DcGANd6UNQ5.QZMurK2deQcXtypBjlclcIS9b8kU5CC', 'activo', NULL, NULL, 'rosio.lilian@gmail.com', 'Pt6Iq6or7j', '2023-06-30 04:27:14', '2023-06-30 04:27:14', NULL, 24),
-(15, '2118121', 'HUGO', 'FLORES QUISPE', 'Hugo_2118121', '$2y$10$s05sEstvqpGg7gxqGfNev.umVh5XPwaCDKTP.lGrvfn.7LoZIH0oq', 'activo', NULL, NULL, 'hugo.flores@gmail.com', 'X91ZzJCIi6', '2023-06-30 04:30:12', '2023-06-30 04:30:12', NULL, 28),
-(16, '6144513', 'JUAN REGIS', 'MUÑES SIRPA', 'Regis_6144513', '$2y$10$g0MgOPM6OTWnXL1H8P0YeuqtCkp02yMqgeQXVwVmsCI0ShDzyTVGy', 'activo', NULL, NULL, 'juan.regis@gmail.com', 'zvzm3wCgMZBUqmxpAwzkE52HTXa6kW6YbLwzXO44PeN9WiIHgngaky5kIguL', '2023-06-30 04:35:32', '2023-06-30 17:36:40', NULL, 41),
-(17, '4886420', 'DAVID CARLOS', 'MAMANI QUISPE', 'David_4886420', '$2y$10$fsgAVJS0lW44KuylMi40SuyGf/kKTYUhopfLh2mEBH/yvY1wG0zmG', 'activo', NULL, NULL, 'david.carlos@gmail.com', 'uUbMii44Ymz1SLhI4UqxHEvG1VBjpX9ekT0iROTmeyshr40G7d8GA7RMyTjG', '2023-06-30 14:22:01', '2023-06-30 14:22:01', NULL, 1),
-(18, '6744713', 'RODRIGO DAVID', 'LUNA QUISBERT', 'Rodrigo_6744713', '$2y$10$qrthQjbwc5fxr9Xdxi2bvuSI6xFMIMU7IjF1US6pdpH4j8somjbRi', 'activo', NULL, NULL, 'rodrigo.david@gmail.com', 'TpNHJRNPHA', '2023-06-30 14:23:16', '2023-06-30 14:23:16', NULL, 15),
-(19, '3328697', 'JONNY HENRRY', 'YAMPARA BLANCO', 'Jonny_3328697', '$2y$10$qDYXvNC8/3Cy4VNZbT8speqiQabtR6X5TJyV4YNnlKTs5zjl.y29W', 'activo', NULL, NULL, 'jonny.henrry@gmail.com', 'Dfochr1nnU', '2023-06-30 14:24:31', '2023-06-30 14:24:31', NULL, 13),
-(20, '4244182', 'SANTOS', 'POMA AGUIRRE', 'Santos_4244182', '$2y$10$aHlcW5QS/k.Odiu1AnviDezeJIluqKSxt9mIsNnPDOQW3F4OtW4r.', 'activo', NULL, NULL, 'santos@gmail.com', 'ONQL28IFXj', '2023-06-30 14:25:19', '2023-06-30 14:25:19', NULL, 17),
-(21, '4960580', 'HELEN JAQUELINE', 'CHAVEZ CHOQUERIBE', 'Helen_4960580', '$2y$10$vaOEC6AI1sppY/4ZX7l6BeLrFBHRtpm9TK75eoPYXv8hAmX5.guDq', 'activo', NULL, NULL, 'helen.jaqueline@gmail.com', 'KxdUJFGqXD', '2023-06-30 14:26:19', '2023-06-30 14:26:19', NULL, 7),
-(22, '5013677', 'JOSE LUIS', 'BERRIOS SORUCO', 'Jose_5013677', '$2y$10$jTtZY0d.M4YcRt87valwIOZz.3jB9p12W2qWR7LoHsBR84uQxMeGC', 'activo', NULL, NULL, 'jose.luis@gmail.com', '9lLFOQ5yPk', '2023-06-30 14:27:31', '2023-06-30 14:27:31', NULL, 14),
-(23, '6775626', 'ISMAEL', 'CANAVIRI QUISPE', 'Ismael_6775626', '$2y$10$zqCJtch79F6aCGvYDciOO.mPwQLwyn3eNXvH1pShotmrfAa422my.', 'activo', NULL, NULL, 'ismael@gmail.com', 'mHwA17USo9', '2023-06-30 14:28:20', '2024-12-18 13:44:47', NULL, 27),
-(24, '4892710', 'ELIO LUIS', 'PEREZ VALERO', 'Elio_4892710', '$2y$10$SKP.zRapcoPMYLQ1KQd7Y.SmrnMptsXNP08bNb5cPkxIEbMATOsHK', 'activo', NULL, NULL, 'elio.luis@gmail.com', 'RyyPJfdMxatGe4cf5zIycfUyTLCNbzj8cNcOr8AESPKZg40l8mUxOqth2hyx', '2023-06-30 14:29:07', '2023-06-30 14:29:07', NULL, 4),
-(25, '7060182', 'MARTHA GIMENA', 'MAMANI MAMANI', 'Martha_7060182', '$2y$10$cdLgmCurow49E9glurxk6.oGo0ck5L2wQdrfRT/1Z2Z9Ho8hDGydG', 'activo', NULL, NULL, 'martha.gimena@gmail.com', 'VVuZiFhKWZ', '2023-06-30 14:30:06', '2023-06-30 14:30:06', NULL, 25),
-(26, '4846239', 'ANIBAL JOSE', 'PINTADO CHAMBI', 'Anibal_4846239', '$2y$10$.IR04WmRvhbCceMIE5K7/uU5JHAcawrfZ1qCUrj4bhgsa5pjYflVG', 'activo', NULL, NULL, 'anibal.jose@gmail.com', 'EZ9VnCwmYn', '2023-06-30 14:32:33', '2023-06-30 14:32:33', NULL, 35),
-(27, '2694310', 'CLARIBEL IRIS', 'ARANDIA TORREZ', 'Claribel_2694310', '$2y$10$XjBvzGp6IZLiRrxcAVgqb.u98N8dH4blMrFKCeVi28Z3PyT84CE2W', 'activo', NULL, NULL, 'claribel.iris@gmail.com', 'p4S27ik6G3', '2023-06-30 14:33:31', '2023-06-30 14:33:31', NULL, 32),
-(28, '4770862', 'JACQUELINE ANTONIETA', 'TICONA SIÑANI', 'Jacqueline_4770862', '$2y$10$GfLOyixYGQ9z4wu8jOqtXO/r8JAJTRDw/3HY.KwW9SwZN4b8n2PSK', 'activo', NULL, NULL, 'jacquelin.antonieta@gmail.com', 'o931nDmywa', '2023-06-30 14:34:35', '2023-06-30 14:34:35', NULL, 26),
-(29, '6008347', 'GERMAN', 'BRAVO CHOQUE', 'German_6008347', '$2y$10$YJD7htCyqKUMShxU6j/doOgsWBHgdUfvgUzGM5d2MsY0KQ1hFi0TS', 'activo', NULL, NULL, 'german@gmail.com', 'dBy0fPj4dj', '2023-06-30 14:35:26', '2023-06-30 14:35:26', NULL, 10),
-(30, '2140144', 'RODOLFO FREDY', 'CATUNTA NACHO', 'Rodolfo_2140144', '$2y$10$uUCyzYRWpe..teyClJJS2en9DAnCJ7G7CcTDeEdk/oH5SiBOw707q', 'activo', NULL, NULL, 'rodolfo.fredy@gmail.com', 'sDOD7Jyl6h', '2023-06-30 14:36:25', '2023-06-30 14:36:25', NULL, 16),
-(31, '4924904', 'ROSA', 'VERASTEGUI ONTIVEROS', 'Rosa_4924904', '$2y$10$ihIUGKCzWvldQbycMb/YkOw2xGOR/4IW6LLd/nmknMYY.O3lZcBh6', 'activo', NULL, NULL, 'rosa@gmail.com', 'qO0LQ8PA2i', '2023-06-30 14:37:29', '2023-06-30 14:37:29', NULL, 19),
-(32, '3389589', 'JORGE', 'CALLISAYA QUISPE', 'Jorge_3389589', '$2y$10$O8qh/Amu95zCSck3tDqtCOoVZUsT.q8RF2ugntymGIkG.tK4j.Qem', 'activo', NULL, NULL, 'jorge@gmail.com', 'W2GLLzkPKa', '2023-06-30 14:38:20', '2023-06-30 14:38:20', NULL, 2),
-(33, '4962868', 'BEATRIZ', 'CONDORI CACHACA', 'Beatriz_4962868', '$2y$10$vC4hzkiN7Pf5EIiC9kbtTOkKoF/hcVQLpgLzyNrCUMTT5ttTyuHZG', 'activo', NULL, NULL, 'Beatriz@gmail.com', 'oLYKoqufSr', '2023-06-30 14:39:18', '2023-06-30 14:39:18', NULL, 6),
-(34, '6052642', 'DANIEL', 'CONDORI GUARACHI', 'Daniel_6052642', '$2y$10$H9jR1V1Io7VNWhLgppkcbu4yePknCmVFejTYXn4cAjQikJi10lZPq', 'activo', NULL, NULL, 'daniel@gmail.com', 'y4J9Mv82Mm', '2023-06-30 14:40:04', '2023-06-30 14:40:04', NULL, 22),
-(35, '4894380', 'FERNANDO', 'QUISPE SUCA', 'Fernando_4894380', '$2y$10$pmjJipL4XYTCtWzvoMsCCeGOJxLumEnUk2aNQyJIw0Dv4tpwD7QH6', 'activo', NULL, NULL, 'fernando@gmail.com', 'Ek0jIDfGm3', '2023-06-30 14:41:03', '2023-06-30 14:41:03', NULL, 9),
-(36, '4978561', 'RIGO RIGOBERTO', 'SANCHEZ QUISBERT', 'Rigo_4978561', '$2y$10$9TJkje2bn5CFgNu8NtDXleeHNa.a0Xha8V2FtBRcjFZlgFibXgSVm', 'activo', NULL, NULL, 'digo.rigoberto@gmail.com', 'oUtVkzjjWP', '2023-06-30 14:41:56', '2023-06-30 14:41:56', NULL, 30),
-(37, '4763898', 'ALBERTO', 'RAMIREZ PAREDES', 'Alberto_4763898', '$2y$10$RCuX6JtkE2b3frbZ7zvv8eVoLg5QBYGM/TWa24k0WI98JQe3Ok2B.', 'activo', NULL, NULL, 'alverto@gmail.com', 'FffvCWPUtSW8P2fIKvUko0ZZMxOcwu2gxeG0x2X14AM1ofBaVZP3jOER0cU1', '2023-06-30 14:42:54', '2023-06-30 14:42:54', NULL, 8),
-(38, '3416615', 'VICTOR EDWIN', 'CAMPOS UGARTE', 'Victor_3416615', '$2y$10$Y5ju1m6wkA0kruyi/zpoXeCFv4TmkB0IXh9sjEF9nmHUKAzgERFO6', 'activo', NULL, NULL, 'victor.edwin@gmail.com', '28n4DUjred', '2023-06-30 14:44:12', '2023-06-30 14:44:12', NULL, 50),
-(39, '3512077', 'VLADIMIR GROVER', 'VEGA GONZALES', 'Vladimir_3512077', '$2y$10$qQVP3zoXvdVAVLppHyT3cOp8LSFdABsbTbxd7gSpJkx03HByZjyP2', 'activo', NULL, NULL, 'vladimir.grover@gmail.com', 'ZcKQrDl3DP', '2023-06-30 14:47:05', '2023-06-30 14:47:05', NULL, 40),
-(40, '123456789', 'SANTOS', 'POMA AGUIRRE', 'Us_123456789', '$2y$10$ZOmDJSnXjAMwRHYJZdXW5uN7EPeCLGwuROoTsUGBd/1MV52u0fmGi', 'activo', NULL, NULL, 'usuario5@gmail.com', 'RvKyZxA68JCwbeg8xDXt0XuEfrhheyrZxPDB1QbTSx6j7LrfxVvyQHqTFdpo', '2023-07-04 18:34:44', '2023-07-04 21:47:17', '2023-07-04 21:47:17', NULL),
-(41, '87654322', 'JUAN', 'MUÑEZ', 'DAVID_87654322', '$2y$10$zMZWYP294MEmdV5ez75FUedLcPkgq.GSEhbgkeZf/ekhmbRb8jPDS', 'activo', NULL, NULL, 'prueba@gmail.com', 'm037pN1qun', '2023-07-21 23:39:14', '2023-07-21 23:49:57', '2023-07-21 23:49:57', NULL),
-(45, '48078961', 'JORGE', 'CHAMBI', 'JORGE_48078961', '$2y$10$QJ6gahaewir6VlPr.OBmeO9DhSekrI18dcPQjDzeVtoYMZIeG0aC.', 'activo', NULL, NULL, 'admin2@gmail.com', 'Uhnehmjj4kDTCOjOfBFUn7w6IYi8QYVztORMierQuAhn01mFA1HKh0gjmzdh', '2023-07-25 22:16:12', '2023-07-25 22:16:12', NULL, NULL),
-(46, '9876543', 'Marcelo', 'Rivas', '9876543', '$2y$10$FHlz9E/rEN/3NK4HQrseu.lC0FuOs8gwZd9UDtM6mv9h7P6MNgfFa', 'activo', NULL, NULL, 'user2@gmail.com', 'k7bJ7HXijdi0oJS2e6eGas70SC4MqZhMvCsHwcFqVhx2eQBXVcvOhiE53rbs', '2023-08-09 22:06:35', '2023-10-03 19:46:50', NULL, NULL),
-(47, '6878067', 'JHONNY', 'APAZA', '6878067', '$2y$10$W/grFhaiptpLn5/zejksSu4HUGEq/CBfVSS8m34Jhi1rep1u2xKQ.', 'activo', NULL, NULL, 'jhonnyapaza@gmail.com', 'aSsDD6WEGzBI7FrA1Gkm4R6XEuKJzzwMgxCLFF0jUZYU8GqEhmyoOGJzCIE3', '2023-11-16 14:22:29', '2023-11-16 14:22:29', NULL, 1),
-(48, '123456', 'SIE', 'PRUEBAS', 'sie', '$2y$10$WiTti3zTLwlFll2N9hwpeOBSA0YTVhjGGg9YkCPzDJr/nY7nhmGqe', 'activo', NULL, NULL, 'pruebas.sie@upea.bo', 'jgCW90usH5aP4fK0PxYXpOXNQYb2ZCj89M30O4VTVFpAtVEvYllpdGgLKQQp', '2023-11-16 14:32:19', '2023-11-16 14:32:19', NULL, 41),
-(49, '12345', 'Sie2', 'Prueba2', 'sie2', '$2y$10$WiTti3zTLwlFll2N9hwpeOBSA0YTVhjGGg9YkCPzDJr/nY7nhmGqe', 'activo', NULL, NULL, 'camin2002.531@gmail.com', 'kjXeWDGNCZ', '2023-11-27 13:58:24', '2025-10-06 21:38:54', NULL, 46),
-(50, '10077835', 'GARY', 'APAZA MAMANI', 'gary', '$2y$10$K7o8doNMe2KnPDZaIprJZezDJb2jfwaJzmjQVHTGqBc.qhsQgEwXu', 'activo', '65640518', NULL, 'gary7apaza@gmail.com', 'r9SRBMID28scfnuTwKIvYClpaortGcIhMHVqGxiisXB1XVXgb4yBNpiBdbvJ', '2023-12-08 18:57:29', '2024-05-10 18:45:25', NULL, 41),
-(51, '9933303', 'Marcos', 'Berrios', '9933303', '$2y$10$TCWiwL5/I5oNaBaNgZciYuaNTZyUwZmbyJRwJ0yWE6SymTJcAHr42', 'activo', NULL, NULL, 'marcosberriosal@gmail.com', 'CdkfSXSbGLNrWylDVMkFMC86CoPL8UWjD71weuI6ndZ8wNNnvyJB5JEprKQ5', '2024-04-04 14:41:46', '2024-07-04 17:59:12', NULL, 1),
-(53, '4744660', 'Rosmeri', 'Cossio', '4744660', '$2y$10$10GZzAunJv4cJtzP.376GOFUSz596ltdpCWUsEBBuIvYRB1HEyoAi', 'activo', NULL, NULL, 'Rosmery@gmail.com', 'u9xzkaX0drYOTKXMJfxnNknKw1LJrTb9hDeuZzza01NLFaKje5s1swS5IHih', '2024-08-21 13:24:53', '2024-12-17 20:32:24', NULL, NULL),
-(54, '6020074', 'Gimena', 'Siñani', 'Us_6020074', '$2y$10$QI5Ya36QPFwfB5OuDhzubu8i3iuCdHGuagXBqRNkbYTB/oUk.JnUi', 'activo', NULL, NULL, 'gimena@gmail.com', 'fGqgFEKOBMon697E02WoDnUej3WA5zY7na9k5ilgeX0ruTJcwW7PDIj4cI5A', '2024-12-17 20:37:09', '2024-12-17 20:37:09', NULL, NULL),
-(55, '3746401', 'Wilson rene', 'Gonzales', 'Us_3746401', '$2y$10$MGQ7JDSy6Adi7wpyNUADv.uIV56XBdHpzqWv9NNR48DMyiNbzlLzi', 'activo', NULL, NULL, 'wilson@wilson.com', 'pA3oB3iMKt', '2025-07-01 16:21:43', '2025-07-01 16:21:43', NULL, 41),
-(61, '1234567', 'Sie3', 'Prueba3', 'sie3', '$2y$10$5CZtLjwc70bg1XYan0001OzsNrhOpwAx4ycdg8OyF6sLyZOR7TpJa', 'activo', NULL, NULL, 'geco.yak77@gmail.com', 'u9QduMJjju', '2025-10-06 21:38:34', '2025-10-06 21:38:34', NULL, 53);
+(6, '87654321', 'Juan Regis', 'Muñes', '87654321', '$2y$10$y9b6oxHNOqC9lwL/TJJL0uwiRwCKtU6cJbPCA9M9oY.57TTMhSWLm', 'activo', NULL, NULL, 'regis@gmail.com', '5sxy9SOU4OSzut8AORYA1OvJ6xTiLA3UaEqMdkoiJJw03I31D2pRvwr7V326', '2023-06-12 19:47:14', '2025-10-09 21:21:35', NULL, 41),
+(49, '12345', 'Planificacion', 'Prueba', 'plani', '$2y$10$wsywhJwrRVA8bY1UVGqpSejG4Hi7jgxk5KIj4xahHVLL1IAcUw0wa', 'activo', NULL, NULL, 'camin2002.531@gmail.com', 'FulEQSjLdfZ2BmbfeiQHgatMwLvM6NHy2GX2z4J01AIulSanzfdXeLE9EII5', '2023-11-27 13:58:24', '2025-10-07 19:53:19', NULL, 46),
+(50, '10077835', 'GARY LIMBERT', 'APAZA MAMANI', 'gary', '$2y$10$K7o8doNMe2KnPDZaIprJZezDJb2jfwaJzmjQVHTGqBc.qhsQgEwXu', 'activo', '67032056', NULL, 'gary7apaza@gmail.com', 'Ce3Faqgmfu', '2023-12-08 18:57:29', '2025-10-31 13:10:07', NULL, 1),
+(55, '3746401', 'Wilson rene', 'Gonzales', '3746401', '$2y$10$lAWRqYSi4C2HgnwDATztB.clH4hUFIGI55YItos0GDArKeQ44tsru', 'activo', NULL, NULL, 'wilson@wilson.com', 'waS3OJythJ', '2025-07-01 16:21:43', '2025-10-07 19:13:39', NULL, 41),
+(61, '1234567', 'Presupuestos', 'Prueba', 'presu', '$2y$10$x/AAziuQcB88f0TwOiIfMekAdyY6LuGIPG/ES164CP.FRWUkHnUom', 'activo', NULL, NULL, 'geco.yak77@gmail.com', 'HK0s7REkvvFzpUz3R8HqGmirdHxhMz91ggzazjlTiBamnbBtShNNDr9GUGOq', '2025-10-06 21:38:34', '2025-10-07 19:53:26', NULL, 53);
 
 --
 -- Índices para tablas volcadas
