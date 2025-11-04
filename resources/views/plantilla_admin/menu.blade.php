@@ -194,14 +194,14 @@
                         <div class="icon">
                             <img src="{{ asset('plantilla_admin/images/icon/draft.svg') }}" alt="usuario">
                         </div>
-                        <span class="menu-title">PRESUPUESTOS Y<br>MODIFICACIONES<br>PRESUPUESTARIAS</span>
+                        <span class="menu-title">COMPRAS Y<br>MODIFICACIONES<br>PRESUPUESTARIAS</span>
                     </a>
 
                     <ul class="sidemenu-nav-second-level">
                         @can('formulacion_poa')
                             <li class=" @if ($menu == '19') {{ 'active' }} @endif ">
                                 <a href="{{ route('fut_inicio') }}">
-                                    <span class="menu-title">Formulario unico<br>de tramite (FUT)</span>
+                                    <span class="menu-title">Formulario unico<br>de tramite o<br>gastos (FUT)</span>
                                 </a>
                             </li>
                         @endcan
@@ -211,7 +211,7 @@
                         @can('formulacion_poa')
                             <li class=" @if ($menu == '23') {{ 'active' }} @endif ">
                                 <a href="{{ route('mot.partidas') }}">
-                                    <span class="menu-title">Restricción modificaciones</span>
+                                    <span class="menu-title">Restricción de modificaciones</span>
                                 </a>
                             </li>
                         @endcan
@@ -307,7 +307,7 @@
                     <ul class="sidemenu-nav-second-level">
                         <li class="@if ($menu == '24') {{ 'active' }} @endif">
                             <a href="{{ route('pdf.inicio') }}">
-                                <span class="menu-title">Resumen general<br>de gastos y<br>sueldos</span>
+                                <span class="menu-title">Resumen general<br>de gastos y<br>saldos</span>
                             </a>
                         </li>
                     </ul>

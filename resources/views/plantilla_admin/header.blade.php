@@ -337,6 +337,32 @@
                                 </ul>
                             </div>
 
+                            @if (isset(Auth::user()->id_unidad_carrera))
+                                <div class="dropdown-wrap">
+                                    <ul class="profile-nav p-0 pt-3">
+                                        <li class="nav-item">
+                                            <a href="{{ asset('manuales/usuario.pdf') }}" class="nav-link" target="_blank">
+                                                <i class="ri-file-pdf-line"></i>
+                                                <span>Manual de usuario</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            @endif
+
+                            @if (Auth::user()->role[0]->name != 'usuario')
+                                <div class="dropdown-wrap">
+                                    <ul class="profile-nav p-0 pt-3">
+                                        <li class="nav-item">
+                                            <a href="{{ asset('manuales/tecnico.pdf') }}" class="nav-link" target="_blank">
+                                                <i class="ri-file-pdf-fill"></i>
+                                                <span>Manual de usuario (técnico/administrador)</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            @endif
+
                             <div class="dropdown-footer">
                                 <ul class="profile-nav">
                                     <li class="nav-item">

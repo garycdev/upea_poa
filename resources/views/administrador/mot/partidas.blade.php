@@ -73,15 +73,6 @@
                 <div class="tab-content" id="myTabContent">
                     <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab"
                         tabindex="0">
-                        <h3></h3>
-                        <div class="others-title d-flex align-items-center">
-                            <div class=" ms-auto position-relative">
-                                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
-                                    data-bs-target="#nuevo_usuario"> <i class="bx bxs-add-to-queue"></i> Nuevo
-                                    Usuario</button>
-                            </div>
-                        </div>
-
                         <div class="table-responsive">
                             <div class="table-responsive">
                                 <table class="table table-hover align-middle dataTable" style="width: 100%">

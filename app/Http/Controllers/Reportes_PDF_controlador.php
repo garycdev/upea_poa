@@ -13,6 +13,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
 
+Carbon::setLocale('es');
+
 class Reportes_PDF_controlador extends Controller
 {
     public function inicio()
@@ -615,25 +617,64 @@ class Reportes_PDF_controlador extends Controller
         $dompdf = new Dompdf($options);
 
         // Establecer fecha de inicio y final
+        $titulo = '';
         if ($tipo == 3) {
             switch ($fecha) {
-                case 1:
+                case 1: // 7 dias
                     $startDate = Carbon::now()->subDays(7);
+                    $endDate   = Carbon::now();
+                    $titulo    = 'Ultimos 7 días';
                     break;
-                case 2:
+                case 2: // 30 dias
                     $startDate = Carbon::now()->subDays(30);
+                    $endDate   = Carbon::now();
+                    $titulo    = 'Ultimos 30 días';
                     break;
-                case 3:
+                case 3: // 3 meses
                     $startDate = Carbon::now()->subMonths(3);
+                    $endDate   = Carbon::now();
+                    $titulo    = 'Ultimos 3 meses';
                     break;
-                case 4:
+                case 4: // 6 meses
                     $startDate = Carbon::now()->subMonths(6);
+                    $endDate   = Carbon::now();
+                    $titulo    = 'Ultimos 6 meses';
+                    break;
+                case 5: // mes actual
+                    $startDate = Carbon::now()->startOfMonth();
+                    $endDate   = Carbon::now();
+                    $titulo    = 'Mes actual (' . $startDate->translatedFormat('F') . ' ' . $startDate->format('Y') . ')';
+                    break;
+                case 6: // gestion actual
+                    $startDate = Carbon::now()->startOfYear();
+                    $endDate   = Carbon::now();
+                    $titulo    = 'Gestión actual (' . $startDate->format('Y') . ')';
+                    break;
+                case 7: // Hoy
+                    $startDate = Carbon::now();
+                    $endDate   = Carbon::now();
+                    $titulo    = 'Hoy (' . $startDate->format('d-m-Y') . ')';
                     break;
                 default:
-                    $startDate = Carbon::now()->subDays(7);
-                    break;
+                    $num  = intval($fecha[0]);
+                    $anio = intval(substr($fecha, 1));
+                    if ($num == 8) {
+                        $startDate = Carbon::create($anio, 1, 1, 0, 0, 0)->startOfYear();
+                        $endDate   = Carbon::create($anio, 12, 31, 23, 59, 59)->endOfYear();
+                        $titulo    = $anio;
+                    } elseif ($num == 9) {
+                        $inicio    = substr($anio, 0, 4);
+                        $fin       = substr($anio, 4);
+                        $titulo    = "$inicio - $fin";
+                        $startDate = Carbon::create($inicio, 1, 1, 0, 0, 0)->startOfYear();
+                        $endDate   = Carbon::create($fin, 12, 31, 23, 59, 59)->endOfYear();
+                    } else {
+                        $startDate = Carbon::now();
+                        $endDate   = Carbon::now();
+                        $titulo    = 'Hoy (' . $startDate->format('d-m-Y') . ')';
+                        break;
+                    }
             }
-            $endDate = Carbon::now();
         } else {
             $startDate = Carbon::createFromFormat('Y-m-d', $fecha)->startOfDay();
             $endDate   = Carbon::createFromFormat('Y-m-d', $fecha_fin)->endOfDay();
@@ -729,7 +770,7 @@ class Reportes_PDF_controlador extends Controller
         $por_fecha_fut = clone $baseFut;
         if ($tipo == 3) { // Periodo
             $porFechaFut = [
-                'fecha'                => 'Ultimos ' . ($fecha == 1 ? '7 días' : ($fecha == 2 ? '30 días' : ($fecha == 3 ? '3 meses' : '6 meses'))),
+                'fecha'                => $titulo,
                 'total_monto_sum'      => $por_fecha_fut->first()->total_monto_sum,
                 'total_pendiente_sum'  => $por_fecha_fut->first()->total_pendiente_sum,
                 'total_verificado_sum' => $por_fecha_fut->first()->total_verificado_sum,
@@ -751,7 +792,7 @@ class Reportes_PDF_controlador extends Controller
         $por_fecha_mot = clone $baseMotDe;
         if ($tipo == 3) { // Periodo
             $porFechaMot = [
-                'fecha'                => 'Ultimos ' . ($fecha == 1 ? '7 días' : ($fecha == 2 ? '30 días' : ($fecha == 3 ? '3 meses' : '6 meses'))),
+                'fecha'                => $titulo,
                 'total_monto_sum'      => $por_fecha_mot->first()->total_monto_sum,
                 'total_saldo_sum'      => $por_fecha_mot->first()->total_saldo_sum,
                 'total_pendiente_sum'  => $por_fecha_mot->first()->total_pendiente_sum,

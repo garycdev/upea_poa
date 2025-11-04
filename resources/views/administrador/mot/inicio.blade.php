@@ -73,7 +73,13 @@
 @section('scripts')
     <script>
         $(document).ready(function() {
-            let tabla = $('#tablaMot').DataTable();
+            if ($.fn.DataTable.isDataTable('#tablaMot')) {
+                $('#tablaMot').DataTable().clear().destroy();
+            }
+
+            let tabla = $('#tablaMot').DataTable({
+                ordering: false
+            });
 
             $(document).on('keyup change', '#nro, #gestion', function() {
                 let id_gestion = $('#gestion').val();
@@ -90,7 +96,7 @@
                     },
                     success: function(response) {
                         console.log(response);
-                        
+
                         tabla.clear().draw();
                         const detalleUrlTemplate =
                             "{{ route('mot.detalle', ['id_mot' => ':ELEMENT_ID']) }}";

@@ -158,14 +158,14 @@
             Reporte de gastos por fecha
         </h4>
         <h4 class="text-primary">PLAN OPERATIVO ANUAL</h4>
-        <h4 class="text-primary">FECHA: {{ $datos['rango'] }}</h4>
+        <h4 class="text-primary">PERIODO: {{ $datos['por_fecha_fut']['fecha'] }}</h4>
         <div class=" ms-auto position-relative">
         </div>
     </div>
 
     <img src="{{ $imagen_upea }}" class="img-esquina img-esquina-top-right">
 
-    <h5 class="formulario_esquina form-esquina-top-left">IMP {{ fecha_literal(date('Y-m-d'), 4) }}</h5>
+    <h5 class="formulario_esquina form-esquina-top-left">IMP {{ fecha_literal(date('Y-m-d'), 7) }}</h5>
     <h5 class="formulario_esquina form-esquina-top-rigth">
         Reporte fecha {{ $datos['rango'] }}
     </h5>
@@ -236,7 +236,7 @@
         <center><b>GASTOS POR FUENTE DE FINANCIAMIENTO</b></center>
         <br>
         <div style="width:100%;">
-            <table class="my-table" style="font-size:8px;">
+            <table class="my-table" style="font-size:10px;">
                 <thead>
                     <tr>
                         <th colspan="9">{{ $datos['por_fecha_fut']['fecha'] }}</th>
@@ -323,7 +323,7 @@
             <center><b>GASTOS POR UNIDAD/CARRERA</b></center>
             <br>
             <div class="table-responsive">
-                <table class="my-table" style="font-size:8px;">
+                <table class="my-table" style="font-size:10px;">
                     <thead>
                         <tr>
                             <th colspan="9">{{ $datos['por_fecha_fut']['fecha'] }}</th>
@@ -410,7 +410,7 @@
             <center><b>GASTOS POR PARTIDAS</b></center>
             <br>
             <div class="table-responsive">
-                <table class="my-table" style="font-size:8px;">
+                <table class="my-table" style="font-size:10px;">
                     <thead>
                         <tr>
                             <th colspan="9">{{ $datos['por_fecha_fut']['fecha'] }}</th>
@@ -549,7 +549,7 @@
         <center><b>MODIFICACIONES POR FUENTE DE FINANCIAMIENTO</b></center>
         <br>
         <div style="width:100%;">
-            <table class="my-table" style="font-size:8px;">
+            <table class="my-table" style="font-size:10px;">
                 <thead>
                     <tr>
                         <th colspan="9">{{ $datos['por_fecha_mot']['fecha'] }}</th>
@@ -645,7 +645,7 @@
             <center><b>MODIFICACIONES POR UNIDAD/CARRERA</b></center>
             <br>
             <div class="table-responsive">
-                <table class="my-table" style="font-size:8px;">
+                <table class="my-table" style="font-size:10px;">
                     <thead>
                         <tr>
                             <th colspan="9">{{ $datos['por_fecha_mot']['fecha'] }}</th>
@@ -738,9 +738,9 @@
         @if ($partidas)
             <br>
             <center><b>MODIFICACIONES POR PARTIDAS</b></center>
-            <center><b style="font-size: 14px">Partidas de origen (para modificación)</b></center>
+            <center><b style="font-size: 14px">DE</b></center>
             <div class="table-responsive">
-                <table class="my-table" style="font-size:8px;">
+                <table class="my-table" style="font-size:10px;">
                     <thead>
                         <tr>
                             <th colspan="9">{{ $datos['por_fecha_mot']['fecha'] }}</th>
@@ -821,9 +821,9 @@
             </center>
         @endif --}}
             <br>
-            <center><b style="font-size: 14px">Partidas de destino</b></center>
+            <center><b style="font-size: 14px">A</b></center>
             <div class="table-responsive">
-                <table class="my-table" style="font-size:8px;">
+                <table class="my-table" style="font-size:10px;">
                     <thead>
                         <tr>
                             <th colspan="9">{{ $datos['por_fecha_mot']['fecha'] }}</th>
@@ -907,7 +907,7 @@
             {{-- @dd($datos['por_fecha_partidas_mot']) --}}
             <center><b style="font-size: 14px">Resumen de modificaciones por partidas (aprobadas)</b></center>
             <div class="table-responsive">
-                <table class="my-table" style="font-size:11px;width:50%;margin:auto;">
+                <table class="my-table" style="font-size:11px;width:75%;margin:auto;">
                     <thead>
                         <tr>
                             <th colspan="3">{{ $datos['por_fecha_mot']['fecha'] }}</th>

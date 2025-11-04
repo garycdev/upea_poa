@@ -1,7 +1,6 @@
 <?php
 
 use Hashids\Hashids;
-use Illuminate\Support\Facades\Auth;
 
 //rodrigo , 50, 1002868503111997
 
@@ -92,6 +91,8 @@ function fecha_literal($Fecha, $Formato)
             return $dias[$numeroDia] . ' ' . $aux['day'] . ' de ' . $meses[$aux['month']] . ' de ' . $aux['year'];
         case 6:
             return date('d/m/Y', strtotime($Fecha));
+        case 7:
+            return $aux['day'] . ' de ' . $meses[$aux['month']] . ' de ' . $aux['year'] . ' ' . date('H:i:s');
         default:
             return date('d/m/Y', strtotime($Fecha));
     }

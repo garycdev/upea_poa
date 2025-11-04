@@ -315,7 +315,7 @@
         @endphp --}}
         @foreach ($datos['por_gestion_fuente'] as $item)
             <div style="width:100%;">
-                <table class="my-table" style="font-size:8px;">
+                <table class="my-table" style="font-size:10px;">
                     @php
                         $finan = [];
                     @endphp
@@ -500,7 +500,7 @@
         @endphp --}}
             {{-- @dd($datos['por_gestion_unidad']) --}}
             @foreach ($datos['por_gestion_unidad'] as $key => $item)
-                <table class="my-table" style="width:100%;font-size:8px;">
+                <table class="my-table" style="width:100%;font-size:10px;">
                     <thead>
                         <tr>
                             <th colspan="7" style="font-size:13px">
@@ -623,13 +623,13 @@
                             <tr>
                                 <td><b>{{ $item2['codigo'] }}</b></td>
                                 <td>
-                                    {{ con_separador_comas($presupuesto) }} bs
+                                    {{ $presupuesto != 0 ? con_separador_comas($presupuesto) . 'bs' : '-' }}
                                 </td>
-                                <td>{{ round($ptotal1, 2) }}%</td>
+                                <td>{{ $ptotal1 != 0 ? round($ptotal1, 2) . '%' : '-' }}</td>
                                 <td>
-                                    {{ con_separador_comas($pendiente) }} bs
+                                    {{ $pendiente != 0 ? con_separador_comas($pendiente) . 'bs' : '-' }}
                                 </td>
-                                <td>{{ round($ptotal2, 2) }}%</td>
+                                <td>{{ $ptotal2 != 0 ? round($ptotal2, 2) . '%' : '-' }}</td>
                                 <td>
                                     <b>{{ con_separador_comas($total) }} bs</b>
                                 </td>
@@ -655,7 +655,7 @@
                     <br>
                     <center>
                         <img src="{{ $chartsPartidas[$item['gestion']] }}"
-                            style="width:85%;margin:auto;font-size:8px;">
+                            style="width:85%;margin:auto;font-size:10px;">
                     </center>
                 @endif
                 <br>

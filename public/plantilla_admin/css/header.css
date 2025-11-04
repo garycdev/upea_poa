@@ -632,14 +632,14 @@ Header Content Content Style
   margin-left: 0;
 }
 .header-right-content .header-right-option.profile-nav-item.dropdown .dropdown-menu .dropdown-footer .nav-item .nav-link {
-  color: #4fcb8d;
+  color: #ff2d2d;
   padding: 5px 15px 5px 38px;
   position: relative;
   font-size: 13px;
   font-weight: 500;
 }
 .header-right-content .header-right-option.profile-nav-item.dropdown .dropdown-menu .dropdown-footer .nav-item .nav-link i {
-  color: #4fcb8d;
+  color: #ff2d2d;
   transition: all ease 0.5s;
   position: absolute;
   left: 15px;

@@ -96,14 +96,14 @@ class ControladorFUT extends Controller
                 'text-primary'
             ));
 
-            $fut->id_unidad_verifica = Auth::user()->id;
-
             Mail::to(Auth::user()->email)->send(new NotificacionGeneral(
                 "Formulario FUT N°" . formatear_con_ceros($fut->nro) . " verificado.",
                 "A verificado la compra FUT N°" . formatear_con_ceros($fut->nro) . ", puede revisarlo dando click al siguiente enlace.",
                 route('fut.detalle', encriptar($fut->id_fut)),
                 'text-primary'
             ));
+
+            $fut->id_unidad_verifica = Auth::user()->id;
         } elseif ($req->estado == 'aprobado') {
             $movs = FutMov::join('fut_partidas_presupuestarias as pp', 'pp.id_fut_pp', '=', 'fut_movimiento.id_fut_pp')
                 ->where('pp.id_fut', $fut->id_fut)
@@ -126,14 +126,14 @@ class ControladorFUT extends Controller
                 'text-success'
             ));
 
-            $fut->id_unidad_aprueba = Auth::user()->id;
-
             Mail::to(Auth::user()->email)->send(new NotificacionGeneral(
                 "Formulario FUT N°" . formatear_con_ceros($fut->nro) . " verificado.",
                 "A aprobado la compra FUT N°" . formatear_con_ceros($fut->nro) . ", puede revisarlo dando click al siguiente enlace.",
                 route('fut.detalle', encriptar($fut->id_fut)),
                 'text-primary'
             ));
+
+            $fut->id_unidad_aprueba = Auth::user()->id;
         }
 
         $fut->save();

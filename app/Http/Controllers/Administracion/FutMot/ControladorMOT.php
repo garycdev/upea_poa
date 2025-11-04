@@ -233,14 +233,14 @@ class ControladorMOT extends Controller
                 'text-primary'
             ));
 
-            $mot->id_unidad_verifica = Auth::user()->id;
-
             Mail::to(Auth::user()->email)->send(new NotificacionGeneral(
                 "Formulario MOT N°" . formatear_con_ceros($mot->nro) . " verificado.",
                 "A verificado la modificación MOT N°" . formatear_con_ceros($mot->nro) . ", puede revisarlo dando click al siguiente enlace.",
                 route('mot.detalle', encriptar($mot->id_mot)),
                 'text-primary'
             ));
+
+            $mot->id_unidad_verifica = Auth::user()->id;
         } elseif ($req->estado == 'aprobado') {
             $movs = MotMov::join('mot_partidas_presupuestarias as pp', 'pp.id_mot_pp', '=', 'mot_movimiento.id_mot_pp')
                 ->where('pp.id_mot', $mot->id_mot)
@@ -272,14 +272,14 @@ class ControladorMOT extends Controller
                 'text-success'
             ));
 
-            $mot->id_unidad_aprueba = Auth::user()->id;
-
             Mail::to(Auth::user()->email)->send(new NotificacionGeneral(
                 "Formulario MOT N°" . formatear_con_ceros($mot->nro) . " verificado.",
                 "A aprobado la modificación MOT N°" . formatear_con_ceros($mot->nro) . ", puede revisarlo dando click al siguiente enlace.",
                 route('mot.detalle', encriptar($mot->id_mot)),
                 'text-primary'
             ));
+
+            $mot->id_unidad_aprueba = Auth::user()->id;
         }
 
         $mot->save();

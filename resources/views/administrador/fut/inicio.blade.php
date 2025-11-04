@@ -87,7 +87,13 @@
 @section('scripts')
     <script>
         $(document).ready(function() {
-            let tabla = $('#tablaFut').DataTable();
+            if ($.fn.DataTable.isDataTable('#tablaFut')) {
+                $('#tablaFut').DataTable().clear().destroy();
+            }
+
+            let tabla = $('#tablaFut').DataTable({
+                ordering: false
+            });
 
             $(document).on('keyup change', '#nro, #gestion', function() {
                 let id_gestion = $('#gestion').val();
